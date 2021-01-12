@@ -88,8 +88,8 @@
 > Assuming all branches (master, develop, ci/develop) already exist, proceed as follows:
 >
 > ```bash
-> $ git clone https://github.com/CoreMedia/<PROJECT_NAME>.git
-> $ cd <PROJECT_NAME>
+> $ git clone https://github.com/CoreMedia/coremedia-headless-commerce.git
+> $ cd coremedia-headless-commerce
 > $ git checkout --track "origin/develop"
 > # ... perform required updates ...
 > $ git commit --all --message="Fixed #1"

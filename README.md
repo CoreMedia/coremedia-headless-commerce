@@ -16,24 +16,11 @@ _Optional:_
 This badge type shows the version number that is required for the selected project version."
 )
 
-> **How to use the template repository**
-> 1. Search for all occurrences of <PROJECT_NAME> and <PROJECT_REPO> and replace them with the actual names of your project.
-> 1. Search for further blockquotes in the documentation. They have to be replaced by real documentation.
-
-# <PROJECT_NAME>
-
-> If possible, the project name should be prefixed with name of the CoreMedia feature it supports, e.g.:
->
-> * `content-hub-adapter-<THIRD_PARTY_NAME>`
-> * `feedback-hub-adapter-<THIRD_PARTY_NAME>`
->
-> An additional abstract and feature list should be provided here.
+# coremedia-headless-commerce
 
 ## Versioning
 
-> Change this note if you prefer a different versioning:
->
->To find out which CoreMedia versions are `supported by this project, please take look at the releases section or on the existing branches. To find the matching version of your CoreMedia system, please checkout the branch with the corresponding name. For example, if your CoreMedia version is 2001.2, checkout the branch 2001.2.
+To find out which CoreMedia versions are `supported by this project, please take look at the releases section or on the existing branches. To find the matching version of your CoreMedia system, please checkout the branch with the corresponding name. For example, if your CoreMedia version is 2001.2, checkout the branch 2001.2.
 
 ## Documentation & Tutorial
 
@@ -45,7 +32,7 @@ This badge type shows the version number that is required for the selected proje
 
     for recent changes
 
-* **[Issues](https://github.com/CoreMedia/<PROJECT_REPO>/issues)**
+* **[Issues](https://github.com/CoreMedia/coremedia-headless-commerce/issues)**
 
     for known bugs and feature requests
 
@@ -68,4 +55,3 @@ that could be used to enhance your CoreMedia experience. We'd love to hear your
 feedback on use-cases and further developments! If you're having problems with
 our code, please refer to our issues section. If you already have a solution to 
 an issue, we love to review and integrate your pull requests. 
-
