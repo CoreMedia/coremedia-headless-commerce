@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.coremedia.commerce.labs</groupId>
+    <artifactId>headless-server-commerce-parent</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+    <relativePath>../headless-server-commerce-parent</relativePath>
+  </parent>
+
+  <artifactId>headless-server-commerce-app</artifactId>
+  <description>Commerce Headless Server Application
+
+    To start the preview headless-server-app, run:
+    mvn spring-boot:run
+
+    To start the live headless-server-app, run:
+    mvn spring-boot:run -Plive</description>
+
+  <properties>
+    <headless-server.spring.profiles>dev,local,preview-local</headless-server.spring.profiles>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.coremedia.caas</groupId>
+      <artifactId>headless-server-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>coremedia-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.commerce.labs</groupId>
+      <artifactId>headless-server-commerce-base-lib</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.commerce.labs</groupId>
+      <artifactId>headless-server-commerce-lib</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- third-party libs -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.coremedia.blueprint.boot.headlessserver.HeadlessServerApp</mainClass>
+          <profiles>${headless-server.spring.profiles}</profiles>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>live</id>
+      <properties>
+        <headless-server.spring.profiles>dev,local,live-local</headless-server.spring.profiles>
+      </properties>
+    </profile>
+  </profiles>
+</project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="logback-common.xml"/>
+
+  <springProfile name="elk">
+    <include resource="logback-elk.xml"/>
+  </springProfile>
+
+  <root level="WARN">
+    <springProfile name="elk">
+      <appender-ref ref="ELASTIC"/>
+    </springProfile>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>

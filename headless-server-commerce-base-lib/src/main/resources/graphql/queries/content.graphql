@@ -1,0 +1,9 @@
+query ContentQuery($id: String!, $type: String!) {
+
+  content {
+    content(id: $id, type: $type) {
+      name
+      type
+    }
+  }
+}

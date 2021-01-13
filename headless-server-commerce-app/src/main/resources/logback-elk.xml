@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+  <property name="ELASTIC_BULK_URL" value="${ELASTIC_BULK_URL:-http://localhost:9200/_bulk}"/>
+  <property name="ERROR_TO_STDERR" value="${ERROR_TO_STDERR:-false}"/>
+  <property name="HOST_FQDN" value="${HOST_FQDN:-}"/>
+
+  <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
+    <url>${ELASTIC_BULK_URL}</url>
+    <index>coremedia-%date{yyyy-MM-dd}</index>
+    <type>application-logs</type>
+    <errorsToStderr>${ERROR_TO_STDERR}</errorsToStderr>
+    <properties>
+      <property>
+        <name>host</name>
+        <value>${HOSTNAME}</value>
+        <allowEmpty>false</allowEmpty>
+      </property>
+      <property>
+        <name>hostFqdn</name>
+        <value>${HOST_FQDN}</value>
+        <allowEmpty>true</allowEmpty>
+      </property>
+      <property>
+        <name>application</name>
+        <value>${springAppName}</value>
+      </property>
+      <property>
+        <name>severity</name>
+        <value>%level</value>
+      </property>
+      <property>
+        <name>environment</name>
+        <value>${environment}</value>
+      </property>
+      <property>
+        <name>thread</name>
+        <value>%thread</value>
+      </property>
+      <property>
+        <name>stacktrace</name>
+        <value>%ex</value>
+      </property>
+      <property>
+        <name>logger</name>
+        <value>%logger</value>
+      </property>
+    </properties>
+    <headers>
+      <header>
+        <name>Content-Type</name>
+        <value>application/json</value>
+      </header>
+    </headers>
+  </appender>
+
+  <logger name="es-error-logger" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE"/>
+  </logger>
+
+</included>

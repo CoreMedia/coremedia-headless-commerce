@@ -8,19 +8,43 @@
 
 ## Table of Content
 
-1. [Introduction](#introduction)
+1. [Building and running the server](#building-and-running-the-server)
 1. [Release Download](#release-download)
 2. [Git Submodule](#git-submodule)
 3. [Activate the extension](#activate-the-extension)
 4. [Intellij IDEA Hints](#intellij-idea-hints)
 
-## Introduction
+## Building and running the server
 
-Depending on what you are setup and your plans, you can integrate this project in different ways.
+Build the workspace with
+    
+    mvn clean install -Dinstallation.server.host=<CMS-SERVER-HOSTNAME> -Dinstallation.server.port=<CMS-SERVER-PORT>
+    
+or specify a global profile defining the required properties `installation.server.host` and `installation.server.port`.
 
-* If you want to use the extension in your project, then it is recommended to fork the repository and integrate it as described in [Git Submodule](#git-submodule).
-* If you do not want to use GitHub, proceed as described in [Release Download](#release-download).
-* If you just want to contribute a new feature or a bugfix to the extension, you will need to work with the [Git Submodule](#git-submodule). As an external developer you will still need a fork of the repository to create a Pull Request. 
+Add the profile 
+
+    -P performance-test
+    
+if you want to run the performance tests while building the workspace. The default setup requires the test data to be imported into the
+CoreMedia content repository.
+
+Run the server with
+
+    mvn spring-boot:run -pl headless-server-app -Dinstallation.server.host=<CMS-SERVER-HOSTNAME> -Dinstallation.server.port=<CMS-SERVER-PORT>
+
+or start the Tomcat Webapp
+
+    mvn cargo:run -pl headless-server-webapp -Dinstallation.server.host=<CMS-SERVER-HOSTNAME> -Dinstallation.server.port=<CMS-SERVER-PORT>
+
+### Executable Jar
+
+A fully executable jar, which can be executed as binary or registered with `init.d` or `systemd`, can be created by adding the profile
+
+    -P executable-jar`
+    
+at build time. For more information see ["Installing Spring Boot Applications"](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html).
+
 
 ## Release Download
 

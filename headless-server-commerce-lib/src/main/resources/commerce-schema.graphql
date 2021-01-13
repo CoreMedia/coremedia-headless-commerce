@@ -1,0 +1,199 @@
+scalar BigDecimal
+
+schema {
+  query: Query
+}
+
+directive @fetch(
+  from : String!
+) on FIELD_DEFINITION
+
+directive @inherit(
+  from: [String!]!
+) on OBJECT | INTERFACE
+
+
+type Query {
+  catalogs(siteId:String): [Catalog] @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
+  catalog(catalogId:String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)")
+  catalogByAlias(catalogAlias: String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)")
+
+  #returns a category or null if the category does not exist. The externalId can either be formatted (e.g commerce://category/categoryId) or plain (e.g. categoryId)
+  categoryMetadata(seoSegment: String!, catalogId: String, siteId: String): Metadata @fetch(from: "@commerceLabsFacade.findCategoryMetadata(#seoSegment, #siteId)")
+  category(categoryId: String!, catalogId: String, siteId: String): Category @fetch(from: "@commerceLabsFacade.getCategory(#categoryId, #siteId)")
+  categoryByStore(categoryId: String!, catalogId: String, locale:String!, storeId: String!): Category @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)")
+  categoryBySeoSegment(seoSegment: String!, siteId: String!): Category @fetch(from: "@commerceLabsFacade.findCategoryBySeoSegment(#seoSegment, #siteId)")
+
+  commerceBean(commerceId: String!, catalogId: String, siteId: String!): CommerceBean @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
+
+  #returns a product or null if the product does not exist. The externalId can either be formatted (e.g commerce://product/productId) or plain (e.g. productId)
+  productMetadata(seoSegment: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.findProductMetadata(#seoSegment, #siteId)")
+  product(externalId: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.getProduct(#externalId, #siteId)")
+  productByTechId(techId: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.getProductByTechId(#techId, #siteId)")
+  productBySeoSegment(seoSegment: String!, siteId: String!): Product @fetch(from: "@commerceLabsFacade.findProductBySeoSegment(#seoSegment, #siteId)")
+
+  productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
+}
+
+interface Metadata {
+  id: ID!
+  externalId: String
+  externalTechId: String
+  seoPath: String
+  locale: String
+  storeId: String
+  catalogId: String
+  type: String
+  pageTitle: String
+  metaDescription: String
+  metaKeywords: [String]
+}
+
+interface CommerceBean {
+  id: ID!
+  externalId: String
+  externalTechId: String
+  shortId: String
+  locale: String
+}
+
+interface Catalog @inherit(from: ["CommerceBean"]) {
+  name: String
+  rootCategory: Category
+  defaultCatalog: Boolean
+  masterCatalog: Boolean
+}
+
+interface Category @inherit(from: ["CommerceBean"]) {
+  name: String
+  shortDescription: String
+  longDescription: String
+  imageUrl: String
+  products: [Product]!
+  parent: Category
+  children: [Category]!
+  breadcrumb: [Category]!
+}
+
+interface Product @inherit(from: ["CommerceBean"]) {
+  name: String
+  title: String
+  currency: String
+  shortDescription: String
+  longDescription: String
+  metaDescription: String
+  metaKeywords: String
+
+  listPrice: BigDecimal
+  offerPrice: BigDecimal
+
+  seoSegment: String
+
+  category: Category
+  variants: [ProductVariant]!
+
+  defaultImageAlt: String
+  defaultImageUrl: String
+  thumbnailUrl: String
+  storefrontUrl: String
+
+  definingAttributes: [ProductAttribute]!
+  describingAttributes: [ProductAttribute]!
+
+  variant: Boolean!
+  imageUrl: String
+}
+
+interface ProductVariant @inherit(from: ["Product"]) {
+  parent: Product
+}
+
+type MetadataImpl implements Metadata {
+  id: ID! @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
+  externalId: String
+  externalTechId: String
+  seoPath: String
+  locale: String
+  storeId: String
+  catalogId: String
+  type: String
+  pageTitle: String
+  metaDescription: String
+  metaKeywords: [String]
+}
+
+type CommerceBeanImpl implements CommerceBean {
+  id: ID! @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
+  externalId: String @fetch(from: "#this.externalId")
+  externalTechId: String @fetch(from: "#this.externalTechId")
+  shortId: String @fetch(from: "#this.externalId")
+  locale: String
+}
+
+type CatalogImpl implements Catalog @inherit(from: ["CommerceBeanImpl"]) {
+  name: String
+  rootCategory: Category
+
+  defaultCatalog: Boolean
+  masterCatalog: Boolean
+}
+
+type CategoryImpl implements Category @inherit(from: ["CommerceBeanImpl"]) {
+  name: String
+  shortDescription: String
+  longDescription: String
+  imageUrl: String
+  products: [Product]!
+  parent: Category
+  children: [Category]!
+  breadcrumb: [Category]!
+}
+
+type ProductImpl implements Product @inherit(from: ["CommerceBeanImpl"]) {
+  name: String @fetch(from: "getName()")
+  title: String @fetch(from: "getTitle()")
+  currency: String @fetch(from: "getCurrency()")
+
+  shortDescription: String @fetch(from: "getShortDescription()")
+  longDescription: String @fetch(from: "getLongDescription()")
+  metaDescription: String @fetch(from: "getMetaDescription()")
+  metaKeywords: String @fetch(from: "getMetaKeywords()")
+
+  listPrice: BigDecimal
+  offerPrice: BigDecimal
+
+  seoSegment: String @fetch(from: "getSeoSegment()")
+
+  category: Category @fetch(from: "getCategory()")
+  variants: [ProductVariant]!  @fetch(from: "getVariants()")
+
+  defaultImageAlt: String @fetch(from: "getDefaultImageAlt()")
+  defaultImageUrl: String @fetch(from: "getDefaultImageUrl()")
+  thumbnailUrl: String @fetch(from: "getThumbnailUrl()")
+  storefrontUrl: String @fetch(from: "getStorefrontUrl()")
+
+  definingAttributes: [ProductAttribute]! @fetch(from: "getDefiningAttributes()")
+  describingAttributes: [ProductAttribute]! @fetch(from: "getDescribingAttributes()")
+
+  variant: Boolean! @fetch(from: "isVariant()")
+
+  imageUrl: String
+
+  remoteLink(siteId:String, context:String): String!
+}
+
+type ProductVariantImpl implements ProductVariant @inherit(from: ["ProductImpl"]) {
+  parent: Product
+}
+
+type ProductAttribute {
+  id: String
+  displayName: String
+  type: String
+  unit: String
+  description: String
+  externalId: String
+  value: String
+  values: [String]!
+  defining: Boolean!
+}

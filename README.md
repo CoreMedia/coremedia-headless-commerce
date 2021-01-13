@@ -18,9 +18,22 @@ This badge type shows the version number that is required for the selected proje
 
 # coremedia-headless-commerce
 
+This open-source workspace is the backend side of the CoreMedia Content as a Service (CaaS) experience for the commerce systems.
+
+CoreMedia CaaS builds on the proven CoreMedia Unified API and leverages modern technologies (Spring Boot, REST, JSON, GraphQL) to deliver CoreMedia content and services to a broad range of applications. Integrate ready-to-go content fragments and new dynamic client-side modules into your (non CMS) webpages, build Single-page applications using your favorite framework and seamlessly integrate and reuse content from your CoreMedia CMS or syndicate/publish content using the headless API.
+
+## Workspace Structure
+
+The workspace is comprised of the following modules:
+* **live-app**: The Spring Boot Application packaged as executable JAR
+* **live-base-lib**: The base library module
+* **live-docker**: The Dockerfile
+* **live-lib**: The library module
+* **live-parent**: Parent module for different processing descriptions (schema/queries etc.)
+
 ## Versioning
 
-To find out which CoreMedia versions are `supported by this project, please take look at the releases section or on the existing branches. To find the matching version of your CoreMedia system, please checkout the branch with the corresponding name. For example, if your CoreMedia version is 2001.2, checkout the branch 2001.2.
+To find out which CoreMedia versions are supported by this project, please take look at the releases section or on the existing branches. To find the matching version of your CoreMedia system, please checkout the branch with the corresponding name. For example, if your CoreMedia version is 2001.2, checkout the branch 2001.2.
 
 ## Documentation & Tutorial
 

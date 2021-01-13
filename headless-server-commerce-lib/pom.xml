@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.coremedia.commerce.labs</groupId>
+    <artifactId>headless-server-commerce-parent</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+    <relativePath>../headless-server-commerce-parent</relativePath>
+  </parent>
+
+  <artifactId>headless-server-commerce-lib</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.coremedia.blueprint.base</groupId>
+      <artifactId>bpbase-lc-client</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- e-commerce -->
+    <dependency>
+      <groupId>com.coremedia.blueprint.base</groupId>
+      <artifactId>bpbase-lc-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.caas</groupId>
+      <artifactId>headless-server-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>cap-multisite</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>coremedia-cache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.livecontext</groupId>
+      <artifactId>lc-ecommerce-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- thirdparty -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.graphql-java</groupId>
+      <artifactId>graphql-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <!-- third-party libs -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>
