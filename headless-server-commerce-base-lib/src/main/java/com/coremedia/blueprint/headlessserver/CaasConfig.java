@@ -45,7 +45,6 @@ import com.coremedia.id.IdScheme;
 import com.coremedia.link.CompositeLinkComposer;
 import com.coremedia.link.LinkComposer;
 import com.coremedia.link.uri.UriLinkBuilder;
-import com.coremedia.link.uri.UriLinkBuilderImpl;
 import com.coremedia.link.uri.UriLinkComposer;
 import com.coremedia.springframework.customizer.CustomizerConfiguration;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -99,7 +98,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
@@ -244,12 +242,6 @@ public class CaasConfig implements WebMvcConfigurer {
   public LinkComposer<Object, String> uriLinkComposer(List<LinkComposer<?, ? extends UriLinkBuilder>> linkComposers) {
     return new UriLinkComposer<>(
             new CompositeLinkComposer<>(linkComposers, emptyList()));
-  }
-
-  @Bean
-  public LinkComposer<Content, UriLinkBuilder> contentUriLinkComposer() {
-    return content -> Optional.of(new UriLinkBuilderImpl(
-            UriComponentsBuilder.fromUriString(content.getId()).build()));
   }
 
   @Bean
