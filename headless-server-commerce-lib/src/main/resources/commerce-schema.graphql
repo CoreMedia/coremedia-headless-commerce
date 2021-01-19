@@ -55,6 +55,7 @@ interface CommerceBean {
   externalTechId: String
   shortId: String
   locale: String
+  siteId: String
 }
 
 interface Catalog @inherit(from: ["CommerceBean"]) {
@@ -128,6 +129,7 @@ type CommerceBeanImpl implements CommerceBean {
   externalTechId: String @fetch(from: "#this.externalTechId")
   shortId: String @fetch(from: "#this.externalId")
   locale: String
+  siteId: String @fetch(from: "#this.context.siteId")
 }
 
 type CatalogImpl implements Catalog @inherit(from: ["CommerceBeanImpl"]) {
