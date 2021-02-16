@@ -1,6 +1,7 @@
 package com.coremedia.blueprint.caas.labs.model;
 
 import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionInitializer;
+import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdBuilder;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatterHelper;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
 import com.coremedia.blueprint.caas.labs.error.CommerceConnectionUnavailable;
@@ -13,6 +14,7 @@ import com.coremedia.livecontext.ecommerce.catalog.CatalogService;
 import com.coremedia.livecontext.ecommerce.catalog.Category;
 import com.coremedia.livecontext.ecommerce.catalog.Product;
 import com.coremedia.livecontext.ecommerce.catalog.ProductVariant;
+import com.coremedia.livecontext.ecommerce.common.BaseCommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceBean;
 import com.coremedia.livecontext.ecommerce.common.CommerceConnection;
 import com.coremedia.livecontext.ecommerce.common.CommerceException;
@@ -35,6 +37,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 
 public class CommerceLabsFacade {
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
+  private static final String SERVICE_TYPE = "catalog";
 
   private final CommerceConnectionInitializer commerceConnectionInitializer;
   private final SitesService sitesService;
@@ -78,7 +81,10 @@ public class CommerceLabsFacade {
     if (catalogId == null) {
       return builder.data(getDefaultCatalog(siteId)).build();
     }
-    return builder.data(createCommerceBean(catalogId, siteId, Catalog.class)).build();
+
+    CommerceId commerceId = CommerceIdBuilder.builder(connection.getVendor(), SERVICE_TYPE, BaseCommerceBeanType.CATALOG)
+            .withExternalId(catalogId).build();
+    return builder.data((Catalog) createCommerceBean(commerceId, connection)).build();
   }
 
   public DataFetcherResult<Catalog> getCatalogByAlias(String catalogAlias, String siteId) {
