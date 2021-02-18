@@ -14,17 +14,17 @@ import com.coremedia.livecontext.ecommerce.catalog.Catalog;
 import com.coremedia.livecontext.ecommerce.catalog.Category;
 import com.coremedia.livecontext.ecommerce.catalog.Product;
 import com.coremedia.livecontext.ecommerce.catalog.ProductVariant;
+import com.coremedia.livecontext.ecommerce.common.BaseCommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceBean;
-import com.google.common.base.CaseFormat;
+import com.coremedia.livecontext.ecommerce.common.CommerceBeanType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Configuration(proxyBeanMethods = false)
 @Import({
@@ -32,14 +32,20 @@ import java.util.stream.Stream;
 })
 public class CommerceLabsConfig {
 
-  private static final Set<String> SCHEMA_TYPE_NAMES = Stream.of(
+  private static final Set<String> SCHEMA_TYPE_NAMES = Set.of(
           CommerceBean.class.getSimpleName(),
           Catalog.class.getSimpleName(),
           Category.class.getSimpleName(),
           Product.class.getSimpleName(),
           ProductVariant.class.getSimpleName(),
-          Metadata.class.getSimpleName())
-          .collect(Collectors.toSet());
+          Metadata.class.getSimpleName());
+
+  private static final Map<CommerceBeanType, String> TYPE_RESOLVE_MAP = Map.of(
+          BaseCommerceBeanType.CATEGORY, "CategoryImpl",
+          BaseCommerceBeanType.PRODUCT, "ProductImpl",
+          BaseCommerceBeanType.SKU, "ProductVariantImpl",
+          BaseCommerceBeanType.CATALOG, "CatalogImpl"
+  );
 
   @Bean
   public ProvidesTypeNameResolver providesCommerceBeanTypeNameResolver() {
@@ -52,9 +58,8 @@ public class CommerceLabsConfig {
   @Bean
   public TypeNameResolver<CommerceBean> commerceBeanTypeNameResolver() {
     return commerceBean -> {
-      String type = commerceBean.getId().getCommerceBeanType().type();
-      String graphQlTypeName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, type) + "Impl";
-      return Optional.of(graphQlTypeName);
+      CommerceBeanType commerceBeanType = commerceBean.getId().getCommerceBeanType();
+      return Optional.ofNullable(TYPE_RESOLVE_MAP.get(commerceBeanType));
     };
   }
 
