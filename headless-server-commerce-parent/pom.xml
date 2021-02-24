@@ -30,7 +30,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <cms.version>2010.2</cms.version>
+    <cms.version>2101.2</cms.version>
     <graphql-java.version>15.0</graphql-java.version>
     <graphql-java-extended-scalars.version>15.0.0</graphql-java-extended-scalars.version>
     <graphql-java-spring-boot-starter.version>2.0</graphql-java-spring-boot-starter.version>
@@ -219,6 +219,11 @@
       <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-api</artifactId>
+        <version>1.31.1</version>
+      </dependency>
+      <dependency>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-protobuf</artifactId>
         <version>1.31.1</version>
       </dependency>
       <dependency>

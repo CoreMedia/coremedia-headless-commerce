@@ -11,7 +11,6 @@ import com.coremedia.caas.model.mapper.FilteringModelMapper;
 import com.coremedia.caas.model.mapper.ModelMapper;
 import com.coremedia.caas.model.mapper.ModelMappingPropertyAccessor;
 import com.coremedia.caas.model.mapper.ModelMappingWiringFactory;
-import com.coremedia.caas.schema.CoercingBigDecimal;
 import com.coremedia.caas.schema.SchemaParser;
 import com.coremedia.caas.search.id.CaasContentBeanIdScheme;
 import com.coremedia.caas.service.cache.Weighted;
@@ -72,6 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
@@ -420,30 +420,27 @@ public class CaasConfig implements WebMvcConfigurer {
   }
 
   @Bean
+  @ConditionalOnProperty(prefix = "caas.graphql", name = "max-execution-timeout")
   public ExecutionTimeoutInstrumentation executionTimeoutInstrumentation() {
-    if (caasGraphqlConfigurationProperties.getMaxExecutionTimeout() > 0) {
-      LOG.info("caas.graphql.max-execution-timeout: {} ms", caasGraphqlConfigurationProperties.getMaxExecutionTimeout());
-      return new ExecutionTimeoutInstrumentation(caasGraphqlConfigurationProperties.getMaxExecutionTimeout());
-    }
-    return null;
+    long maxExecutionTimeout = caasGraphqlConfigurationProperties.getMaxExecutionTimeout().toMillis();
+    LOG.info("caas.graphql.max-execution-timeout: {} ms", maxExecutionTimeout);
+    return new ExecutionTimeoutInstrumentation(maxExecutionTimeout);
   }
 
   @Bean
+  @ConditionalOnExpression("#{T(Integer).valueOf(${caas.graphql.max-query-depth:30}) > 0}")
   public MaxQueryDepthInstrumentation maxQueryDepthInstrumentation() {
-    if (caasGraphqlConfigurationProperties.getMaxQueryDepth() > 0) {
-      LOG.info("caas.graphql.max-query-depth: {}", caasGraphqlConfigurationProperties.getMaxQueryDepth());
-      return new MaxQueryDepthInstrumentation(caasGraphqlConfigurationProperties.getMaxQueryDepth());
-    }
-    return null;
+    int maxQueryDepth = caasGraphqlConfigurationProperties.getMaxQueryDepth();
+    LOG.info("caas.graphql.max-query-depth: {}", maxQueryDepth);
+    return new MaxQueryDepthInstrumentation(maxQueryDepth);
   }
 
   @Bean
+  @ConditionalOnExpression("#{T(Integer).valueOf(${caas.graphql.max-query-complexity:0}) > 0}")
   public MaxQueryComplexityInstrumentation maxQueryComplexityInstrumentation() {
-    if (caasGraphqlConfigurationProperties.getMaxQueryComplexity() > 0) {
-      LOG.info("caas.graphql.max-query-complexity: {}", caasGraphqlConfigurationProperties.getMaxQueryComplexity());
-      return new MaxQueryComplexityInstrumentation(caasGraphqlConfigurationProperties.getMaxQueryComplexity());
-    }
-    return null;
+    int maxQueryComplexity = caasGraphqlConfigurationProperties.getMaxQueryComplexity();
+    LOG.info("caas.graphql.max-query-complexity: {}", maxQueryComplexity);
+    return new MaxQueryComplexityInstrumentation(maxQueryComplexity);
   }
 
   @Bean
@@ -509,7 +506,7 @@ public class CaasConfig implements WebMvcConfigurer {
 
   @Bean
   public GraphQLScalarType BigDecimal() {
-    return GraphQLScalarType.newScalar().name("BigDecimal").description("java.math.BigDecimal").coercing(new CoercingBigDecimal()).build();
+    return ExtendedScalars.GraphQLBigDecimal;
   }
 
   private Map<String, Object> renameQueryRootsWithOptionalPrefix(Map<String, Object> queryRoots) {
