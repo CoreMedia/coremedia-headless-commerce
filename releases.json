@@ -1,4 +1,11 @@
 {
+  "0.0.5":   {
+    "adapterBaseVersion": "",
+    "stateMavenArtifacts": "STAGED",
+    "stateDockerImage": "STAGED",
+    "stateContributionsWorkspace": "",
+    "stagingRepositoryId": "cms-onerepo-staging-profile-5026"
+  },
   "0.0.4":   {
     "adapterBaseVersion": "",
     "stateMavenArtifacts": "STAGED",
