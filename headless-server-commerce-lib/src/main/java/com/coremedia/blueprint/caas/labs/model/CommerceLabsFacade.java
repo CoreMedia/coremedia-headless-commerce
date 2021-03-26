@@ -21,6 +21,7 @@ import com.coremedia.livecontext.ecommerce.common.CommerceException;
 import com.coremedia.livecontext.ecommerce.common.CommerceId;
 import com.coremedia.livecontext.ecommerce.common.CommerceIdProvider;
 import com.coremedia.livecontext.ecommerce.common.StoreContext;
+import com.coremedia.livecontext.ecommerce.search.SearchFacet;
 import com.coremedia.livecontext.ecommerce.search.SearchResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
@@ -218,6 +220,57 @@ public class CommerceLabsFacade {
       LOG.warn("Could not search products with searchTerm {}", searchTerm, e);
       return null;
     }
+  }
+
+  @Nullable
+  public List<ProductSearchFacetResult> facetsForProductSearch(String categoryId, String siteId) {
+    CommerceConnection connection = getCommerceConnection(siteId);
+    if (connection == null) {
+      return null;
+    }
+    StoreContext storeContext = connection.getStoreContext();
+    CommerceId categoryCommerceId = getCategoryId(categoryId, connection);
+
+    try {
+      CatalogService catalogService = connection.getCatalogService();
+      Category category = catalogService.findCategoryById(categoryCommerceId, storeContext);
+      if (category == null) {
+        return null;
+      }
+      return facetsForProductSearch(category, connection);
+    } catch (CommerceException e) {
+      LOG.warn("Could not retrieve facets for categoryId {}", categoryId, e);
+      return null;
+    }
+  }
+
+  @Nullable
+  public List<ProductSearchFacetResult> facetsForProductSearchBySeoSegment(String seoSegment, String siteId) {
+    CommerceConnection connection = getCommerceConnection(siteId);
+    if (connection == null) {
+      return null;
+    }
+
+    try {
+      //Get the category by seo segment
+      Category category = findCategoryBySeoSegment(seoSegment, siteId).getData();
+      if (category == null) {
+        return null;
+      } else {
+        //since GrpcUtils#entityIdFrom forces us to use a proper external Id, we "reload" the category here.
+        category = getCategory(category.getExternalId(), siteId).getData();
+      }
+      return facetsForProductSearch(category, connection);
+    } catch (CommerceException e) {
+      LOG.warn("Could not retrieve facets for category seoSegment {}", seoSegment, e);
+      return null;
+    }
+  }
+
+  private List<ProductSearchFacetResult> facetsForProductSearch(Category category, CommerceConnection connection) {
+    Map<String, List<SearchFacet>> facetsForProductSearch = connection.getCatalogService().getFacetsForProductSearch(category, connection.getStoreContext());
+    //Map the results from Map<String, List<SearchFacet>> to List<ProductSearchFacetResult> since json/graphql is not a big fan of maps
+    return facetsForProductSearch.entrySet().stream().map(entry -> ProductSearchFacetResult.fromValues(entry.getKey(), entry.getValue())).collect(Collectors.toList());
   }
 
   @Nullable

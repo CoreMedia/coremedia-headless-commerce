@@ -33,6 +33,48 @@ type Query {
   productBySeoSegment(seoSegment: String!, siteId: String!): Product @fetch(from: "@commerceLabsFacade.findProductBySeoSegment(#seoSegment, #siteId)")
 
   productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
+
+  productSearch(searchTerm: String!, searchParams: ProductSearchParams, siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #searchParams, #siteId)")
+  productSearchFacets(categoryId: String!, siteId: String): [ProductSearchFacetResult] @fetch(from: "@commerceLabsFacade.facetsForProductSearch(#categoryId, #siteId)")
+  productSearchFacetsBySeoSegment(seoSegment: String!, siteId: String): [ProductSearchFacetResult] @fetch(from: "@commerceLabsFacade.facetsForProductSearchBySeoSegment(#seoSegment, #siteId)")
+}
+
+
+enum OrderBySortField {
+  ORDER_BY_TYPE_PRICE_ASC
+  ORDER_BY_TYPE_PRICE_DSC
+}
+
+input ProductSearchParams {
+  pageNumber: Int
+  pageSize: Int
+  categoryId: String
+  orderBy: OrderBySortField
+  offset: Int
+  total: Int
+  facetSupport: String
+  facet: String
+}
+
+type ProductSearchResult {
+  totalCount: Int!
+  pageNumber: Int!
+  pageSize: Int!
+  searchResult: [Product]
+}
+
+type SearchFacet {
+  count: Int
+  label: String!
+  selected: Boolean
+  query: String
+  url: String
+  childFacets: [SearchFacet]
+}
+
+type ProductSearchFacetResult {
+  facetName: String!
+  searchFacets: [SearchFacet]
 }
 
 interface Metadata {
