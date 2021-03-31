@@ -29,6 +29,7 @@ import graphql.execution.DataFetcherResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -205,17 +206,54 @@ public class CommerceLabsFacade {
     }
   }
 
-  @Nullable
-  public SearchResult<Product> searchProducts(String searchTerm, Map<String, String> searchParams, String siteId) {
+  public DataFetcherResult<SearchResult<Product>> searchProducts(String searchTerm, Map<String, String> searchParams, String siteId) {
+    if (searchParams == null) {
+      //subsequent calls expect searchparams to be a map
+      searchParams = Collections.emptyMap();
+    } else {
+      //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
+      if (searchParams.containsKey(CatalogService.SEARCH_PARAM_CATEGORYID)) {
+        String categoryId = searchParams.get(CatalogService.SEARCH_PARAM_CATEGORYID);
+        Category categoryBySeoSegment = findCategoryBySeoSegment(categoryId, siteId).getData();
+        if (categoryBySeoSegment != null) {
+          searchParams.put(CatalogService.SEARCH_PARAM_CATEGORYID, categoryBySeoSegment.getExternalTechId());
+        }
+      }
+    }
+    return searchProductsByTechId(searchTerm, searchParams, siteId);
+  }
+
+  public DataFetcherResult<SearchResult<Product>> searchProductsBySeoSegment(String searchTerm, Map<String, String> searchParams, String siteId) {
+    if (searchParams == null) {
+      //subsequent calls expect searchparams to be a map
+      searchParams = Collections.emptyMap();
+    } else {
+      //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
+      if (searchParams.containsKey(CatalogService.SEARCH_PARAM_CATEGORYID)) {
+        String categoryId = searchParams.get(CatalogService.SEARCH_PARAM_CATEGORYID);
+        Category categoryBySeoSegment = getCategory(categoryId, siteId).getData();
+        if (categoryBySeoSegment != null) {
+          searchParams.put(CatalogService.SEARCH_PARAM_CATEGORYID, categoryBySeoSegment.getExternalTechId());
+        }
+      }
+    }
+    return searchProductsByTechId(searchTerm, searchParams, siteId);
+  }
+
+  public DataFetcherResult<SearchResult<Product>> searchProductsByTechId(String searchTerm, Map<String, String> searchParams, String siteId) {
+    DataFetcherResult.Builder<SearchResult<Product>> builder = DataFetcherResult.newResult();
+    if (siteId == null) {
+      return builder.error(SiteIdUndefined.getInstance()).build();
+    }
     CommerceConnection connection = getCommerceConnection(siteId);
     if (connection == null) {
-      return null;
+      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
     StoreContext storeContext = connection.getStoreContext();
 
     try {
       CatalogService catalogService = connection.getCatalogService();
-      return catalogService.searchProducts(searchTerm, searchParams, storeContext);
+      return builder.data(catalogService.searchProducts(searchTerm, searchParams, storeContext)).build();
     } catch (CommerceException e) {
       LOG.warn("Could not search products with searchTerm {}", searchTerm, e);
       return null;
@@ -403,10 +441,10 @@ public class CommerceLabsFacade {
 
   /**
    * Ensures that the id is in the long format, which is required by subsequent calls:
-   *
+   * <p>
    * Example: <code>vendor:///summer_catalog/product/foo-1</code> or <code>vendor:///catalog/product/foo-1</code>
    *
-   * @param productId the external id
+   * @param productId  the external id
    * @param connection the commerce connection to be used
    * @return id in the long format
    */
@@ -428,7 +466,7 @@ public class CommerceLabsFacade {
 
   /**
    * Ensures that the id is in the long format, which is required by subsequent calls:
-   *
+   * <p>
    * Example: <code>vendor:///summer_catalog/category/men</code> or <code>vendor:///catalog/category/men</code>
    *
    * @param categoryId the external id
@@ -444,7 +482,8 @@ public class CommerceLabsFacade {
     return commerceIdOptional.orElseGet(() -> idProvider.formatCategoryId(catalogAlias, categoryId));
   }
 
-  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
   @Nullable
   public String getCommerceId(CommerceBean commerceBean) {
     return CommerceIdFormatterHelper.format(commerceBean.getId());
