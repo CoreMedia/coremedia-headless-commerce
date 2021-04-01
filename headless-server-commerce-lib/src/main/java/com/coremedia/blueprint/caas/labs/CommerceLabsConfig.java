@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import java.util.Set;
 @Import({
         BaseCommerceServicesAutoConfiguration.class
 })
+@ImportResource({"classpath:/com/coremedia/blueprint/base/links/bpbase-links-postprocessors.xml"})
 public class CommerceLabsConfig {
 
   private static final Set<String> SCHEMA_TYPE_NAMES = Set.of(
