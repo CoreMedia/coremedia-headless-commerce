@@ -214,7 +214,7 @@ public class CommerceLabsFacade {
       //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
       if (searchParams.containsKey(CatalogService.SEARCH_PARAM_CATEGORYID)) {
         String categoryId = searchParams.get(CatalogService.SEARCH_PARAM_CATEGORYID);
-        Category categoryBySeoSegment = findCategoryBySeoSegment(categoryId, siteId).getData();
+        Category categoryBySeoSegment = getCategory(categoryId, siteId).getData();
         if (categoryBySeoSegment != null) {
           searchParams.put(CatalogService.SEARCH_PARAM_CATEGORYID, categoryBySeoSegment.getExternalTechId());
         }
