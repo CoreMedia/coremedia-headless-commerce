@@ -398,15 +398,24 @@ public class CommerceLabsFacade {
     if (bean == null || !expectedType.isAssignableFrom(bean.getClass())) {
       return null;
     }
-    return null;
+    return (T) bean;
   }
 
   @Nullable
   private CommerceBean createCommerceBean(String id, CommerceConnection commerceConnection) {
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(id);
+    CommerceIdProvider idProvider = commerceConnection.getIdProvider();
+    CatalogAlias catalogAlias = commerceConnection.getStoreContext().getCatalogAlias();
     if (commerceIdOptional.isEmpty()) {
       LOG.debug("unknown id: '{}'", id);
-      return null;
+      //Type guessing
+      //Am i a product?
+      CommerceBean commerceBean = createCommerceBean(idProvider.formatProductId(catalogAlias, id), commerceConnection);
+      if(commerceBean != null) {
+        return commerceBean;
+      }
+      //I might be a category
+      return createCommerceBean(idProvider.formatCategoryId(catalogAlias, id), commerceConnection);
     }
     return createCommerceBean(commerceIdOptional.get(), commerceConnection);
   }
