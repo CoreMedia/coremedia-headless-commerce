@@ -35,6 +35,7 @@ type Query {
   productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
 
   productSearch(searchTerm: String!, searchParams: ProductSearchParams, siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #searchParams, #siteId)")
+  productSearchBySeoSegment(searchTerm: String!, searchParams: ProductSearchParams, siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProductsBySeoSegment(#searchTerm, #searchParams, #siteId)")
   productSearchFacets(categoryId: String!, siteId: String): [ProductSearchFacetResult] @fetch(from: "@commerceLabsFacade.facetsForProductSearch(#categoryId, #siteId)")
   productSearchFacetsBySeoSegment(seoSegment: String!, siteId: String): [ProductSearchFacetResult] @fetch(from: "@commerceLabsFacade.facetsForProductSearchBySeoSegment(#seoSegment, #siteId)")
 }
