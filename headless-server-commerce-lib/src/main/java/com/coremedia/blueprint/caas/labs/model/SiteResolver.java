@@ -1,6 +1,6 @@
 package com.coremedia.blueprint.caas.labs.model;
 
-import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionInitializer;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
 import com.coremedia.cache.Cache;
 import com.coremedia.cap.multisite.Site;
 import com.coremedia.cap.multisite.SitesService;
@@ -23,16 +23,16 @@ public class SiteResolver {
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
 
   private final SitesService sitesService;
-  private final CommerceConnectionInitializer commerceConnectionInitializer;
+  private final CommerceConnectionSupplier commerceConnectionSupplier;
   private final Cache cache;
 
-  public SiteResolver(SitesService sitesService, CommerceConnectionInitializer commerceConnectionInitializer, Cache cache) {
+  public SiteResolver(SitesService sitesService, CommerceConnectionSupplier commerceConnectionSupplier, Cache cache) {
     this.sitesService = sitesService;
-    this.commerceConnectionInitializer = commerceConnectionInitializer;
+    this.commerceConnectionSupplier = commerceConnectionSupplier;
     this.cache = cache;
   }
 
-  Optional<Site> findSiteFor(String storeId, Locale locale){
+  Optional<Site> findSiteFor(String storeId, Locale locale) {
     return cache.get(new StoreIdAndLocaleToSiteCacheKey(storeId, locale, this));
   }
 
@@ -64,9 +64,9 @@ public class SiteResolver {
     StoreContext storeContext;
 
     try {
-      Optional<CommerceConnection> commerceConnection = commerceConnectionInitializer.findConnectionForSite(site);
+      Optional<CommerceConnection> commerceConnection = commerceConnectionSupplier.findConnection(site);
 
-      if (!commerceConnection.isPresent()) {
+      if (commerceConnection.isEmpty()) {
         LOG.debug("Site '{}' has no commerce connection.", site.getName());
         return false;
       }

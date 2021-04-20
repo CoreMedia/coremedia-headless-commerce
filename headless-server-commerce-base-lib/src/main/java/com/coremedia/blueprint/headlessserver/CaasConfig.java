@@ -466,6 +466,7 @@ public class CaasConfig implements WebMvcConfigurer {
 
   @Bean
   public GraphQLSchema graphQLSchema(Map<String, SchemaDirectiveWiring> directiveWirings,
+                                     TypeDefinitionRegistry typeRegistry,
                                      @Qualifier("rootModelMapper") ModelMapper<Object, Object> modelMapper,
                                      List<WiringFactory> wiringFactories)
           throws IOException {
@@ -474,7 +475,6 @@ public class CaasConfig implements WebMvcConfigurer {
             .wiringFactory(wiringFactory);
     directiveWirings.forEach(builder::directive);
     RuntimeWiring wiring = builder.build();
-    TypeDefinitionRegistry typeRegistry = typeDefinitionRegistry();
     SchemaGenerator schemaGenerator = new SchemaGenerator();
     return schemaGenerator.makeExecutableSchema(typeRegistry, wiring);
   }

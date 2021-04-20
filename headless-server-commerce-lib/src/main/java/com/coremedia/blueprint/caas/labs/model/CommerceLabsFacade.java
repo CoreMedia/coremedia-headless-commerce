@@ -1,6 +1,6 @@
 package com.coremedia.blueprint.caas.labs.model;
 
-import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionInitializer;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdBuilder;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatterHelper;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
@@ -21,20 +21,21 @@ import com.coremedia.livecontext.ecommerce.common.CommerceException;
 import com.coremedia.livecontext.ecommerce.common.CommerceId;
 import com.coremedia.livecontext.ecommerce.common.CommerceIdProvider;
 import com.coremedia.livecontext.ecommerce.common.StoreContext;
-import com.coremedia.livecontext.ecommerce.search.SearchFacet;
+import com.coremedia.livecontext.ecommerce.search.OrderBy;
+import com.coremedia.livecontext.ecommerce.search.SearchQuery;
+import com.coremedia.livecontext.ecommerce.search.SearchQueryBuilder;
 import com.coremedia.livecontext.ecommerce.search.SearchResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import graphql.execution.DataFetcherResult;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
@@ -42,12 +43,12 @@ public class CommerceLabsFacade {
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
   private static final String SERVICE_TYPE = "catalog";
 
-  private final CommerceConnectionInitializer commerceConnectionInitializer;
+  private final CommerceConnectionSupplier commerceConnectionSupplier;
   private final SitesService sitesService;
   private final SiteResolver siteResolver;
 
-  public CommerceLabsFacade(CommerceConnectionInitializer commerceConnectionInitializer, SitesService sitesService, SiteResolver siteResolver) {
-    this.commerceConnectionInitializer = commerceConnectionInitializer;
+  public CommerceLabsFacade(CommerceConnectionSupplier commerceConnectionSupplier, SitesService sitesService, SiteResolver siteResolver) {
+    this.commerceConnectionSupplier = commerceConnectionSupplier;
     this.sitesService = sitesService;
     this.siteResolver = siteResolver;
   }
@@ -206,41 +207,39 @@ public class CommerceLabsFacade {
     }
   }
 
-  public DataFetcherResult<SearchResult<Product>> searchProducts(String searchTerm, Map<String, String> searchParams, String siteId) {
-    if (searchParams == null) {
-      //subsequent calls expect searchparams to be a map
-      searchParams = Collections.emptyMap();
-    } else {
-      //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
-      if (searchParams.containsKey(CatalogService.SEARCH_PARAM_CATEGORYID)) {
-        String categoryId = searchParams.get(CatalogService.SEARCH_PARAM_CATEGORYID);
-        Category categoryBySeoSegment = getCategory(categoryId, siteId).getData();
-        if (categoryBySeoSegment != null) {
-          searchParams.put(CatalogService.SEARCH_PARAM_CATEGORYID, categoryBySeoSegment.getExternalTechId());
-        }
-      }
-    }
-    return searchProductsByTechId(searchTerm, searchParams, siteId);
+  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
+  public DataFetcherResult<SearchResult<Product>> searchProducts(String searchTerm,
+                                                                 @Nullable String categoryId,
+                                                                 @Nullable String orderBy,
+                                                                 @Nullable Integer offset,
+                                                                 @Nullable Integer limit,
+                                                                 String siteId) {
+    //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
+    String categoryTechId = Optional.ofNullable(categoryId).map(cat -> getCategory(cat, siteId).getData()).map(CommerceBean::getExternalTechId).orElse(null);
+    return searchProductsByTechId(searchTerm, categoryTechId, orderBy, offset, limit, siteId);
   }
 
-  public DataFetcherResult<SearchResult<Product>> searchProductsBySeoSegment(String searchTerm, Map<String, String> searchParams, String siteId) {
-    if (searchParams == null) {
-      //subsequent calls expect searchparams to be a map
-      searchParams = Collections.emptyMap();
-    } else {
-      //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
-      if (searchParams.containsKey(CatalogService.SEARCH_PARAM_CATEGORYID)) {
-        String categoryId = searchParams.get(CatalogService.SEARCH_PARAM_CATEGORYID);
-        Category categoryBySeoSegment = findCategoryBySeoSegment(categoryId, siteId).getData();
-        if (categoryBySeoSegment != null) {
-          searchParams.put(CatalogService.SEARCH_PARAM_CATEGORYID, categoryBySeoSegment.getExternalTechId());
-        }
-      }
-    }
-    return searchProductsByTechId(searchTerm, searchParams, siteId);
+  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
+  public DataFetcherResult<SearchResult<Product>> searchProductsBySeoSegment(String searchTerm,
+                                                                             @Nullable String seoSegment,
+                                                                             @Nullable String orderBy,
+                                                                             @Nullable Integer offset,
+                                                                             @Nullable Integer limit,
+                                                                             String siteId) {
+
+    //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
+    String categoryTechId = Optional.ofNullable(seoSegment).map(segment -> findCategoryBySeoSegment(segment, siteId).getData()).map(CommerceBean::getExternalTechId).orElse(null);
+    return searchProductsByTechId(searchTerm, categoryTechId, orderBy, offset, limit, siteId);
   }
 
-  public DataFetcherResult<SearchResult<Product>> searchProductsByTechId(String searchTerm, Map<String, String> searchParams, String siteId) {
+  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
+  public DataFetcherResult<SearchResult<Product>> searchProductsByTechId(
+          String searchTerm,
+          @Nullable String techId,
+          @Nullable String orderBy,
+          @Nullable Integer offset,
+          @Nullable Integer limit,
+          String siteId) {
     DataFetcherResult.Builder<SearchResult<Product>> builder = DataFetcherResult.newResult();
     if (siteId == null) {
       return builder.error(SiteIdUndefined.getInstance()).build();
@@ -249,66 +248,33 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
-    StoreContext storeContext = connection.getStoreContext();
+
 
     try {
-      CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService.searchProducts(searchTerm, searchParams, storeContext)).build();
+      StoreContext storeContext = connection.getStoreContext();
+      Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(techId);
+      CommerceId commerceId = commerceIdOptional.orElseGet(() -> connection.getIdProvider().formatCategoryTechId(storeContext.getCatalogAlias(), techId));
+
+      SearchQueryBuilder queryBuilder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.PRODUCT);
+      if (offset != null) {
+        queryBuilder.setOffset(offset);
+      }
+      if (limit != null) {
+        queryBuilder.setLimit(limit);
+      }
+      if (commerceId != null) {
+        queryBuilder.setCategoryId(commerceId);
+      }
+      queryBuilder.setIncludeResultFacets(true);
+      if (StringUtils.isNotBlank(orderBy)) {
+        queryBuilder.setOrderBy(OrderBy.of(orderBy));
+      }
+
+      return builder.data(connection.getCatalogService().search(queryBuilder.build(), storeContext)).build();
     } catch (CommerceException e) {
       LOG.warn("Could not search products with searchTerm {}", searchTerm, e);
       return null;
     }
-  }
-
-  @Nullable
-  public List<ProductSearchFacetResult> facetsForProductSearch(String categoryId, String siteId) {
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return null;
-    }
-    StoreContext storeContext = connection.getStoreContext();
-    CommerceId categoryCommerceId = getCategoryId(categoryId, connection);
-
-    try {
-      CatalogService catalogService = connection.getCatalogService();
-      Category category = catalogService.findCategoryById(categoryCommerceId, storeContext);
-      if (category == null) {
-        return null;
-      }
-      return facetsForProductSearch(category, connection);
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve facets for categoryId {}", categoryId, e);
-      return null;
-    }
-  }
-
-  @Nullable
-  public List<ProductSearchFacetResult> facetsForProductSearchBySeoSegment(String seoSegment, String siteId) {
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return null;
-    }
-
-    try {
-      //Get the category by seo segment
-      Category category = findCategoryBySeoSegment(seoSegment, siteId).getData();
-      if (category == null) {
-        return null;
-      } else {
-        //since GrpcUtils#entityIdFrom forces us to use a proper external Id, we "reload" the category here.
-        category = getCategory(category.getExternalId(), siteId).getData();
-      }
-      return facetsForProductSearch(category, connection);
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve facets for category seoSegment {}", seoSegment, e);
-      return null;
-    }
-  }
-
-  private List<ProductSearchFacetResult> facetsForProductSearch(Category category, CommerceConnection connection) {
-    Map<String, List<SearchFacet>> facetsForProductSearch = connection.getCatalogService().getFacetsForProductSearch(category, connection.getStoreContext());
-    //Map the results from Map<String, List<SearchFacet>> to List<ProductSearchFacetResult> since json/graphql is not a big fan of maps
-    return facetsForProductSearch.entrySet().stream().map(entry -> ProductSearchFacetResult.fromValues(entry.getKey(), entry.getValue())).collect(Collectors.toList());
   }
 
   @Nullable
@@ -411,7 +377,7 @@ public class CommerceLabsFacade {
       //Type guessing
       //Am i a product?
       CommerceBean commerceBean = createCommerceBean(idProvider.formatProductId(catalogAlias, id), commerceConnection);
-      if(commerceBean != null) {
+      if (commerceBean != null) {
         return commerceBean;
       }
       //I might be a category
@@ -434,7 +400,7 @@ public class CommerceLabsFacade {
         LOG.info("Cannot find site for siteId {}.", siteId);
         return null;
       }
-      CommerceConnection connection = commerceConnectionInitializer.findConnectionForSite(site)
+      CommerceConnection connection = commerceConnectionSupplier.findConnection(site)
               .orElse(null);
 
       if (connection == null) {

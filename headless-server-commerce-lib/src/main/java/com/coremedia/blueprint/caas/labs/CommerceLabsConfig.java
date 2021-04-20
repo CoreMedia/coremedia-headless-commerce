@@ -1,7 +1,7 @@
 package com.coremedia.blueprint.caas.labs;
 
 import com.coremedia.blueprint.base.livecontext.ecommerce.common.BaseCommerceServicesAutoConfiguration;
-import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionInitializer;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
 import com.coremedia.blueprint.caas.labs.model.CommerceLabsFacade;
 import com.coremedia.blueprint.caas.labs.model.Metadata;
 import com.coremedia.blueprint.caas.labs.model.SiteResolver;
@@ -73,14 +73,14 @@ public class CommerceLabsConfig {
   }
 
   @Bean
-  public CommerceLabsFacade commerceLabsFacade(@Qualifier("commerceConnectionInitializer") CommerceConnectionInitializer commerceConnectionInitializer,
+  public CommerceLabsFacade commerceLabsFacade(@Qualifier("commerceConnectionSupplier") CommerceConnectionSupplier commerceConnectionSupplier,
                                                SitesService sitesService, SiteResolver siteResolver) {
-    return new CommerceLabsFacade(commerceConnectionInitializer, sitesService, siteResolver);
+    return new CommerceLabsFacade(commerceConnectionSupplier, sitesService, siteResolver);
   }
 
   @Bean
-  public SiteResolver siteResolver(SitesService sitesService, CommerceConnectionInitializer commerceConnectionInitializer, Cache cache){
-    return new SiteResolver(sitesService, commerceConnectionInitializer, cache);
+  public SiteResolver siteResolver(SitesService sitesService, CommerceConnectionSupplier commerceConnectionSupplier, Cache cache) {
+    return new SiteResolver(sitesService, commerceConnectionSupplier, cache);
   }
 
   @Bean
