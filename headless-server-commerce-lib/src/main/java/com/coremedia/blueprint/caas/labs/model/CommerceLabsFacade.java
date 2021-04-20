@@ -24,6 +24,7 @@ import com.coremedia.livecontext.ecommerce.common.StoreContext;
 import com.coremedia.livecontext.ecommerce.search.OrderBy;
 import com.coremedia.livecontext.ecommerce.search.SearchQuery;
 import com.coremedia.livecontext.ecommerce.search.SearchQueryBuilder;
+import com.coremedia.livecontext.ecommerce.search.SearchQueryFacet;
 import com.coremedia.livecontext.ecommerce.search.SearchResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
@@ -213,10 +215,11 @@ public class CommerceLabsFacade {
                                                                  @Nullable String orderBy,
                                                                  @Nullable Integer offset,
                                                                  @Nullable Integer limit,
+                                                                 @Nullable List<String> filterFacets,
                                                                  String siteId) {
     //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
     String categoryTechId = Optional.ofNullable(categoryId).map(cat -> getCategory(cat, siteId).getData()).map(CommerceBean::getExternalTechId).orElse(null);
-    return searchProductsByTechId(searchTerm, categoryTechId, orderBy, offset, limit, siteId);
+    return searchProductsByTechId(searchTerm, categoryTechId, orderBy, offset, limit, filterFacets, siteId);
   }
 
   @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
@@ -225,11 +228,12 @@ public class CommerceLabsFacade {
                                                                              @Nullable String orderBy,
                                                                              @Nullable Integer offset,
                                                                              @Nullable Integer limit,
+                                                                             @Nullable List<String> filterFacets,
                                                                              String siteId) {
 
     //since only the externalTechId is being allowed by ecom system, we are forced us to "reload" the category here.
     String categoryTechId = Optional.ofNullable(seoSegment).map(segment -> findCategoryBySeoSegment(segment, siteId).getData()).map(CommerceBean::getExternalTechId).orElse(null);
-    return searchProductsByTechId(searchTerm, categoryTechId, orderBy, offset, limit, siteId);
+    return searchProductsByTechId(searchTerm, categoryTechId, orderBy, offset, limit, filterFacets, siteId);
   }
 
   @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
@@ -239,6 +243,7 @@ public class CommerceLabsFacade {
           @Nullable String orderBy,
           @Nullable Integer offset,
           @Nullable Integer limit,
+          @Nullable List<String> filterFacets,
           String siteId) {
     DataFetcherResult.Builder<SearchResult<Product>> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -268,6 +273,9 @@ public class CommerceLabsFacade {
       queryBuilder.setIncludeResultFacets(true);
       if (StringUtils.isNotBlank(orderBy)) {
         queryBuilder.setOrderBy(OrderBy.of(orderBy));
+      }
+      if (filterFacets != null) {
+        queryBuilder.setFilterFacets(filterFacets.stream().map(SearchQueryFacet::of).collect(Collectors.toList()));
       }
 
       return builder.data(connection.getCatalogService().search(queryBuilder.build(), storeContext)).build();

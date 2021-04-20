@@ -34,8 +34,8 @@ type Query {
 
   productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
 
-  productSearch(searchTerm: String!, categoryId: String, orderBy: String, offset: Int, limit:  Int, siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #categoryId, #orderBy, #offset, #limit, #siteId)")
-  productSearchBySeoSegment(searchTerm: String!, seoSegment: String, orderBy: String, offset: Int, limit:  Int, siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProductsBySeoSegment(#searchTerm, #seoSegment, #orderBy, #offset, #limit, #siteId)")
+  productSearch(searchTerm: String!, categoryId: String, orderBy: String, offset: Int, limit:  Int, filterFacets: [String], siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #categoryId, #orderBy, #offset, #limit, #filterFacets, #siteId)")
+  productSearchBySeoSegment(searchTerm: String!, seoSegment: String, orderBy: String, offset: Int, limit:  Int, filterFacets: [String], siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProductsBySeoSegment(#searchTerm, #seoSegment, #orderBy, #offset, #limit, #filterFacets, #siteId)")
 }
 
 
