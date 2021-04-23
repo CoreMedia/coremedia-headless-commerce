@@ -49,7 +49,8 @@ public class CommerceLabsFacade {
     this.siteResolver = siteResolver;
   }
 
-  //Catalogs
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
   public DataFetcherResult<List<Catalog>> getCatalogs(String siteId) {
     DataFetcherResult.Builder<List<Catalog>> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -69,6 +70,8 @@ public class CommerceLabsFacade {
     }
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)")
   public DataFetcherResult<Catalog> getCatalog(String catalogId, String siteId) {
     DataFetcherResult.Builder<Catalog> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -87,6 +90,8 @@ public class CommerceLabsFacade {
     return builder.data((Catalog) createCommerceBean(commerceId, connection)).build();
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)")
   public DataFetcherResult<Catalog> getCatalogByAlias(String catalogAlias, String siteId) {
     DataFetcherResult.Builder<Catalog> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -128,7 +133,8 @@ public class CommerceLabsFacade {
     }
   }
 
-  //Category
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCategory(#categoryId, #siteId)")
   public DataFetcherResult<Category> getCategory(String categoryId, String siteId) {
     DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -143,6 +149,8 @@ public class CommerceLabsFacade {
     return builder.data((Category) bean).build();
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)")
   public DataFetcherResult<Category> getCategoryByStore(String categoryId, String localeAsString, String storeId, String catalogId) {
     DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
     if (storeId == null || localeAsString == null) {
@@ -159,7 +167,8 @@ public class CommerceLabsFacade {
     return builder.data((Category) bean).build();
   }
 
-  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
   @Nullable
   public DataFetcherResult<CommerceBean> getCommerceBean(String commerceId, String siteId) {
     DataFetcherResult.Builder<CommerceBean> builder = DataFetcherResult.newResult();
@@ -169,6 +178,8 @@ public class CommerceLabsFacade {
     return builder.data(createCommerceBean(commerceId, siteId, CommerceBean.class)).build();
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProduct(#externalId, #siteId)")
   public DataFetcherResult<Product> getProduct(String externalId, String siteId) {
     DataFetcherResult.Builder<Product> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -183,6 +194,8 @@ public class CommerceLabsFacade {
     return builder.data((Product) bean).build();
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProductByTechId(#techId, #siteId)")
   public DataFetcherResult<Product> getProductByTechId(String techId, String siteId) {
     DataFetcherResult.Builder<Product> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -239,6 +252,8 @@ public class CommerceLabsFacade {
     }
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.findProductBySeoSegment(#seoSegment, #siteId)")
   public DataFetcherResult<Product> findProductBySeoSegment(String seoSegment, String siteId) {
     DataFetcherResult.Builder<Product> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -258,6 +273,8 @@ public class CommerceLabsFacade {
     }
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.findCategoryBySeoSegment(#seoSegment, #siteId)")
   public DataFetcherResult<Category> findCategoryBySeoSegment(String seoSegment, String siteId) {
     DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -278,6 +295,8 @@ public class CommerceLabsFacade {
     }
   }
 
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
   public DataFetcherResult<ProductVariant> getProductVariant(String productVariantId, String siteId) {
     DataFetcherResult.Builder<ProductVariant> builder = DataFetcherResult.newResult();
     if (siteId == null) {
@@ -360,7 +379,7 @@ public class CommerceLabsFacade {
    * @return id in the long format
    */
   @NonNull
-  private CommerceId getProductId(String productId, CommerceConnection connection) {
+  private static CommerceId getProductId(String productId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
     CatalogAlias catalogAlias = connection.getStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(productId);
@@ -368,7 +387,7 @@ public class CommerceLabsFacade {
   }
 
   @NonNull
-  private CommerceId getProductVariantId(String productVariantId, CommerceConnection connection) {
+  private static CommerceId getProductVariantId(String productVariantId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
     CatalogAlias catalogAlias = connection.getStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(productVariantId);
@@ -396,7 +415,7 @@ public class CommerceLabsFacade {
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
   @Nullable
-  public String getCommerceId(CommerceBean commerceBean) {
+  public static String getCommerceId(CommerceBean commerceBean) {
     return CommerceIdFormatterHelper.format(commerceBean.getId());
   }
 
