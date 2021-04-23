@@ -358,7 +358,8 @@ public class CaasConfig implements WebMvcConfigurer {
 
   /**
    * Only as example to plugin a filter predicate.
-   * Previously used to check validation date ins content is in production.
+   *
+   * @return the predicate
    */
   @Bean
   @Qualifier("filterPredicate")
