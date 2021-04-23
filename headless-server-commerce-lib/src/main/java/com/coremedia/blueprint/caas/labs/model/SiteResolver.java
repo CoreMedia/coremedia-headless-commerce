@@ -1,6 +1,6 @@
 package com.coremedia.blueprint.caas.labs.model;
 
-import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionInitializer;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
 import com.coremedia.cache.Cache;
 import com.coremedia.cap.multisite.Site;
 import com.coremedia.cap.multisite.SitesService;
@@ -23,12 +23,12 @@ public class SiteResolver {
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
 
   private final SitesService sitesService;
-  private final CommerceConnectionInitializer commerceConnectionInitializer;
+  private final CommerceConnectionSupplier commerceConnectionSupplier;
   private final Cache cache;
 
-  public SiteResolver(SitesService sitesService, CommerceConnectionInitializer commerceConnectionInitializer, Cache cache) {
+  public SiteResolver(SitesService sitesService, CommerceConnectionSupplier commerceConnectionSupplier, Cache cache) {
     this.sitesService = sitesService;
-    this.commerceConnectionInitializer = commerceConnectionInitializer;
+    this.commerceConnectionSupplier = commerceConnectionSupplier;
     this.cache = cache;
   }
 
@@ -64,9 +64,9 @@ public class SiteResolver {
     StoreContext storeContext;
 
     try {
-      Optional<CommerceConnection> commerceConnection = commerceConnectionInitializer.findConnectionForSite(site);
+      Optional<CommerceConnection> commerceConnection = commerceConnectionSupplier.findConnection(site);
 
-      if (!commerceConnection.isPresent()) {
+      if (commerceConnection.isEmpty()) {
         LOG.debug("Site '{}' has no commerce connection.", site.getName());
         return false;
       }
@@ -85,6 +85,4 @@ public class SiteResolver {
     return locale.equals(siteLocale) ||
             (isNullOrEmpty(siteLocale.getCountry()) && locale.getLanguage().equals(siteLocale.getLanguage()));
   }
-
-
 }

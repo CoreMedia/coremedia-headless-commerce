@@ -1,6 +1,6 @@
 package com.coremedia.blueprint.caas.labs.model;
 
-import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionInitializer;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdBuilder;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatterHelper;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
@@ -39,12 +39,12 @@ public class CommerceLabsFacade {
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
   private static final String SERVICE_TYPE = "catalog";
 
-  private final CommerceConnectionInitializer commerceConnectionInitializer;
+  private final CommerceConnectionSupplier commerceConnectionSupplier;
   private final SitesService sitesService;
   private final SiteResolver siteResolver;
 
-  public CommerceLabsFacade(CommerceConnectionInitializer commerceConnectionInitializer, SitesService sitesService, SiteResolver siteResolver) {
-    this.commerceConnectionInitializer = commerceConnectionInitializer;
+  public CommerceLabsFacade(CommerceConnectionSupplier commerceConnectionSupplier, SitesService sitesService, SiteResolver siteResolver) {
+    this.commerceConnectionSupplier = commerceConnectionSupplier;
     this.sitesService = sitesService;
     this.siteResolver = siteResolver;
   }
@@ -213,6 +213,7 @@ public class CommerceLabsFacade {
 
     try {
       CatalogService catalogService = connection.getCatalogService();
+      //noinspection removal
       return catalogService.searchProducts(searchTerm, searchParams, storeContext);
     } catch (CommerceException e) {
       LOG.warn("Could not search products with searchTerm {}", searchTerm, e);
@@ -230,6 +231,7 @@ public class CommerceLabsFacade {
 
     try {
       CatalogService catalogService = connection.getCatalogService();
+      //noinspection removal
       return catalogService.searchProductVariants(searchTerm, searchParams, storeContext);
     } catch (CommerceException e) {
       LOG.warn("Could not search product variants with searchTerm {}", searchTerm, e);
@@ -307,7 +309,7 @@ public class CommerceLabsFacade {
     if (bean == null || !expectedType.isAssignableFrom(bean.getClass())) {
       return null;
     }
-    return null;
+    return (T) bean;
   }
 
   @Nullable
@@ -334,7 +336,7 @@ public class CommerceLabsFacade {
         LOG.info("Cannot find site for siteId {}.", siteId);
         return null;
       }
-      CommerceConnection connection = commerceConnectionInitializer.findConnectionForSite(site)
+      CommerceConnection connection = commerceConnectionSupplier.findConnection(site)
               .orElse(null);
 
       if (connection == null) {
@@ -350,10 +352,10 @@ public class CommerceLabsFacade {
 
   /**
    * Ensures that the id is in the long format, which is required by subsequent calls:
-   *
+   * <p>
    * Example: <code>vendor:///summer_catalog/product/foo-1</code> or <code>vendor:///catalog/product/foo-1</code>
    *
-   * @param productId the external id
+   * @param productId  the external id
    * @param connection the commerce connection to be used
    * @return id in the long format
    */
@@ -375,7 +377,7 @@ public class CommerceLabsFacade {
 
   /**
    * Ensures that the id is in the long format, which is required by subsequent calls:
-   *
+   * <p>
    * Example: <code>vendor:///summer_catalog/category/men</code> or <code>vendor:///catalog/category/men</code>
    *
    * @param categoryId the external id
@@ -391,7 +393,8 @@ public class CommerceLabsFacade {
     return commerceIdOptional.orElseGet(() -> idProvider.formatCategoryId(catalogAlias, categoryId));
   }
 
-  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
   @Nullable
   public String getCommerceId(CommerceBean commerceBean) {
     return CommerceIdFormatterHelper.format(commerceBean.getId());
