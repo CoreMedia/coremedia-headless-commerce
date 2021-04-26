@@ -257,8 +257,6 @@ public class CommerceLabsFacade {
 
     try {
       StoreContext storeContext = connection.getStoreContext();
-      Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(techId);
-      CommerceId commerceId = commerceIdOptional.orElseGet(() -> connection.getIdProvider().formatCategoryTechId(storeContext.getCatalogAlias(), techId));
 
       SearchQueryBuilder queryBuilder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.PRODUCT);
       if (offset != null) {
@@ -267,8 +265,12 @@ public class CommerceLabsFacade {
       if (limit != null) {
         queryBuilder.setLimit(limit);
       }
-      if (commerceId != null) {
-        queryBuilder.setCategoryId(commerceId);
+      if (StringUtils.isNotBlank(techId)) {
+        Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(techId);
+        CommerceId commerceId = commerceIdOptional.orElseGet(() -> connection.getIdProvider().formatCategoryTechId(storeContext.getCatalogAlias(), techId));
+        if (commerceId != null) {
+          queryBuilder.setCategoryId(commerceId);
+        }
       }
       queryBuilder.setIncludeResultFacets(true);
       if (StringUtils.isNotBlank(orderBy)) {
