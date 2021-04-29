@@ -94,6 +94,7 @@ import java.util.stream.Collectors;
 
 import static com.coremedia.caas.web.CaasWebConfig.ATTRIBUTE_NAMES_TO_GQL_CONTEXT;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.emptyMap;
 
 @Configuration
 @EnableConfigurationProperties({
@@ -115,7 +116,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 public class CaasConfig implements WebMvcConfigurer {
 
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
-  private static final String OPTIONAL_QUERY_ROOT_BEAN_NAME_PREFIX = "query-root:";
   private static final int TWENTY_FOUR_HOURS = 24 * 60 * 60;
   private static final int CORS_RESPONSE_MAX_AGE = TWENTY_FOUR_HOURS;
 
@@ -297,7 +297,7 @@ public class CaasConfig implements WebMvcConfigurer {
   public GraphQLInvocation graphQLInvocation(GraphQL graphQL,
                                              DataLoaderRegistry dataLoaderRegistry, CaasServiceConfigurationProperties caasServiceConfigurationProperties,
                                              @Qualifier(ATTRIBUTE_NAMES_TO_GQL_CONTEXT) Set<String> requestAttributeNamesToGraphqlContext) {
-    return new GraphQLInvocationImpl(graphQL, null, dataLoaderRegistry, caasServiceConfigurationProperties, requestAttributeNamesToGraphqlContext);
+    return new GraphQLInvocationImpl(graphQL, emptyMap(), dataLoaderRegistry, caasServiceConfigurationProperties, requestAttributeNamesToGraphqlContext);
   }
 
   @Bean
