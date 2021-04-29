@@ -17,6 +17,7 @@ import static java.lang.invoke.MethodHandles.lookup;
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientAutoConfiguration",
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientHealthAutoConfiguration",
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientMetricAutoConfiguration",
+        "com.coremedia.blueprint.caas.p13n.P13nAutoConfiguration",
 })
 public class HeadlessServerCommerceApp {
 
