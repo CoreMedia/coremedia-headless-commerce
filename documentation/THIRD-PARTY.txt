@@ -1,5 +1,5 @@
 
-Lists of 26 third-party dependencies.
+Lists of 26 3rd party dependencies.
      (Apache License, Version 2.0) Caffeine cache (com.github.ben-manes.caffeine:caffeine:2.8.8 - https://github.com/ben-manes/caffeine)
      (GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1) SpotBugs Annotations (com.github.spotbugs:spotbugs-annotations:3.1.8 - https://spotbugs.github.io/)
      (Apache License, Version 2.0) Guava: Google Core Libraries for Java (com.google.guava:guava:29.0-jre - https://github.com/google/guava/guava)

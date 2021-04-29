@@ -28,4 +28,3 @@ Developers at CoreMedia don't necessarily need a fork of the repository. They ha
 >
 > * **master:** Will be initially used to create `develop` branch. Afterwards, it will just be used to merge changes from `develop` branch to `master`, i.e., it will just be recipient afterwards. On _release_ the master merge commit will be tagged. See below for details on tagging.
 > * **develop:** After initial creation, all development by CoreMedia and merging pull requests will happen here.
-

@@ -18,8 +18,8 @@ queries:
 Try the following query and adjust the site parameter if necessary:
 
 ```graphql
-    {
-  catalogs(siteId: "sfra-en-gb") {
+{
+  catalogs(siteId: "coremedia_site_id") {
     __typename
     id
     externalId
@@ -28,6 +28,6 @@ Try the following query and adjust the site parameter if necessary:
 }
 ```
 
-A list of all available catalogs should appear. The available query API can be
+A list of all available catalogs should appear. This only works if the demo site
+is available and connected to a commerce adapter. The available query API can be
 found below the "Docs" link in the upper right corner.
-
