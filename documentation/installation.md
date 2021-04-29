@@ -25,7 +25,15 @@ or specify a profile defining the required properties `installation.server.host`
 . All prepared spring boot profiles can be
 found [here](https://github.com/CoreMedia/coremedia-headless-commerce/tree/master/headless-server-commerce-app/src/main/resources)
 
+The headless server commerce relies on running CoreMedia system. It connects to
+a Content Server, reads site site settings and especially its livecontext
+settings. The livecontext settings refers to the commerce adapter endpoint. The
+headless server commerce then establishes a connection to the commerce adapter
+endpoint.
+
 ## Release Download
 
-Go to [Release](https://github.com/CoreMedia/coremedia-headless-commerce/releases) and download the version that matches you CMCC release version.
+Go
+to [Release](https://github.com/CoreMedia/coremedia-headless-commerce/releases)
+and download the version that matches you CMCC release version.
 
