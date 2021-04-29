@@ -15,14 +15,6 @@
   <dependencies>
     <dependency>
       <groupId>com.coremedia.blueprint.base</groupId>
-      <artifactId>bpbase-headless-server-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.blueprint.base</groupId>
-      <artifactId>bpbase-settings-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.blueprint.base</groupId>
       <artifactId>bpbase-settings-impl</artifactId>
       <scope>runtime</scope>
     </dependency>
@@ -36,19 +28,7 @@
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
-      <artifactId>cap-multisite</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
       <artifactId>cap-unified-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
-      <artifactId>coremedia-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
-      <artifactId>coremedia-id</artifactId>
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
