@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.coremedia.commerce.labs</groupId>
     <artifactId>headless-server-commerce-parent</artifactId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../headless-server-commerce-parent</relativePath>
   </parent>
 
@@ -13,14 +13,6 @@
   <description>Implementation of the commerce headless server.</description>
 
   <dependencies>
-    <dependency>
-      <groupId>com.coremedia.blueprint.base</groupId>
-      <artifactId>bpbase-headless-server-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.blueprint.base</groupId>
-      <artifactId>bpbase-settings-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.coremedia.blueprint.base</groupId>
       <artifactId>bpbase-settings-impl</artifactId>
@@ -36,19 +28,7 @@
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
-      <artifactId>cap-multisite</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
       <artifactId>cap-unified-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
-      <artifactId>coremedia-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
-      <artifactId>coremedia-id</artifactId>
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
