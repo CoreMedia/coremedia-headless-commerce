@@ -1,5 +1,10 @@
 #!/usr/bin/env groovy
 
+/*
+  This file is used for CoreMedia internal Deployment.
+  Please ignore or delete.
+*/
+
 import com.coremedia.cm.DockerAgent
 import com.coremedia.cm.Jenkins
 import com.coremedia.cm.nexus.NexusStagingAction
