@@ -13,6 +13,8 @@
 
 ## Building and running the server
 
+Make sure that you do have access to the CoreMedia public maven repository.
+
 Build the workspace with
 
     mvn clean install
