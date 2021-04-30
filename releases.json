@@ -1,37 +1,7 @@
-{
-  "0.0.5":   {
-    "adapterBaseVersion": "",
-    "stateMavenArtifacts": "STAGED",
-    "stateDockerImage": "STAGED",
-    "stateContributionsWorkspace": "",
-    "stagingRepositoryId": "cms-onerepo-staging-profile-5026"
-  },
-  "0.0.4":   {
-    "adapterBaseVersion": "",
-    "stateMavenArtifacts": "STAGED",
-    "stateDockerImage": "STAGED",
-    "stateContributionsWorkspace": "",
-    "stagingRepositoryId": "cms-onerepo-staging-profile-4976"
-  },
-  "0.0.3":   {
-    "adapterBaseVersion": "",
-    "stateMavenArtifacts": "STAGED",
-    "stateDockerImage": "STAGED",
-    "stateContributionsWorkspace": "",
-    "stagingRepositoryId": "cms-onerepo-staging-profile-4885"
-  },
-  "0.0.2":   {
-    "adapterBaseVersion": "",
-    "stateMavenArtifacts": "STAGED",
-    "stateDockerImage": "STAGED",
-    "stateContributionsWorkspace": "",
-    "stagingRepositoryId": "cms-onerepo-staging-profile-4880"
-  },
-  "0.0.1":   {
-    "adapterBaseVersion": "",
-    "stateMavenArtifacts": "STAGED",
-    "stateDockerImage": "STAGED",
-    "stateContributionsWorkspace": "",
-    "stagingRepositoryId": "cms-onerepo-staging-profile-4861"
-  }
-}
+{"1.0.0": {
+  "adapterBaseVersion": "",
+  "stateMavenArtifacts": "STAGED",
+  "stateDockerImage": "STAGED",
+  "stateContributionsWorkspace": "",
+  "stagingRepositoryId": "cms-onerepo-staging-profile-5220"
+}}
