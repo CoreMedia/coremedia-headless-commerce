@@ -85,6 +85,4 @@ public class SiteResolver {
     return locale.equals(siteLocale) ||
             (isNullOrEmpty(siteLocale.getCountry()) && locale.getLanguage().equals(siteLocale.getLanguage()));
   }
-
-
 }

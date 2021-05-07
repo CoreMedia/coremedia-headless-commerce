@@ -28,13 +28,3 @@ Developers at CoreMedia don't necessarily need a fork of the repository. They ha
 >
 > * **master:** Will be initially used to create `develop` branch. Afterwards, it will just be used to merge changes from `develop` branch to `master`, i.e., it will just be recipient afterwards. On _release_ the master merge commit will be tagged. See below for details on tagging.
 > * **develop:** After initial creation, all development by CoreMedia and merging pull requests will happen here.
-> * **ci/develop:** An artificial branch required for CoreMedia CI systems. It is required, as for CoreMedia CI we need to change the parent POMs in that way, that we set the version to `9999.9` and add a relative path, so that it matches our workspace setup.
->    
->    As soon as changes from `develop` shall be published to CI, we rebase
->    the adaptions:
->    
->    ```bash
->    $ git checkout "ci/develop"
->    $ git rebase "origin/develop"
->    $ git push --force-with-lease
->    ```

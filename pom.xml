@@ -4,7 +4,7 @@
 
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <organization>
@@ -39,6 +39,7 @@
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
     <sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
+    <docs.directory>documentation</docs.directory>
   </properties>
 
   <build>
@@ -84,6 +85,22 @@
           <artifactId>maven-source-plugin</artifactId>
           <version>${maven-source-plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>2.0.0</version>
+          <configuration>
+            <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
+            <errorRemedy>ignore</errorRemedy>
+            <excludedGroups>^com\.coremedia\.</excludedGroups>
+            <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+            <includeTransitiveDependencies>false</includeTransitiveDependencies>
+            <licensesOutputFile>${docs.directory}/third-party-licenses/licenses.xml</licensesOutputFile>
+            <licensesOutputDirectory>${docs.directory}/third-party-licenses</licensesOutputDirectory>
+            <outputDirectory>${docs.directory}</outputDirectory>
+            <sortByGroupIdAndArtifactId>true</sortByGroupIdAndArtifactId>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -102,4 +119,30 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>docs-third-party</id>
+      <!--
+        Will create generated resources for docs/ folder.
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-docs-licenses</id>
+                <goals>
+                  <goal>aggregate-add-third-party</goal>
+                  <goal>aggregate-download-licenses</goal>
+                </goals>
+                <phase>generate-resources</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

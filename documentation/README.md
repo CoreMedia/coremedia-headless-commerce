@@ -4,19 +4,14 @@
 
 1. [Installation](installation.md)
 
-    How to administrate the coremedia-headless-commerce service.
+   How to administrate the coremedia-headless-commerce service.
+   > 1. [Manual Tests](manual-tests.md)
+        >
+        >   Read this to re-test your changes.
 
 1. [Contribute](contribute.md)
 
-    Read this if you are contributing to the project.
-    
-> 1. [Manual Tests](manual-tests.md)
->
->   Read this to re-test your changes.
->
-> 1. [Release (CoreMedia-only)](release.md)
->
->   Read this if you are creating a release of this project.
+   Read this if you are contributing to the project.
 
 ## See Also
 

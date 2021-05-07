@@ -8,17 +8,20 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import static java.lang.invoke.MethodHandles.lookup;
+
 /**
  * Main entry point for the headless server application.
  */
-@SpringBootApplication( excludeName = {
+@SpringBootApplication(excludeName = {
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientAutoConfiguration",
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientHealthAutoConfiguration",
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientMetricAutoConfiguration",
+        "com.coremedia.blueprint.caas.p13n.P13nAutoConfiguration",
 })
-public class HeadlessServerApp {
+public class HeadlessServerCommerceApp {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HeadlessServerApp.class);
+  private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
 
   private static Throwable unwrap(Throwable e) {
     return (e.getCause() != null) ? unwrap(e.getCause()) : e;
@@ -27,7 +30,7 @@ public class HeadlessServerApp {
   public static void main(String[] args) {
     try {
       Hooks.enable();
-      SpringApplication.run(HeadlessServerApp.class, args);
+      SpringApplication.run(HeadlessServerCommerceApp.class, args);
     } catch (BeanCreationException e) {
       Throwable c = unwrap(e);
       if (InvalidDefinition.class.isAssignableFrom(c.getClass())) {

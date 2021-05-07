@@ -1,22 +1,18 @@
 Changelog
 ================================================================================
+---
 
-X.Y.Z
---------------------------------------------------------------------------------
+## v1.0.0
 
-### Main Changes
+*Released 30.04.2021*
 
-* ....
+- Initial Release of this Application.
 
-### Bug Fixes
+---
 
-* Fixed #1
-* ...
+## Limitations
 
-### Other Changes
+There are specific limitations in this application that developers and customers
+need to be aware of:
 
-* ...
-
-### General Notes
-
-* ...
+1. This solution is not supposed to run in production environments

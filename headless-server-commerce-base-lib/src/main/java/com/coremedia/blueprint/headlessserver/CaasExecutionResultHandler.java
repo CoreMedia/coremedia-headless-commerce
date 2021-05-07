@@ -10,10 +10,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 
+import static java.lang.invoke.MethodHandles.lookup;
+
 @Component
 public class CaasExecutionResultHandler implements ExecutionResultHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CaasExecutionResultHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
 
   @Override
   public Object handleExecutionResult(CompletableFuture<ExecutionResult> completableFuture) {
