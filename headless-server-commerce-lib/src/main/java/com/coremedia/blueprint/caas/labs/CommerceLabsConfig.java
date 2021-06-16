@@ -5,6 +5,7 @@ import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnect
 import com.coremedia.blueprint.caas.labs.model.CommerceLabsFacade;
 import com.coremedia.blueprint.caas.labs.model.Metadata;
 import com.coremedia.blueprint.caas.labs.model.SiteResolver;
+import com.coremedia.blueprint.caas.labs.model.Store;
 import com.coremedia.blueprint.caas.labs.wiring.CommerceInstrumentation;
 import com.coremedia.caas.wiring.ProvidesTypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolver;
@@ -38,13 +39,19 @@ public class CommerceLabsConfig {
           Category.class.getSimpleName(),
           Product.class.getSimpleName(),
           ProductVariant.class.getSimpleName(),
-          Metadata.class.getSimpleName());
+          Metadata.class.getSimpleName(),
+          Store.class.getSimpleName());
 
   private static final Map<CommerceBeanType, String> TYPE_RESOLVE_MAP = Map.of(
           BaseCommerceBeanType.CATEGORY, "CategoryImpl",
           BaseCommerceBeanType.PRODUCT, "ProductImpl",
           BaseCommerceBeanType.SKU, "ProductVariantImpl",
           BaseCommerceBeanType.CATALOG, "CatalogImpl"
+  );
+
+  private static final Map<Class, String> MISC_TYPE_RESOLVE_MAP = Map.of(
+          Metadata.class, "MetadataImpl",
+          Store.class, "StoreImpl"
   );
 
   @Bean
@@ -61,6 +68,11 @@ public class CommerceLabsConfig {
       CommerceBeanType commerceBeanType = commerceBean.getId().getCommerceBeanType();
       return Optional.ofNullable(TYPE_RESOLVE_MAP.get(commerceBeanType));
     };
+  }
+
+  @Bean
+  public TypeNameResolver<Object> miscTypeNameResolver() {
+    return object -> Optional.ofNullable(MISC_TYPE_RESOLVE_MAP.get(object.getClass()));
   }
 
   @Bean("query-root:catalog")

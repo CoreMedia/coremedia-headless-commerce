@@ -14,6 +14,7 @@ directive @inherit(
 
 
 type Query {
+  storeContext(siteId:String!): Store @fetch(from: "@commerceLabsFacade.getStoreContext(#siteId)")
   catalogs(siteId:String): [Catalog] @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
   catalog(catalogId:String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)")
   catalogByAlias(catalogAlias: String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)")
@@ -33,6 +34,17 @@ type Query {
   productBySeoSegment(seoSegment: String!, siteId: String!): Product @fetch(from: "@commerceLabsFacade.findProductBySeoSegment(#seoSegment, #siteId)")
 
   productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
+}
+
+interface Store {
+  id: ID!
+  storeId: String
+  storeName: String
+  catalogId: String
+  catalogAlias: String
+  currency: String
+  locale: String
+  vendor: String
 }
 
 interface Metadata {
@@ -56,6 +68,8 @@ interface CommerceBean {
   shortId: String
   locale: String
   siteId: String
+  storeId: String
+  catalogId: String
 }
 
 interface Catalog @inherit(from: ["CommerceBean"]) {
@@ -123,6 +137,17 @@ type MetadataImpl implements Metadata {
   metaKeywords: [String]
 }
 
+type StoreImpl implements Store {
+  id: ID! @fetch(from: "#this.storeId")
+  storeId: String
+  storeName: String
+  catalogId: String
+  catalogAlias: String
+  currency: String
+  locale: String
+  vendor: String
+}
+
 type CommerceBeanImpl implements CommerceBean {
   id: ID! @fetch(from: "@commerceLabsFacade.getCommerceId(#this)")
   externalId: String @fetch(from: "#this.externalId")
@@ -130,6 +155,8 @@ type CommerceBeanImpl implements CommerceBean {
   shortId: String @fetch(from: "#this.externalId")
   locale: String
   siteId: String @fetch(from: "#this.context.siteId")
+  storeId: String @fetch(from: "#this.context.storeId")
+  catalogId: String @fetch(from: "@commerceLabsFacade.getCatalogId(#this)")
 }
 
 type CatalogImpl implements Catalog @inherit(from: ["CommerceBeanImpl"]) {

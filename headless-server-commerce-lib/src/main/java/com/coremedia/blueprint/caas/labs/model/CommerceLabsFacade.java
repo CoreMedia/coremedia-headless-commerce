@@ -10,6 +10,7 @@ import com.coremedia.cap.multisite.Site;
 import com.coremedia.cap.multisite.SitesService;
 import com.coremedia.livecontext.ecommerce.catalog.Catalog;
 import com.coremedia.livecontext.ecommerce.catalog.CatalogAlias;
+import com.coremedia.livecontext.ecommerce.catalog.CatalogId;
 import com.coremedia.livecontext.ecommerce.catalog.CatalogService;
 import com.coremedia.livecontext.ecommerce.catalog.Category;
 import com.coremedia.livecontext.ecommerce.catalog.Product;
@@ -47,6 +48,17 @@ public class CommerceLabsFacade {
     this.commerceConnectionSupplier = commerceConnectionSupplier;
     this.sitesService = sitesService;
     this.siteResolver = siteResolver;
+  }
+
+  public DataFetcherResult<Store> getStoreContext(String siteId) {
+    DataFetcherResult.Builder<Store> builder = DataFetcherResult.newResult();
+    CommerceConnection connection = getCommerceConnection(siteId);
+    if (connection == null) {
+      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
+    }
+    StoreContext storeContext = connection.getStoreContext();
+
+    return builder.data(Store.from(storeContext, connection.getVendor().value())).build();
   }
 
   @SuppressWarnings("unused")
@@ -417,6 +429,13 @@ public class CommerceLabsFacade {
   @Nullable
   public static String getCommerceId(CommerceBean commerceBean) {
     return CommerceIdFormatterHelper.format(commerceBean.getId());
+  }
+
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogId(#this)")
+  @Nullable
+  public static String getCatalogId(CommerceBean commerceBean) {
+    return commerceBean.getContext().getCatalogId().map(CatalogId::value).orElse(null);
   }
 
 }
