@@ -181,7 +181,25 @@ public class CommerceLabsFacade {
     if (siteId == null) {
       return builder.error(SiteIdUndefined.getInstance()).build();
     }
-    return builder.data(createCommerceBean(commerceId, siteId, CommerceBean.class)).build();
+
+    CommerceConnection connection = getCommerceConnection(siteId);
+    if (connection == null) {
+      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
+    }
+
+    //Check if the id is a product first
+    CommerceId possibleProduct = getProductId(commerceId, connection);
+    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(possibleProduct, connection.getStoreContext());
+    try {
+      if (bean != null) {
+        bean.load();
+      }
+    } catch (Exception e) {
+      //It might be a category
+      CommerceId possibleCategory = getCategoryId(commerceId, connection);
+      bean = connection.getCommerceBeanFactory().createBeanFor(possibleCategory, connection.getStoreContext());
+    }
+    return builder.data(bean).build();
   }
 
   @SuppressWarnings("unused")
