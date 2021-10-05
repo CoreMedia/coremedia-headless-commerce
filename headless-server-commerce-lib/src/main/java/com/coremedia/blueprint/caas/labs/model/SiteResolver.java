@@ -71,7 +71,7 @@ public class SiteResolver {
         return false;
       }
 
-      storeContext = commerceConnection.get().getStoreContext();
+      storeContext = commerceConnection.get().getInitialStoreContext();
     } catch (CommerceException e) {
       LOG.debug("Could not retrieve store context for site '{}'.", site.getName(), e);
       return false;

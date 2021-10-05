@@ -31,3 +31,4 @@ public class CaasGraphQLError implements GraphQLError {
     return ErrorType.OperationNotSupported;
   }
 }
+

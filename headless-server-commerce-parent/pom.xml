@@ -2,13 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.9.RELEASE</version>
-    <relativePath />
-  </parent>
-
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce-parent</artifactId>
   <version>1.0.1-SNAPSHOT</version>
@@ -30,170 +23,73 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <cms.version>2104.1</cms.version>
-    <graphql-java.version>16.1</graphql-java.version>
-    <graphql-java-extended-scalars.version>15.0.0</graphql-java-extended-scalars.version>
-    <graphql-java-spring-boot-starter.version>2.0</graphql-java-spring-boot-starter.version>
-    <graphiql-spring-boot-starter.version>5.6.0</graphiql-spring-boot-starter.version>
-    <graphql-java-dataloader.version>2.2.3</graphql-java-dataloader.version>
-    <springfox.version>2.9.2</springfox.version>
-    <org-glassfish-pfl.version>4.1.0</org-glassfish-pfl.version>
+    <cms.version>9999.1</cms.version>
+    <springfox.version>3.0.0</springfox.version>
+    <graphiql-spring-boot-starter.version>11.0.0</graphiql-spring-boot-starter.version>
+    <caffeine.version>2.9.2</caffeine.version>
 
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
-    <!--this property can be either an organisational prefix or a complete registry prefix-->
-    <docker.repository.prefix>coremedia</docker.repository.prefix>
-    <!--this property must be unique for each image-->
-    <docker.repository.suffix>${project.build.finalName}</docker.repository.suffix>
-    <docker.image.tag>${project.version}</docker.image.tag>
-    <!--used as docker build args-->
-    <docker.java-application-base-image.repo>coremedia/java-application-base</docker.java-application-base-image.repo>
-    <docker.java-application-base-image.tag>2.1.3</docker.java-application-base-image.tag>
-
-    <!-- plugin versions not inherited from spring-boot-starter-parent (or overwritten) -->
     <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-    <protobuf-maven-plugin.version>0.5.1</protobuf-maven-plugin.version>
+    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+    <showDeprecation>true</showDeprecation>
+    <showWarnings>true</showWarnings>
     <sonar-maven-plugin.version>3.6.0.1398</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
+    <spring-boot-maven-plugin.version>2.5.3</spring-boot-maven-plugin.version>
 
-    <!-- extension versions -->
-    <os-maven-plugin.version>1.6.0</os-maven-plugin.version>
+    <jib.skip>true</jib.skip>
+    <jib.goal>dockerBuild</jib.goal>
+    <application.image-base>coremedia/java-application-base:2.3.1-openjdk-11-jre</application.image-base>
+    <application.image-prefix>coremedia</application.image-prefix>
+    <application.image-suffix>${project.build.finalName}</application.image-suffix>
+    <application.image-tag>${project.version}</application.image-tag>
 
-    <!-- dependency versions not inherited from spring-boot-starter-parent (or overwritten) -->
-    <assertj.version>3.14.0</assertj.version>
-    <guava.version>29.0-jre</guava.version>
-    <logback-elasticsearch-appender.version>1.6</logback-elasticsearch-appender.version>
-    <spotbugs.version>3.1.8</spotbugs.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.coremedia.blueprint</groupId>
-        <artifactId>lc-asset-services</artifactId>
+        <groupId>com.coremedia.cms</groupId>
+        <artifactId>common-core-bom</artifactId>
         <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.blueprint.base</groupId>
-        <artifactId>bpbase-headless-server-core</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.blueprint.base</groupId>
-        <artifactId>bpbase-lc-client</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.blueprint.base</groupId>
-        <artifactId>bpbase-lc-common</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.blueprint.base</groupId>
-        <artifactId>bpbase-settings-api</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.blueprint.base</groupId>
-        <artifactId>bpbase-settings-impl</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.blueprint.boot</groupId>
-        <artifactId>blueprint-spring-boot-autoconfigure</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.caas</groupId>
-        <artifactId>headless-server-core</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.caas</groupId>
-        <artifactId>headless-server-web</artifactId>
-        <version>${cms.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.coremedia.cms</groupId>
-        <artifactId>cap-multisite</artifactId>
+        <artifactId>common-thirdparty-bom</artifactId>
         <version>${cms.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.coremedia.cms</groupId>
-        <artifactId>cap-unified-api</artifactId>
+        <artifactId>headless-server-core-bom</artifactId>
         <version>${cms.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.coremedia.cms</groupId>
-        <artifactId>coremedia-cache</artifactId>
+        <artifactId>headless-server-thirdparty-bom</artifactId>
         <version>${cms.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.coremedia.cms</groupId>
-        <artifactId>coremedia-common</artifactId>
+        <artifactId>middle-core-bom</artifactId>
         <version>${cms.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
+
       <dependency>
-        <groupId>com.coremedia.cms</groupId>
-        <artifactId>coremedia-id</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.cms</groupId>
-        <artifactId>coremedia-spring</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.coremedia.livecontext</groupId>
-        <artifactId>lc-ecommerce-api</artifactId>
-        <version>${cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-annotations</artifactId>
-        <version>${spotbugs.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.errorprone</groupId>
-        <artifactId>error_prone_annotations</artifactId>
-        <version>2.4.0</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
-        <version>3.11.4</version>
-      </dependency>
-      <dependency>
-        <groupId>com.graphql-java</groupId>
-        <artifactId>graphql-java</artifactId>
-        <version>${graphql-java.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.graphql-java</groupId>
-        <artifactId>graphql-java-extended-scalars</artifactId>
-        <version>${graphql-java-extended-scalars.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.graphql-java</groupId>
-        <artifactId>graphql-java-spring-webmvc</artifactId>
-        <version>${graphql-java-spring-boot-starter.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.graphql-java</groupId>
-        <artifactId>java-dataloader</artifactId>
-        <version>${graphql-java-dataloader.version}</version>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine.version}</version>
       </dependency>
       <dependency>
         <groupId>com.graphql-java-kickstart</groupId>
@@ -202,70 +98,10 @@
         <scope>runtime</scope>
       </dependency>
       <dependency>
-        <groupId>com.internetitem</groupId>
-        <artifactId>logback-elasticsearch-appender</artifactId>
-        <version>${logback-elasticsearch-appender.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.jhlabs</groupId>
-        <artifactId>filters</artifactId>
-        <version>2.0.235-1</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>2.6</version>
-      </dependency>
-      <dependency>
-        <groupId>io.grpc</groupId>
-        <artifactId>grpc-api</artifactId>
-        <version>1.31.1</version>
-      </dependency>
-      <dependency>
-        <groupId>io.grpc</groupId>
-        <artifactId>grpc-protobuf</artifactId>
-        <version>1.31.1</version>
-      </dependency>
-      <dependency>
-        <groupId>io.grpc</groupId>
-        <artifactId>grpc-stub</artifactId>
-        <version>1.31.1</version>
-      </dependency>
-      <dependency>
         <groupId>io.springfox</groupId>
         <artifactId>springfox-swagger-ui</artifactId>
         <version>${springfox.version}</version>
         <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>1.5.21</version>
-      </dependency>
-      <dependency>
-        <groupId>org.checkerframework</groupId>
-        <artifactId>checker-qual</artifactId>
-        <version>3.4.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.pfl</groupId>
-        <artifactId>pfl-asm</artifactId>
-        <version>${org-glassfish-pfl.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.pfl</groupId>
-        <artifactId>pfl-basic</artifactId>
-        <version>${org-glassfish-pfl.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.pfl</groupId>
-        <artifactId>pfl-tf</artifactId>
-        <version>${org-glassfish-pfl.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ow2.asm</groupId>
-        <artifactId>asm</artifactId>
-        <version>8.0.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -309,46 +145,16 @@
         </plugin>
 
         <plugin>
-          <groupId>com.spotify</groupId>
-          <artifactId>dockerfile-maven-plugin</artifactId>
-          <version>1.4.12</version>
-          <configuration>
-            <!--if set to true you cannot build offline-->
-            <pullNewerImage>false</pullNewerImage>
-            <!--via repository the complete image name is defined-->
-            <repository>${docker.repository.prefix}/${docker.repository.suffix}</repository>
-            <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
-            <tag>${docker.image.tag}</tag>
-            <buildArgs combine.children="append">
-              <JAVA_APPLICATION_BASE_IMAGE_REPO>${docker.java-application-base-image.repo}</JAVA_APPLICATION_BASE_IMAGE_REPO>
-              <JAVA_APPLICATION_BASE_IMAGE_TAG>${docker.java-application-base-image.tag}</JAVA_APPLICATION_BASE_IMAGE_TAG>
-            </buildArgs>
-          </configuration>
-          <executions>
-            <!--
-             | you can skip the whole docker process using the system property dockerfile.skip
-             -->
-            <execution>
-              <!--
-               | you can skip building the image using the system property dockerfile.build.skip
-               -->
-              <id>docker-build</id>
-              <goals>
-                <goal>build</goal>
-              </goals>
-              <phase>install</phase>
-            </execution>
-            <execution>
-              <id>docker-push</id>
-              <!--
-               | you can skip pushing the image using the system property dockerfile.push.skip
-               -->
-              <goals>
-                <goal>push</goal>
-              </goals>
-              <phase>deploy</phase>
-            </execution>
-          </executions>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>jib-maven-plugin</artifactId>
+          <version>3.1.4</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.google.cloud.tools</groupId>
+              <artifactId>jib-ownership-extension-maven</artifactId>
+              <version>0.1.0</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
         <plugin>
@@ -360,6 +166,7 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot-maven-plugin.version}</version>
           <configuration>
             <excludes>
               <exclude>
@@ -401,7 +208,18 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <showDeprecation>${showDeprecation}</showDeprecation>
+          <showWarnings>${showWarnings}</showWarnings>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.2</version>
         <executions>
           <execution>
             <id>analyze-dependencies</id>
@@ -423,6 +241,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
         <executions>
           <execution>
             <id>enforce-banned-dependencies</id>
