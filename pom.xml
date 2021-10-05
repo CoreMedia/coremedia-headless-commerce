@@ -20,7 +20,6 @@
   <modules>
     <module>headless-server-commerce-app</module>
     <module>headless-server-commerce-base-lib</module>
-    <module>headless-server-commerce-docker</module>
     <module>headless-server-commerce-lib</module>
     <module>headless-server-commerce-parent</module>
   </modules>

@@ -5,7 +5,6 @@ import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnect
 import com.coremedia.blueprint.caas.labs.model.CommerceLabsFacade;
 import com.coremedia.blueprint.caas.labs.model.Metadata;
 import com.coremedia.blueprint.caas.labs.model.SiteResolver;
-import com.coremedia.blueprint.caas.labs.wiring.CommerceInstrumentation;
 import com.coremedia.caas.wiring.ProvidesTypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolver;
 import com.coremedia.cache.Cache;
@@ -81,10 +80,5 @@ public class CommerceLabsConfig {
   @Bean
   public SiteResolver siteResolver(SitesService sitesService, CommerceConnectionSupplier commerceConnectionSupplier, Cache cache) {
     return new SiteResolver(sitesService, commerceConnectionSupplier, cache);
-  }
-
-  @Bean
-  public CommerceInstrumentation commerceInstrumentation() {
-    return new CommerceInstrumentation();
   }
 }

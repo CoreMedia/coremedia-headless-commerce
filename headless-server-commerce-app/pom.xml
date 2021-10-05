@@ -16,8 +16,11 @@
     mvn spring-boot:run
 
     To start the live headless-server-app, run:
-    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview
-  </description>
+    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview</description>
+
+  <properties>
+    <headless-server.spring.profiles>dev,local,preview</headless-server.spring.profiles>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -88,13 +91,100 @@
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <from>
+            <image>${application.image-base}</image>
+          </from>
+          <to>
+            <image>${application.image-prefix}/${application.image-suffix}</image>
+            <tags>
+              <tag>${application.image-tag}</tag>
+            </tags>
+          </to>
+          <container>
+            <appRoot>/coremedia</appRoot>
+            <workingDirectory>/coremedia</workingDirectory>
+            <ports>
+              <!--Servlet Container Port -->
+              <port>8080</port>
+              <!--Actuator Port-->
+              <port>8081</port>
+            </ports>
+          </container>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-container-image</id>
+            <goals>
+              <goal>${jib.goal}</goal>
+            </goals>
+            <phase>install</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.coremedia.blueprint.boot.headlessserver.HeadlessServerCommerceApp</mainClass>
-          <fork>false</fork>
+          <mainClass>${spring-boot.mainClass}</mainClass>
+          <profiles>${headless-server.spring.profiles}</profiles>
+          <layers>
+            <enabled>true</enabled>
+          </layers>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>default-image</id>
+      <properties>
+        <jib.skip>false</jib.skip>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.google.cloud.tools</groupId>
+            <artifactId>jib-maven-plugin</artifactId>
+            <configuration>
+              <container>
+                <entrypoint>INHERIT</entrypoint>
+                <args>
+                  <arg>application</arg>
+                </args>
+                <user>coremedia:coremedia</user>
+                <environment>
+                  <JAVA_HEAP>1280m</JAVA_HEAP>
+                  <JAVA_PARALLEL_GC>true</JAVA_PARALLEL_GC>
+                  <SPRING_BOOT_EXPLODED_APP>true</SPRING_BOOT_EXPLODED_APP>
+                  <SPRING_BOOT_EXPLODED_MAINCLASS>@jib-main-class-file</SPRING_BOOT_EXPLODED_MAINCLASS>
+                  <SPRING_BOOT_EXPLODED_CLASSPATH>@jib-classpath-file</SPRING_BOOT_EXPLODED_CLASSPATH>
+                </environment>
+                <ports>
+                  <!--Prometheus Agent Port-->
+                  <port>8199</port>
+                </ports>
+              </container>
+              <pluginExtensions>
+                <pluginExtension>
+                  <implementation>com.google.cloud.tools.jib.maven.extension.ownership.JibOwnershipExtension</implementation>
+                  <configuration implementation="com.google.cloud.tools.jib.maven.extension.ownership.Configuration">
+                    <rules>
+                      <rule>
+                        <glob>/coremedia**</glob>
+                        <ownership>1000:1000</ownership>
+                      </rule>
+                    </rules>
+                  </configuration>
+                </pluginExtension>
+              </pluginExtensions>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
