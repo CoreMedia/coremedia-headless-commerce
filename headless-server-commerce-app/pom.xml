@@ -16,11 +16,8 @@
     mvn spring-boot:run
 
     To start the live headless-server-app, run:
-    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview</description>
-
-  <properties>
-    <headless-server.spring.profiles>dev,local,preview</headless-server.spring.profiles>
-  </properties>
+    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview
+  </description>
 
   <dependencies>
     <dependency>
@@ -89,47 +86,52 @@
 
   <build>
     <finalName>${project.artifactId}</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>jib-maven-plugin</artifactId>
+          <configuration>
+            <from>
+              <image>${application.image-base}</image>
+            </from>
+            <to>
+              <image>${application.image-prefix}/${application.image-suffix}</image>
+              <tags>
+                <tag>${application.image-tag}</tag>
+              </tags>
+            </to>
+            <container>
+              <appRoot>/coremedia</appRoot>
+              <workingDirectory>/coremedia</workingDirectory>
+              <ports>
+                <!--Servlet Container Port -->
+                <port>8080</port>
+                <!--Actuator Port-->
+                <port>8081</port>
+                <!--Prometheus Agent Port-->
+                <port>8199</port>
+              </ports>
+            </container>
+          </configuration>
+          <executions>
+            <execution>
+              <id>build-container-image</id>
+              <goals>
+                <goal>${jib.goal}</goal>
+              </goals>
+              <phase>install</phase>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>jib-maven-plugin</artifactId>
-        <configuration>
-          <from>
-            <image>${application.image-base}</image>
-          </from>
-          <to>
-            <image>${application.image-prefix}/${application.image-suffix}</image>
-            <tags>
-              <tag>${application.image-tag}</tag>
-            </tags>
-          </to>
-          <container>
-            <appRoot>/coremedia</appRoot>
-            <workingDirectory>/coremedia</workingDirectory>
-            <ports>
-              <!--Servlet Container Port -->
-              <port>8080</port>
-              <!--Actuator Port-->
-              <port>8081</port>
-            </ports>
-          </container>
-        </configuration>
-        <executions>
-          <execution>
-            <id>build-container-image</id>
-            <goals>
-              <goal>${jib.goal}</goal>
-            </goals>
-            <phase>install</phase>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>${spring-boot.mainClass}</mainClass>
-          <profiles>${headless-server.spring.profiles}</profiles>
+          <mainClass>com.coremedia.blueprint.boot.headlessserver.HeadlessServerCommerceApp</mainClass>
           <layers>
             <enabled>true</enabled>
           </layers>
@@ -163,10 +165,6 @@
                   <SPRING_BOOT_EXPLODED_MAINCLASS>@jib-main-class-file</SPRING_BOOT_EXPLODED_MAINCLASS>
                   <SPRING_BOOT_EXPLODED_CLASSPATH>@jib-classpath-file</SPRING_BOOT_EXPLODED_CLASSPATH>
                 </environment>
-                <ports>
-                  <!--Prometheus Agent Port-->
-                  <port>8199</port>
-                </ports>
               </container>
               <pluginExtensions>
                 <pluginExtension>
