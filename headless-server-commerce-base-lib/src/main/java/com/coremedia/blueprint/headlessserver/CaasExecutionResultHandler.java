@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
+import static java.lang.invoke.MethodHandles.lookup;
+
 public class CaasExecutionResultHandler implements ExecutionResultHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CaasExecutionResultHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
 
   @Override
   public Object handleExecutionResult(CompletableFuture<ExecutionResult> completableFuture) {
