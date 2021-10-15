@@ -159,7 +159,7 @@
                 </args>
                 <user>coremedia:coremedia</user>
                 <environment>
-                  <JAVA_HEAP>1280m</JAVA_HEAP>
+                  <JAVA_HEAP>1g</JAVA_HEAP>
                   <JAVA_PARALLEL_GC>true</JAVA_PARALLEL_GC>
                   <SPRING_BOOT_EXPLODED_APP>true</SPRING_BOOT_EXPLODED_APP>
                   <SPRING_BOOT_EXPLODED_MAINCLASS>@jib-main-class-file</SPRING_BOOT_EXPLODED_MAINCLASS>
