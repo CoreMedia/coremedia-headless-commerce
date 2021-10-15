@@ -256,7 +256,7 @@ pipeline {
             }
           }
         }
-        stage('Git Push Release') {
+/*         stage('Git Push Release') {
           when {
             expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             beforeAgent true
@@ -307,7 +307,7 @@ git commit --message="Set next development version ${releaseNextDevelopmentVersi
 git push origin HEAD:refs/heads/${params.BRANCH}
 """)
           }
-        }
+        }*/
       }
     }
   }
