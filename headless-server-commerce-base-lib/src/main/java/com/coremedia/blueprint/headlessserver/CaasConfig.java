@@ -29,7 +29,6 @@ import com.coremedia.caas.wiring.CompositeTypeNameResolverProvider;
 import com.coremedia.caas.wiring.ContentRepositoryWiringFactory;
 import com.coremedia.caas.wiring.ExecutionTimeoutInstrumentation;
 import com.coremedia.caas.wiring.ProvidesTypeNameResolver;
-import com.coremedia.caas.wiring.RemoteLinkWiringFactory;
 import com.coremedia.caas.wiring.TypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolverWiringFactory;
 import com.coremedia.cap.content.ContentRepository;
@@ -39,7 +38,6 @@ import com.coremedia.link.LinkComposer;
 import com.coremedia.springframework.customizer.CustomizerConfiguration;
 import com.coremedia.springframework.xml.ResourceAwareXmlBeanDefinitionReader;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -77,7 +75,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
@@ -110,7 +107,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -121,7 +117,6 @@ import static com.coremedia.caas.headless_server.plugin_support.PluginSupport.QU
 import static com.coremedia.caas.web.CaasWebConfig.ATTRIBUTE_NAMES_TO_GQL_CONTEXT;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 @Configuration
 @EnableConfigurationProperties({
@@ -130,9 +125,7 @@ import static java.util.Collections.emptyMap;
         GraphiqlConfigurationProperties.class,
 })
 @EnableWebMvc
-@ImportResource(value = {
-        "classpath:/com/coremedia/blueprint/base/settings/impl/bpbase-settings-services.xml",
-}, reader = ResourceAwareXmlBeanDefinitionReader.class)
+@ImportResource(value = "classpath:/com/coremedia/blueprint/base/settings/impl/bpbase-settings-services.xml", reader = ResourceAwareXmlBeanDefinitionReader.class)
 @Import({
         CustomizerConfiguration.class,
         CapRepositoriesConfiguration.class,
@@ -156,6 +149,7 @@ public class CaasConfig implements WebMvcConfigurer {
     this.graphiqlConfigurationProperties = graphiqlConfigurationProperties;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void configurePathMatch(PathMatchConfigurer matcher) {
     matcher.setUseSuffixPatternMatch(false);
@@ -171,7 +165,7 @@ public class CaasConfig implements WebMvcConfigurer {
   }
 
   @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+  public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
     List<String> resources = new ArrayList<>(Arrays.asList("/static/**", "/docs/**"));
     List<String> resourceLocations = new ArrayList<>();
     if (graphiqlConfigurationProperties.isEnabled()) {
@@ -213,7 +207,7 @@ public class CaasConfig implements WebMvcConfigurer {
 
   @Bean("cacheManager")
   public CacheManager cacheManager() {
-    List<org.springframework.cache.Cache> list = caasServiceConfigurationProperties.getCacheSpecs().entrySet().stream()
+    List<Cache> list = caasServiceConfigurationProperties.getCacheSpecs().entrySet().stream()
             .map(entry -> createCache(entry.getKey(), entry.getValue()))
             .collect(Collectors.toUnmodifiableList());
     SimpleCacheManager cacheManager = new SimpleCacheManager();
@@ -222,7 +216,7 @@ public class CaasConfig implements WebMvcConfigurer {
   }
 
   @NonNull
-  private CaffeineCache createCache(String cacheName, String cacheSpec) {
+  private static CaffeineCache createCache(String cacheName, String cacheSpec) {
     com.github.benmanes.caffeine.cache.Cache<Object, Object> cache = Caffeine.from(cacheSpec)
             .weigher((key, value) -> {
               if (value instanceof Weighted) {
@@ -442,8 +436,8 @@ public class CaasConfig implements WebMvcConfigurer {
   @Bean
   public PreparsedDocumentProvider preparsedDocumentProvider(CacheManager cacheManager) {
     return new PreparsedDocumentProvider() {
-      Cache cache = cacheManager.getCache(CacheInstances.PREPARSED_DOCUMENTS);
-      Function<ExecutionInput, PreparsedDocumentEntry> computeFunction = executionInput -> new PreparsedDocumentEntry(
+      final Cache cache = cacheManager.getCache(CacheInstances.PREPARSED_DOCUMENTS);
+      final Function<ExecutionInput, PreparsedDocumentEntry> computeFunction = executionInput -> new PreparsedDocumentEntry(
               graphql.parser.Parser.parse(executionInput.getQuery())
       );
 
