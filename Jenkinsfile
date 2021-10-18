@@ -25,7 +25,9 @@ final String DOCKER_SNAPSHOTS_REGISTRY = "${Jenkins.getDockerRegistry(env)}/${RE
 final String DOCKER_RELEASES_REGISTRY = "${ComhubHelper.releasesCommerceRegistryUpstream}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 
 final Map<String, String> DEFAULT_MAVEN_PARAMS = [
-        'docker.repository.prefix': DOCKER_SNAPSHOTS_REGISTRY,
+        'application.image-prefix'   : DOCKER_SNAPSHOTS_REGISTRY,
+        'jib.allowInsecureRegistries': 'true',
+        'jib.goal'                   : 'build',
         'enforcer.skip'           : 'true',
         'mdep.analyze.skip'       : 'true',
         'sort.skip'               : 'true',
@@ -46,6 +48,8 @@ String version
 String releaseTag
 String releaseNextDevelopmentVersion
 
+String tmpDockerImageTagRelease
+
 pipeline {
   agent {
     label Jenkins.defaultNodeLabel
@@ -54,19 +58,19 @@ pipeline {
   options {
     timestamps()
     timeout(time: 1, unit: 'HOURS')
-    buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '25'))
+    buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '10'))
     durabilityHint('PERFORMANCE_OPTIMIZED')
     newContainerPerStage()
   }
 
   stages {
-
     stage('Prepare') {
       steps {
         script {
           String projectVersion = comhubXmlStarletSelect(xmlFile: 'pom.xml', xPath: 'project/version')
           if (isReleaseStaging) {
             version = projectVersion.replace('-SNAPSHOT', '')
+            tmpDockerImageTagRelease = "${version}-tmp-rc-SNAPSHOT"
             cmBuildDescription(getUser: true, gitLink: true, information: ['Release Staging': version])
             env.RELEASE_VERSION = version // Show release version in build description of (outer) release pipeline
             releaseTag = "${PROJECT_NAME}-${version}"
@@ -92,7 +96,7 @@ pipeline {
       agent {
         docker {
           image DOCKER_IMAGE_MAVEN
-          args "${DockerAgent.defaultMavenArgs} ${DockerAgent.defaultDockerArgs}"
+          args DockerAgent.defaultMavenArgs
           reuseNode true
         }
       }
@@ -102,6 +106,7 @@ pipeline {
             cmMaven(cmd: 'versions:set',
                     mavenParams: ['newVersion'        : "${version}",
                                   'generateBackupPoms': 'false',
+                                  'updateMatchingVersions': 'false', // https://stackoverflow.com/questions/16865743/updating-the-versions-in-a-maven-multi-module-project
                                   'processAllModules' : 'true'],
                     scanMvnLog: true,
             )
@@ -109,13 +114,12 @@ pipeline {
         }
         stage('Build') {
           steps {
-            cmMaven(cmd: 'deploy',
+            cmMaven(cmd: 'deploy -Pdefault-image',
                     mavenParams: DEFAULT_MAVEN_PARAMS + (
                             isReleaseStaging
                                     ? ['performRelease'                : 'true',
                                        'altReleaseDeploymentRepository': "local::default::file://${RELEASE_LOCAL_STAGING_DIR}",
-                                       'dockerfile.push.skip'          : 'true',
-                                       'docker.repository.prefix'      : DOCKER_RELEASES_REGISTRY]
+                                       'application.image-tag'         : tmpDockerImageTagRelease]
                                     : [:]),
                     scanMvnLog: true,
             )
@@ -246,7 +250,11 @@ pipeline {
           }
           steps {
             script {
-              comhubDockerPush(tag: "${DOCKER_RELEASES_REGISTRY}/${RELEASE_DOCKER_IMAGE_NAME}:${version}",
+              String tmpImage = "${DOCKER_SNAPSHOTS_REGISTRY}/${RELEASE_DOCKER_IMAGE_NAME}:${tmpDockerImageTagRelease}"
+              String releaseImage = "${DOCKER_RELEASES_REGISTRY}/${RELEASE_DOCKER_IMAGE_NAME}:${version}"
+              cmBash(label: 'Pull and tag release image', returnStdout: true,
+                      script: "docker pull ${tmpImage} && docker tag ${tmpImage} ${releaseImage}")
+              comhubDockerPush(tag: "${releaseImage}",
                       awsCredentialsId: ComhubHelper.ecrCredentialsId,
                       ec2Region: ComhubHelper.ecrRegion,
                       dryRun: isTestMode)
@@ -256,7 +264,7 @@ pipeline {
             }
           }
         }
-/*         stage('Git Push Release') {
+        stage('Git Push Release') {
           when {
             expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             beforeAgent true
@@ -281,7 +289,7 @@ git push ${gitDryRun} origin refs/tags/${releaseTag}:refs/tags/${releaseTag}
           agent {
             docker {
               image DOCKER_IMAGE_MAVEN
-              args "${DockerAgent.defaultMavenArgs} ${DockerAgent.defaultDockerArgs}"
+              args DockerAgent.defaultMavenArgs
               reuseNode true
             }
           }
@@ -307,7 +315,7 @@ git commit --message="Set next development version ${releaseNextDevelopmentVersi
 git push origin HEAD:refs/heads/${params.BRANCH}
 """)
           }
-        }*/
+        }
       }
     }
   }
