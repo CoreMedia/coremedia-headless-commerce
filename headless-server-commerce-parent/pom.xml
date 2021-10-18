@@ -42,12 +42,6 @@
     <showWarnings>true</showWarnings>
     <sonar-maven-plugin.version>3.6.0.1398</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
-    <jib.skip>true</jib.skip>
-    <jib.goal>dockerBuild</jib.goal>
-    <application.image-base>coremedia/java-application-base:2.3.1-openjdk-11-jre</application.image-base>
-    <application.image-prefix>coremedia</application.image-prefix>
-    <application.image-suffix>${project.build.finalName}</application.image-suffix>
-    <application.image-tag>${project.version}</application.image-tag>
   </properties>
 
   <dependencyManagement>

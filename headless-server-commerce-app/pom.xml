@@ -19,6 +19,15 @@
     mvn spring-boot:run -Dspring-boot.run.profiles=local,preview
   </description>
 
+  <properties>
+    <jib.skip>true</jib.skip>
+    <jib.goal>dockerBuild</jib.goal>
+    <application.image-base>coremedia/java-application-base:2.3.1-openjdk-11-jre</application.image-base>
+    <application.image-prefix>coremedia</application.image-prefix>
+    <application.image-suffix>${project.build.finalName}</application.image-suffix>
+    <application.image-tag>${project.version}</application.image-tag>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.coremedia.caas</groupId>
