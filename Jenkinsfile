@@ -68,14 +68,15 @@ pipeline {
       steps {
         script {
           String projectVersion = comhubXmlStarletSelect(xmlFile: 'pom.xml', xPath: 'project/version')
-          if (isReleaseStaging) {
-            version = projectVersion.replace('-SNAPSHOT', '')
+          if (isReleaseStaging) {//input example: 2.0.40-RC-SNAPSHOT
+            version = projectVersion.replace('-SNAPSHOT', '') //example: 2.0.40-RC
+            String versionExtension = version.replaceAll('[\\d.]*','') //example: -RC
             tmpDockerImageTagRelease = "${version}-tmp-rc-SNAPSHOT"
             cmBuildDescription(getUser: true, gitLink: true, information: ['Release Staging': version])
             env.RELEASE_VERSION = version // Show release version in build description of (outer) release pipeline
             releaseTag = "${PROJECT_NAME}-${version}"
-            int nextDeVPatchVersion = 1 + Integer.valueOf(version.replaceAll('.*\\.', ''))
-            releaseNextDevelopmentVersion = version.replaceAll('\\d+$', "${nextDeVPatchVersion}-SNAPSHOT")
+            int nextDeVPatchVersion = 1 + Integer.valueOf(version.replaceAll('.*\\.', '').replaceAll('[^\\d.]*','')) //example: 41
+            releaseNextDevelopmentVersion = version.replaceAll("\\d+${versionExtension}", "${nextDeVPatchVersion}${versionExtension}-SNAPSHOT") //example: 2.0.41-RC-SNAPSHOT
             cmGitLocalAuth()
           } else {
             String gitShortRef = sh(label: 'Get short ref from HEAD commit', returnStdout: true,
