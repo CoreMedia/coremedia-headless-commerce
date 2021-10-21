@@ -18,7 +18,6 @@ final String PROJECT_NAME = 'headless-server-commerce'
 final String RELEASE_DOCKER_REPOSITORY_NAME = 'coremedia'
 final String RELEASE_DOCKER_IMAGE_NAME = 'headless-server-commerce'
 final String RELEASE_LOCAL_STAGING_DIR = '${WORKSPACE}/target/nexus-staging'
-final String RELEASES_JSON_FILE = 'releases.json'
 
 final String DOCKER_IMAGE_MAVEN = "${Jenkins.globalDockerRegistry}/ci/coremedia-maven:3.6.3-amazoncorretto-11-2"
 final String DOCKER_SNAPSHOTS_REGISTRY = "${Jenkins.getDockerRegistry(env)}/${RELEASE_DOCKER_REPOSITORY_NAME}"
@@ -237,10 +236,6 @@ pipeline {
                       localStagingDir: RELEASE_LOCAL_STAGING_DIR)
               cmNexusStaging(action: NexusStagingAction.close, dryRun: isTestMode,
                       stagedRepositoryId: stagingRepositoryId)
-              comhubReleasesJsonAddRelease(file: RELEASES_JSON_FILE,
-                      version: version,
-                      stagingRepositoryId: stagingRepositoryId,
-                      stateMavenArtifacts: ReleaseState.STAGED)
             }
           }
         }
@@ -259,9 +254,6 @@ pipeline {
                       awsCredentialsId: ComhubHelper.ecrCredentialsId,
                       ec2Region: ComhubHelper.ecrRegion,
                       dryRun: isTestMode)
-              comhubReleasesJsonUpdateRelease(file: RELEASES_JSON_FILE,
-                      version: version,
-                      stateDockerImage: ReleaseState.STAGED)
             }
           }
         }
@@ -273,7 +265,6 @@ pipeline {
           steps {
             sh(label: 'Commit release version and create tag', returnStdout: true, script: """#!/usr/bin/env bash
 set -euo pipefail
-git add ${RELEASES_JSON_FILE}
 git ls-files --modified | xargs -n1 git add
 git commit --message="Release ${releaseTag}"
 git push origin HEAD:refs/heads/${params.BRANCH}
