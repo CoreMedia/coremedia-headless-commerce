@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.coremedia.commerce.labs</groupId>
     <artifactId>headless-server-commerce-parent</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>2.0.0-RC-SNAPSHOT</version>
     <relativePath>../headless-server-commerce-parent</relativePath>
   </parent>
 
@@ -13,11 +13,6 @@
   <description>Implementation of the commerce headless server.</description>
 
   <dependencies>
-    <dependency>
-      <groupId>com.coremedia.blueprint.base</groupId>
-      <artifactId>bpbase-settings-impl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
     <dependency>
       <groupId>com.coremedia.caas</groupId>
       <artifactId>headless-server-core</artifactId>
@@ -27,8 +22,20 @@
       <artifactId>headless-server-web</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.coremedia.caas</groupId>
+      <artifactId>headless-server.plugin-support</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.coremedia.cms</groupId>
       <artifactId>cap-unified-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>cap-unified-api-boot</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>coremedia-common</artifactId>
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
@@ -74,19 +81,9 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-core</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

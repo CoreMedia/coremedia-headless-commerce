@@ -21,6 +21,8 @@ import com.coremedia.livecontext.ecommerce.common.CommerceException;
 import com.coremedia.livecontext.ecommerce.common.CommerceId;
 import com.coremedia.livecontext.ecommerce.common.CommerceIdProvider;
 import com.coremedia.livecontext.ecommerce.common.StoreContext;
+import com.coremedia.livecontext.ecommerce.search.SearchQuery;
+import com.coremedia.livecontext.ecommerce.search.SearchQueryBuilder;
 import com.coremedia.livecontext.ecommerce.search.SearchResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -63,7 +65,7 @@ public class CommerceLabsFacade {
 
     try {
       CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService.getCatalogs(connection.getStoreContext())).build();
+      return builder.data(catalogService.getCatalogs(connection.getInitialStoreContext())).build();
     } catch (CommerceException e) {
       LOG.warn("Could not retrieve catalogs for siteId {}", siteId, e);
       return builder.build();
@@ -101,7 +103,7 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
 
     try {
       CatalogService catalogService = connection.getCatalogService();
@@ -120,7 +122,7 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return null;
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
 
     try {
       CatalogService catalogService = connection.getCatalogService();
@@ -145,7 +147,7 @@ public class CommerceLabsFacade {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
     CommerceId commerceId = getCategoryId(categoryId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getStoreContext());
+    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
     return builder.data((Category) bean).build();
   }
 
@@ -163,7 +165,7 @@ public class CommerceLabsFacade {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
     CommerceId commerceId = getCategoryId(categoryId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getStoreContext());
+    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
     return builder.data((Category) bean).build();
   }
 
@@ -190,7 +192,7 @@ public class CommerceLabsFacade {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
     CommerceId commerceId = getProductId(externalId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getStoreContext());
+    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
     return builder.data((Product) bean).build();
   }
 
@@ -205,7 +207,7 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
     CommerceId productCommerceId = connection.getIdProvider().formatProductTechId(storeContext.getCatalogAlias(), techId);
     try {
       CatalogService catalogService = connection.getCatalogService();
@@ -222,12 +224,12 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return null;
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
 
     try {
       CatalogService catalogService = connection.getCatalogService();
-      //noinspection removal
-      return catalogService.searchProducts(searchTerm, searchParams, storeContext);
+      SearchQueryBuilder builder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.PRODUCT);
+      return catalogService.search(builder.build(), storeContext);
     } catch (CommerceException e) {
       LOG.warn("Could not search products with searchTerm {}", searchTerm, e);
       return null;
@@ -240,12 +242,12 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return null;
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
 
     try {
       CatalogService catalogService = connection.getCatalogService();
-      //noinspection removal
-      return catalogService.searchProductVariants(searchTerm, searchParams, storeContext);
+      SearchQueryBuilder builder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.SKU);
+      return catalogService.search(builder.build(), storeContext);
     } catch (CommerceException e) {
       LOG.warn("Could not search product variants with searchTerm {}", searchTerm, e);
       return null;
@@ -263,7 +265,7 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
     try {
       CatalogService catalogService = connection.getCatalogService();
       return builder.data(catalogService.findProductBySeoSegment(seoSegment, storeContext)).build();
@@ -284,7 +286,7 @@ public class CommerceLabsFacade {
     if (connection == null) {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
-    StoreContext storeContext = connection.getStoreContext();
+    StoreContext storeContext = connection.getInitialStoreContext();
 
     try {
       CatalogService catalogService = connection.getCatalogService();
@@ -307,14 +309,14 @@ public class CommerceLabsFacade {
       return builder.error(CommerceConnectionUnavailable.getInstance()).build();
     }
     CommerceId commerceId = getProductVariantId(productVariantId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getStoreContext());
+    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
     return builder.data((ProductVariant) bean).build();
   }
 
 
   @Nullable
   private CommerceBean createCommerceBean(CommerceId commerceId, CommerceConnection commerceConnection) {
-    StoreContext storeContext = commerceConnection.getStoreContext();
+    StoreContext storeContext = commerceConnection.getInitialStoreContext();
     return commerceConnection.getCommerceBeanFactory().createBeanFor(commerceId, storeContext);
   }
 
@@ -381,7 +383,7 @@ public class CommerceLabsFacade {
   @NonNull
   private static CommerceId getProductId(String productId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
-    CatalogAlias catalogAlias = connection.getStoreContext().getCatalogAlias();
+    CatalogAlias catalogAlias = connection.getInitialStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(productId);
     return commerceIdOptional.orElseGet(() -> idProvider.formatProductId(catalogAlias, productId));
   }
@@ -389,7 +391,7 @@ public class CommerceLabsFacade {
   @NonNull
   private static CommerceId getProductVariantId(String productVariantId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
-    CatalogAlias catalogAlias = connection.getStoreContext().getCatalogAlias();
+    CatalogAlias catalogAlias = connection.getInitialStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(productVariantId);
     return commerceIdOptional.orElseGet(() -> idProvider.formatProductVariantId(catalogAlias, productVariantId));
   }
@@ -407,7 +409,7 @@ public class CommerceLabsFacade {
   @NonNull
   private CommerceId getCategoryId(String categoryId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
-    CatalogAlias catalogAlias = connection.getStoreContext().getCatalogAlias();
+    CatalogAlias catalogAlias = connection.getInitialStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(categoryId);
     return commerceIdOptional.orElseGet(() -> idProvider.formatCategoryId(catalogAlias, categoryId));
   }
