@@ -30,7 +30,7 @@
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <cms.version>9999.1</cms.version>
+    <cms.version>2110.1-pr3</cms.version>
     <springfox.version>3.0.0</springfox.version>
     <graphiql-spring-boot-starter.version>11.0.0</graphiql-spring-boot-starter.version>
     <caffeine.version>2.9.2</caffeine.version>
