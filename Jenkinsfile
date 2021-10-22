@@ -39,8 +39,8 @@ final String GITHUB_COMMIT_STATUS_CONTEXT = "${PROJECT_NAME} pipeline"
 boolean isDefaultBuild = !params.BUILD_TYPE
 boolean isReleaseStaging = params.BUILD_TYPE == 'RELEASE_STAGING'
 
-boolean isTestMode = params.DRYRUN
-String gitDryRun = isTestMode ? '--dry-run' : ''
+boolean isTestMode = params.DRY_RUN
+String gitDryRun = isTestMode ? ' --dry-run' : ''
 
 String version
 
@@ -234,7 +234,7 @@ git push ${gitDryRun} origin refs/tags/${releaseTag}:refs/tags/${releaseTag}
 set -euo pipefail
 git ls-files --modified | xargs -n1 git add
 git commit --message="Set next development version ${releaseNextDevelopmentVersion}"
-git push origin HEAD:refs/heads/${params.BRANCH}
+git push ${gitDryRun} origin HEAD:refs/heads/${params.BRANCH}
 """)
           }
         }
