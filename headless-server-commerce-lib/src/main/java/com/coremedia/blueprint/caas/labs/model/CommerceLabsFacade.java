@@ -52,7 +52,6 @@ public class CommerceLabsFacade {
     this.siteResolver = siteResolver;
   }
 
-  @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
   public <T> DataFetcherResult<T> fetchData(String siteId, Function<CommerceConnection, T> function) {
     DataFetcherResult.Builder<T> builder = DataFetcherResult.newResult();
     if (siteId == null) {
