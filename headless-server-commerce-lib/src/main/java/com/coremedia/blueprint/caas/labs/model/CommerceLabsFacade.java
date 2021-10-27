@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -160,31 +159,31 @@ public class CommerceLabsFacade {
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #categoryId...)")
   public DataFetcherResult<SearchResult<Product>> searchProductsFilterByCategoryId(String searchTerm,
-                                                                 @Nullable String categoryId,
-                                                                 @Nullable String orderBy,
-                                                                 @Nullable Integer offset,
-                                                                 @Nullable Integer limit,
-                                                                 @Nullable List<String> filterFacets,
-                                                                 String siteId) {
+                                                                                   @Nullable String categoryId,
+                                                                                   @Nullable String orderBy,
+                                                                                   @Nullable Integer offset,
+                                                                                   @Nullable Integer limit,
+                                                                                   @Nullable List<String> filterFacets,
+                                                                                   String siteId) {
     return fetchData(siteId, connection -> getProductSearchResult(searchTerm, orderBy, offset, limit, filterFacets, connection, getCategoryId(categoryId, connection)));
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #categoryId...)")
   public DataFetcherResult<SearchResult<Product>> searchProductsFilterByCategorySeoSegment(String searchTerm,
-                                                                 @Nullable String categorySeoSegment,
-                                                                 @Nullable String orderBy,
-                                                                 @Nullable Integer offset,
-                                                                 @Nullable Integer limit,
-                                                                 @Nullable List<String> filterFacets,
-                                                                 String siteId) {
+                                                                                           @Nullable String categorySeoSegment,
+                                                                                           @Nullable String orderBy,
+                                                                                           @Nullable Integer offset,
+                                                                                           @Nullable Integer limit,
+                                                                                           @Nullable List<String> filterFacets,
+                                                                                           String siteId) {
     return fetchData(siteId, connection -> {
       CommerceId commerceId = null;
       //The commerceId needs to be an externalId or an externalTechId due to GrpcUtils#entityIdFrom
       if (StringUtils.isNotBlank(categorySeoSegment)) {
         StoreContext storeContext = connection.getInitialStoreContext();
         Category categoryBySeoSegment = connection.getCatalogService().findCategoryBySeoSegment(categorySeoSegment, storeContext);
-        if(categoryBySeoSegment != null){
+        if (categoryBySeoSegment != null) {
           commerceId = connection.getIdProvider().formatCategoryId(storeContext.getCatalogAlias(), categoryBySeoSegment.getExternalId());
         }
       }
@@ -356,7 +355,7 @@ public class CommerceLabsFacade {
     if (limit != null) {
       queryBuilder.setLimit(limit);
     }
-    if(categoryCommerceId != null){
+    if (categoryCommerceId != null) {
       queryBuilder.setCategoryId(categoryCommerceId);
     }
     queryBuilder.setIncludeResultFacets(true);
