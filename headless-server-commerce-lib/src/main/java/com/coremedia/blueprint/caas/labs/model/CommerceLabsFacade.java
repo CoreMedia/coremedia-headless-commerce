@@ -21,20 +21,25 @@ import com.coremedia.livecontext.ecommerce.common.CommerceException;
 import com.coremedia.livecontext.ecommerce.common.CommerceId;
 import com.coremedia.livecontext.ecommerce.common.CommerceIdProvider;
 import com.coremedia.livecontext.ecommerce.common.StoreContext;
+import com.coremedia.livecontext.ecommerce.search.OrderBy;
 import com.coremedia.livecontext.ecommerce.search.SearchQuery;
 import com.coremedia.livecontext.ecommerce.search.SearchQueryBuilder;
+import com.coremedia.livecontext.ecommerce.search.SearchQueryFacet;
 import com.coremedia.livecontext.ecommerce.search.SearchResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import graphql.execution.DataFetcherResult;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
@@ -71,6 +76,7 @@ public class CommerceLabsFacade {
   }
 
   @SuppressWarnings("unused")
+  @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
   public DataFetcherResult<List<Catalog>> getCatalogs(String siteId) {
     return fetchData(siteId, connection -> {
@@ -80,6 +86,7 @@ public class CommerceLabsFacade {
   }
 
   @SuppressWarnings("unused")
+  @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)")
   public DataFetcherResult<Catalog> getCatalog(String catalogId, String siteId) {
     return fetchData(siteId, connection -> {
@@ -92,6 +99,7 @@ public class CommerceLabsFacade {
   }
 
   @SuppressWarnings("unused")
+  @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)")
   public DataFetcherResult<Catalog> getCatalogByAlias(String catalogAlias, String siteId) {
     return fetchData(siteId, connection -> {
@@ -101,25 +109,6 @@ public class CommerceLabsFacade {
               .getCatalog(CatalogAlias.of(catalogAlias), storeContext)
               .orElse(null);
     });
-  }
-
-  @Nullable
-  public Catalog getDefaultCatalog(String siteId) {
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return null;
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
-
-    try {
-      CatalogService catalogService = connection.getCatalogService();
-      return catalogService
-              .getDefaultCatalog(storeContext)
-              .orElse(null);
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve default catalog", e);
-      return null;
-    }
   }
 
   @SuppressWarnings("unused")
@@ -133,6 +122,7 @@ public class CommerceLabsFacade {
   }
 
   @SuppressWarnings("unused")
+  @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)")
   public DataFetcherResult<Category> getCategoryByStore(String categoryId, String localeAsString, String storeId, String catalogId) {
     DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
@@ -168,33 +158,39 @@ public class CommerceLabsFacade {
   }
 
   @SuppressWarnings("unused")
-  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProductByTechId(#techId, #siteId)")
-  public DataFetcherResult<Product> getProductByTechId(String techId, String siteId) {
-    return fetchData(siteId, connection -> {
-      StoreContext storeContext = connection.getInitialStoreContext();
-      CommerceId productCommerceId = connection.getIdProvider().formatProductTechId(storeContext.getCatalogAlias(), techId);
-      CatalogService catalogService = connection.getCatalogService();
-      return catalogService.findProductById(productCommerceId, storeContext);
-    });
-
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #categoryId...)")
+  public DataFetcherResult<SearchResult<Product>> searchProductsFilterByCategoryId(String searchTerm,
+                                                                 @Nullable String categoryId,
+                                                                 @Nullable String orderBy,
+                                                                 @Nullable Integer offset,
+                                                                 @Nullable Integer limit,
+                                                                 @Nullable List<String> filterFacets,
+                                                                 String siteId) {
+    return fetchData(siteId, connection -> getProductSearchResult(searchTerm, orderBy, offset, limit, filterFacets, connection, getCategoryId(categoryId, connection)));
   }
 
-  @Nullable
-  public SearchResult<Product> searchProducts(String searchTerm, Map<String, String> searchParams, String siteId) {
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return null;
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.searchProducts(#searchTerm, #categoryId...)")
+  public DataFetcherResult<SearchResult<Product>> searchProductsFilterByCategorySeoSegment(String searchTerm,
+                                                                 @Nullable String categorySeoSegment,
+                                                                 @Nullable String orderBy,
+                                                                 @Nullable Integer offset,
+                                                                 @Nullable Integer limit,
+                                                                 @Nullable List<String> filterFacets,
+                                                                 String siteId) {
+    return fetchData(siteId, connection -> {
+      CommerceId commerceId = null;
+      //The commerceId needs to be an externalId or an externalTechId due to GrpcUtils#entityIdFrom
+      if (StringUtils.isNotBlank(categorySeoSegment)) {
+        StoreContext storeContext = connection.getInitialStoreContext();
+        Category categoryBySeoSegment = connection.getCatalogService().findCategoryBySeoSegment(categorySeoSegment, storeContext);
+        if(categoryBySeoSegment != null){
+          commerceId = connection.getIdProvider().formatCategoryId(storeContext.getCatalogAlias(), categoryBySeoSegment.getExternalId());
+        }
+      }
 
-    try {
-      CatalogService catalogService = connection.getCatalogService();
-      SearchQueryBuilder builder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.PRODUCT);
-      return catalogService.search(builder.build(), storeContext);
-    } catch (CommerceException e) {
-      LOG.warn("Could not search products with searchTerm {}", searchTerm, e);
-      return null;
-    }
+      return getProductSearchResult(searchTerm, orderBy, offset, limit, filterFacets, connection, commerceId);
+    });
   }
 
   @Nullable
@@ -236,6 +232,7 @@ public class CommerceLabsFacade {
   }
 
   @SuppressWarnings("unused")
+  @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
   public DataFetcherResult<ProductVariant> getProductVariant(String productVariantId, String siteId) {
     return fetchData(siteId, connection -> {
@@ -335,7 +332,7 @@ public class CommerceLabsFacade {
    */
 
   @NonNull
-  private CommerceId getCategoryId(String categoryId, CommerceConnection connection) {
+  private CommerceId getCategoryId(@Nullable String categoryId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
     CatalogAlias catalogAlias = connection.getInitialStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(categoryId);
@@ -347,6 +344,30 @@ public class CommerceLabsFacade {
   @Nullable
   public static String getCommerceId(CommerceBean commerceBean) {
     return CommerceIdFormatterHelper.format(commerceBean.getId());
+  }
+
+  private SearchResult<Product> getProductSearchResult(String searchTerm, String orderBy, Integer offset, Integer limit, List<String> filterFacets, CommerceConnection connection, CommerceId categoryCommerceId) {
+    StoreContext storeContext = connection.getInitialStoreContext();
+
+    SearchQueryBuilder queryBuilder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.PRODUCT);
+    if (offset != null) {
+      queryBuilder.setOffset(offset);
+    }
+    if (limit != null) {
+      queryBuilder.setLimit(limit);
+    }
+    if(categoryCommerceId != null){
+      queryBuilder.setCategoryId(categoryCommerceId);
+    }
+    queryBuilder.setIncludeResultFacets(true);
+    if (StringUtils.isNotBlank(orderBy)) {
+      queryBuilder.setOrderBy(OrderBy.of(orderBy));
+    }
+    if (filterFacets != null) {
+      queryBuilder.setFilterFacets(filterFacets.stream().map(SearchQueryFacet::of).collect(Collectors.toList()));
+    }
+
+    return connection.getCatalogService().search(queryBuilder.build(), storeContext);
   }
 
 }

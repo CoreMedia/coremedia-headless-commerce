@@ -12,27 +12,60 @@ directive @inherit(
   from: [String!]!
 ) on OBJECT | INTERFACE
 
+directive @deprecated(
+  reason: String = "No longer supported"
+) on FIELD_DEFINITION | ENUM_VALUE | ARGUMENT_DEFINITION
+
 
 type Query {
-  catalogs(siteId:String): [Catalog] @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
-  catalog(catalogId:String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)")
-  catalogByAlias(catalogAlias: String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)")
+  catalogs(siteId:String): [Catalog] @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
+  catalog(catalogId:String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
+  catalogByAlias(catalogAlias: String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
 
   #returns a category or null if the category does not exist. The externalId can either be formatted (e.g commerce://category/categoryId) or plain (e.g. categoryId)
-  categoryMetadata(seoSegment: String!, catalogId: String, siteId: String): Metadata @fetch(from: "@commerceLabsFacade.findCategoryMetadata(#seoSegment, #siteId)")
+  categoryMetadata(seoSegment: String!, catalogId: String, siteId: String): Metadata @fetch(from: "@commerceLabsFacade.findCategoryMetadata(#seoSegment, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
   category(categoryId: String!, catalogId: String, siteId: String): Category @fetch(from: "@commerceLabsFacade.getCategory(#categoryId, #siteId)")
-  categoryByStore(categoryId: String!, catalogId: String, locale:String!, storeId: String!): Category @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)")
+  categoryByStore(categoryId: String!, catalogId: String, locale:String!, storeId: String!): Category @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)") @deprecated(reason: "No reason to expose this via headless server commerce")
   categoryBySeoSegment(seoSegment: String!, siteId: String!): Category @fetch(from: "@commerceLabsFacade.findCategoryBySeoSegment(#seoSegment, #siteId)")
 
   commerceBean(commerceId: String!, catalogId: String, siteId: String!): CommerceBean @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
 
   #returns a product or null if the product does not exist. The externalId can either be formatted (e.g commerce://product/productId) or plain (e.g. productId)
-  productMetadata(seoSegment: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.findProductMetadata(#seoSegment, #siteId)")
+  productMetadata(seoSegment: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.findProductMetadata(#seoSegment, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
   product(externalId: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.getProduct(#externalId, #siteId)")
-  productByTechId(techId: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.getProductByTechId(#techId, #siteId)")
   productBySeoSegment(seoSegment: String!, siteId: String!): Product @fetch(from: "@commerceLabsFacade.findProductBySeoSegment(#seoSegment, #siteId)")
+  #search for products fulfilling the search parameters. The categoryId can either be formatted (e.g commerce://category/categoryId) or plain (e.g. categoryId)
+  searchProducts(searchTerm: String!, categoryId: String, orderBy: String, offset: Int, limit:  Int, filterFacets: [String], siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProductsFilterByCategoryId(#searchTerm, #categoryId, #orderBy, #offset, #limit, #filterFacets, #siteId)")
+  #search for products fulfilling the search parameters.
+  searchProductsFilterByCategorySeoSegment(searchTerm: String!, categorySeoSegment: String, orderBy: String, offset: Int, limit:  Int, filterFacets: [String], siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProductsFilterByCategorySeoSegment(#searchTerm, #categorySeoSegment, #orderBy, #offset, #limit, #filterFacets, #siteId)")
 
-  productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
+  productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
+}
+
+enum OrderBySortField {
+  ORDER_BY_TYPE_PRICE_ASC
+  ORDER_BY_TYPE_PRICE_DSC
+}
+
+type ProductSearchResult {
+  totalCount: Int!
+  items: [Product]
+  resultFacets: [Facet]
+}
+
+type Facet {
+  hitCount: Int
+  label: String!
+  key: String!
+  multiSelect: Boolean
+  values: [FacetValue]
+}
+
+type FacetValue {
+  hitCount: Int
+  label: String!
+  query: String!
+  selected: Boolean
 }
 
 interface Metadata {
