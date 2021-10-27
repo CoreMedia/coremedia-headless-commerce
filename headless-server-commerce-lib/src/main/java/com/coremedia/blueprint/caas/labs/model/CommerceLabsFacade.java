@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -55,10 +56,8 @@ public class CommerceLabsFacade {
     this.siteResolver = siteResolver;
   }
 
-  @SuppressWarnings("unused")
-  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
-  public DataFetcherResult<List<Catalog>> getCatalogs(String siteId) {
-    DataFetcherResult.Builder<List<Catalog>> builder = DataFetcherResult.newResult();
+  public <T> DataFetcherResult<T> fetchData(String siteId, Function<CommerceConnection, T> function) {
+    DataFetcherResult.Builder<T> builder = DataFetcherResult.newResult();
     if (siteId == null) {
       return builder.error(SiteIdUndefined.getInstance()).build();
     }
@@ -68,56 +67,44 @@ public class CommerceLabsFacade {
     }
 
     try {
-      CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService.getCatalogs(connection.getInitialStoreContext())).build();
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve catalogs for siteId {}", siteId, e);
-      return builder.build();
+      return builder.data(function.apply(connection)).build();
+    } catch (Exception e) {
+      LOG.warn("Could not apply function", e);
+      return null;
     }
+  }
+
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
+  public DataFetcherResult<List<Catalog>> getCatalogs(String siteId) {
+    return fetchData(siteId, connection -> {
+      CatalogService catalogService = connection.getCatalogService();
+      return catalogService.getCatalogs(connection.getInitialStoreContext());
+    });
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)")
   public DataFetcherResult<Catalog> getCatalog(String catalogId, String siteId) {
-    DataFetcherResult.Builder<Catalog> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    if (catalogId == null) {
-      return builder.data(getDefaultCatalog(siteId)).build();
-    }
+    return fetchData(siteId, connection -> {
+      CommerceId commerceId = CommerceIdBuilder.builder(connection.getVendor(), SERVICE_TYPE, BaseCommerceBeanType.CATALOG)
+              .withExternalId(catalogId).build();
+      return (Catalog) createCommerceBean(commerceId, connection);
+    });
 
-    CommerceId commerceId = CommerceIdBuilder.builder(connection.getVendor(), SERVICE_TYPE, BaseCommerceBeanType.CATALOG)
-            .withExternalId(catalogId).build();
-    return builder.data((Catalog) createCommerceBean(commerceId, connection)).build();
+
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)")
   public DataFetcherResult<Catalog> getCatalogByAlias(String catalogAlias, String siteId) {
-    DataFetcherResult.Builder<Catalog> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
-
-    try {
+    return fetchData(siteId, connection -> {
+      StoreContext storeContext = connection.getInitialStoreContext();
       CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService
+      return catalogService
               .getCatalog(CatalogAlias.of(catalogAlias), storeContext)
-              .orElse(null)).build();
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve catalog for catalogAlias {}", catalogAlias, e);
-      return builder.build();
-    }
+              .orElse(null);
+    });
   }
 
   @Nullable
@@ -142,17 +129,11 @@ public class CommerceLabsFacade {
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCategory(#categoryId, #siteId)")
   public DataFetcherResult<Category> getCategory(String categoryId, String siteId) {
-    DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    CommerceId commerceId = getCategoryId(categoryId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
-    return builder.data((Category) bean).build();
+    return fetchData(siteId, connection -> {
+      CommerceId commerceId = getCategoryId(categoryId, connection);
+      CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
+      return (Category) bean;
+    });
   }
 
   @SuppressWarnings("unused")
@@ -177,67 +158,44 @@ public class CommerceLabsFacade {
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
   @Nullable
   public DataFetcherResult<CommerceBean> getCommerceBean(String commerceId, String siteId) {
-    DataFetcherResult.Builder<CommerceBean> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
+    return fetchData(siteId, connection -> {
 
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-
-    //Check if the id is a product first
-    CommerceId possibleProduct = getProductId(commerceId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(possibleProduct, connection.getInitialStoreContext());
-    try {
-      if (bean != null) {
-        bean.load();
+      //Check if the id is a product first
+      CommerceId possibleProduct = getProductId(commerceId, connection);
+      CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(possibleProduct, connection.getInitialStoreContext());
+      try {
+        if (bean != null) {
+          bean.load();
+        }
+      } catch (Exception e) {
+        //It might be a category
+        CommerceId possibleCategory = getCategoryId(commerceId, connection);
+        bean = connection.getCommerceBeanFactory().createBeanFor(possibleCategory, connection.getInitialStoreContext());
       }
-    } catch (Exception e) {
-      //It might be a category
-      CommerceId possibleCategory = getCategoryId(commerceId, connection);
-      bean = connection.getCommerceBeanFactory().createBeanFor(possibleCategory, connection.getInitialStoreContext());
-    }
-    return builder.data(bean).build();
+      return bean;
+    });
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProduct(#externalId, #siteId)")
   public DataFetcherResult<Product> getProduct(String externalId, String siteId) {
-    DataFetcherResult.Builder<Product> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    CommerceId commerceId = getProductId(externalId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
-    return builder.data((Product) bean).build();
+    return fetchData(siteId, connection -> {
+      CommerceId commerceId = getProductId(externalId, connection);
+      CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
+      return (Product) bean;
+    });
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProductByTechId(#techId, #siteId)")
   public DataFetcherResult<Product> getProductByTechId(String techId, String siteId) {
-    DataFetcherResult.Builder<Product> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
-    CommerceId productCommerceId = connection.getIdProvider().formatProductTechId(storeContext.getCatalogAlias(), techId);
-    try {
+    return fetchData(siteId, connection -> {
+      StoreContext storeContext = connection.getInitialStoreContext();
+      CommerceId productCommerceId = connection.getIdProvider().formatProductTechId(storeContext.getCatalogAlias(), techId);
       CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService.findProductById(productCommerceId, storeContext)).build();
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve product for techId {}", techId, e);
-      return builder.build();
-    }
+      return catalogService.findProductById(productCommerceId, storeContext);
+    });
+
   }
 
   @SuppressWarnings("unused") // it is being used by within commerce-schema.graphql
@@ -339,60 +297,31 @@ public class CommerceLabsFacade {
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.findProductBySeoSegment(#seoSegment, #siteId)")
   public DataFetcherResult<Product> findProductBySeoSegment(String seoSegment, String siteId) {
-    DataFetcherResult.Builder<Product> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
-    try {
+    return fetchData(siteId, connection -> {
+      StoreContext storeContext = connection.getInitialStoreContext();
       CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService.findProductBySeoSegment(seoSegment, storeContext)).build();
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve product for seoSegment {}", seoSegment, e);
-      return builder.build();
-    }
+      return catalogService.findProductBySeoSegment(seoSegment, storeContext);
+    });
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.findCategoryBySeoSegment(#seoSegment, #siteId)")
   public DataFetcherResult<Category> findCategoryBySeoSegment(String seoSegment, String siteId) {
-    DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
-
-    try {
+    return fetchData(siteId, connection -> {
+      StoreContext storeContext = connection.getInitialStoreContext();
       CatalogService catalogService = connection.getCatalogService();
-      return builder.data(catalogService.findCategoryBySeoSegment(seoSegment, storeContext)).build();
-    } catch (CommerceException e) {
-      LOG.warn("Could not retrieve category by seoSegment {}", seoSegment, e);
-      return builder.build();
-    }
+      return catalogService.findCategoryBySeoSegment(seoSegment, storeContext);
+    });
   }
 
   @SuppressWarnings("unused")
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)")
   public DataFetcherResult<ProductVariant> getProductVariant(String productVariantId, String siteId) {
-    DataFetcherResult.Builder<ProductVariant> builder = DataFetcherResult.newResult();
-    if (siteId == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    CommerceId commerceId = getProductVariantId(productVariantId, connection);
-    CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
-    return builder.data((ProductVariant) bean).build();
+    return fetchData(siteId, connection -> {
+      CommerceId commerceId = getProductVariantId(productVariantId, connection);
+      CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
+      return (ProductVariant) bean;
+    });
   }
 
 
@@ -403,11 +332,7 @@ public class CommerceLabsFacade {
   }
 
   @Nullable
-  private <T extends CommerceBean> T createCommerceBean(String id, String siteId, Class<T> expectedType) {
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return null;
-    }
+  private <T extends CommerceBean> T createCommerceBean(String id, CommerceConnection connection, Class<T> expectedType) {
     CommerceBean bean = createCommerceBean(id, connection);
     if (bean == null || !expectedType.isAssignableFrom(bean.getClass())) {
       return null;
