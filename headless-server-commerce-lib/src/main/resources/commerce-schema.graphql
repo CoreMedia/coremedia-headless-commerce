@@ -1,22 +1,3 @@
-scalar BigDecimal
-
-schema {
-  query: Query
-}
-
-directive @fetch(
-  from : String!
-) on FIELD_DEFINITION
-
-directive @inherit(
-  from: [String!]!
-) on OBJECT | INTERFACE
-
-directive @deprecated(
-  reason: String = "No longer supported"
-) on FIELD_DEFINITION | ENUM_VALUE | ARGUMENT_DEFINITION
-
-
 type Query {
   catalogs(siteId:String): [Catalog] @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
   catalog(catalogId:String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
