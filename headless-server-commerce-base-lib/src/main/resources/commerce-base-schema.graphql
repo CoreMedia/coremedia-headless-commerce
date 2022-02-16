@@ -4,6 +4,9 @@ schema {
   query: Query
 }
 
+type Query {
+}
+
 directive @fetch(
   from : String!
 ) on FIELD_DEFINITION

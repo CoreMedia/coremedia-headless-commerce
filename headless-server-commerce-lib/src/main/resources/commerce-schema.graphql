@@ -1,4 +1,4 @@
-type Query {
+extend type Query {
   catalogs(siteId:String): [Catalog] @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
   catalog(catalogId:String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalog(#catalogId, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
   catalogByAlias(catalogAlias: String, siteId: String): Catalog @fetch(from: "@commerceLabsFacade.getCatalogByAlias(#catalogAlias, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
