@@ -21,6 +21,8 @@ extend type Query {
   searchProductsFilterByCategorySeoSegment(searchTerm: String!, categorySeoSegment: String, orderBy: String, offset: Int, limit:  Int, filterFacets: [String], siteId:String):ProductSearchResult @fetch(from: "@commerceLabsFacade.searchProductsFilterByCategorySeoSegment(#searchTerm, #categorySeoSegment, #orderBy, #offset, #limit, #filterFacets, #siteId)")
 
   productVariant(externalId: String!, catalogId: String, siteId: String): ProductVariant @fetch(from: "@commerceLabsFacade.getProductVariant(#externalId, #siteId)") @deprecated(reason: "No reason to expose this via headless server commerce")
+
+  contentRootByStore(locale:String!, storeId: String!): CMChannel @fetch(from: "@commerceLabsFacade.getContentRootByStore(#locale, #storeId)")
 }
 
 enum OrderBySortField {

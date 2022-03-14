@@ -6,6 +6,7 @@ import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatter
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
 import com.coremedia.blueprint.caas.labs.error.CommerceConnectionUnavailable;
 import com.coremedia.caas.model.error.SiteIdUndefined;
+import com.coremedia.cap.content.Content;
 import com.coremedia.cap.multisite.Site;
 import com.coremedia.cap.multisite.SitesService;
 import com.coremedia.livecontext.ecommerce.catalog.Catalog;
@@ -254,6 +255,27 @@ public class CommerceLabsFacade {
       CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(commerceId, connection.getInitialStoreContext());
       return (ProductVariant) bean;
     });
+  }
+
+
+  @SuppressWarnings("unused")
+  public DataFetcherResult<Content> getContentRootByStore(String localeAsString, String storeId) {
+    DataFetcherResult.Builder<Content> builder = DataFetcherResult.newResult();
+    if (storeId == null || localeAsString == null) {
+      return builder.error(SiteIdUndefined.getInstance()).build();
+    }
+    Locale locale = Locale.forLanguageTag(localeAsString);
+
+    CommerceConnection connection = getCommerceConnection(storeId, locale);
+    if (connection == null) {
+      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
+    }
+    Site site = sitesService.getSite(connection.getInitialStoreContext().getSiteId());
+    if (site == null || site.getSiteRootDocument() == null) {
+      return builder.error(SiteIdUndefined.getInstance()).build();
+    }
+    builder.data(site.getSiteRootDocument());
+    return builder.build();
   }
 
 
