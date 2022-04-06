@@ -6,6 +6,7 @@ import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatter
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
 import com.coremedia.blueprint.caas.labs.error.CommerceConnectionUnavailable;
 import com.coremedia.caas.model.error.SiteIdUndefined;
+import com.coremedia.cap.content.Content;
 import com.coremedia.cap.multisite.Site;
 import com.coremedia.cap.multisite.SitesService;
 import com.coremedia.livecontext.ecommerce.catalog.Catalog;
@@ -143,7 +144,22 @@ public class CommerceLabsFacade {
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
   @Nullable
   public DataFetcherResult<CommerceBean> getCommerceBean(String commerceId, String siteId) {
-    return fetchData(siteId, connection -> createCommerceBean(commerceId, connection, CommerceBean.class));
+    return fetchData(siteId, connection -> {
+
+      //Check if the id is a product first
+      CommerceId possibleProduct = getProductId(commerceId, connection);
+      CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(possibleProduct, connection.getInitialStoreContext());
+      try {
+        if (bean != null) {
+          bean.load();
+        }
+      } catch (Exception e) {
+        //It might be a category
+        CommerceId possibleCategory = getCategoryId(commerceId, connection);
+        bean = connection.getCommerceBeanFactory().createBeanFor(possibleCategory, connection.getInitialStoreContext());
+      }
+      return bean;
+    });
   }
 
   @SuppressWarnings("unused")
@@ -242,6 +258,27 @@ public class CommerceLabsFacade {
   }
 
 
+  @SuppressWarnings("unused")
+  public DataFetcherResult<Content> getContentRootByStore(String localeAsString, String storeId) {
+    DataFetcherResult.Builder<Content> builder = DataFetcherResult.newResult();
+    if (storeId == null || localeAsString == null) {
+      return builder.error(SiteIdUndefined.getInstance()).build();
+    }
+    Locale locale = Locale.forLanguageTag(localeAsString);
+
+    CommerceConnection connection = getCommerceConnection(storeId, locale);
+    if (connection == null) {
+      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
+    }
+    Site site = sitesService.getSite(connection.getInitialStoreContext().getSiteId());
+    if (site == null || site.getSiteRootDocument() == null) {
+      return builder.error(SiteIdUndefined.getInstance()).build();
+    }
+    builder.data(site.getSiteRootDocument());
+    return builder.build();
+  }
+
+
   @Nullable
   private CommerceBean createCommerceBean(CommerceId commerceId, CommerceConnection commerceConnection) {
     StoreContext storeContext = commerceConnection.getInitialStoreContext();
@@ -260,9 +297,18 @@ public class CommerceLabsFacade {
   @Nullable
   private CommerceBean createCommerceBean(String id, CommerceConnection commerceConnection) {
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(id);
+    CommerceIdProvider idProvider = commerceConnection.getIdProvider();
+    CatalogAlias catalogAlias = commerceConnection.getInitialStoreContext().getCatalogAlias();
     if (commerceIdOptional.isEmpty()) {
       LOG.debug("unknown id: '{}'", id);
-      return null;
+      //Type guessing
+      //Am i a product?
+      CommerceBean commerceBean = createCommerceBean(idProvider.formatProductId(catalogAlias, id), commerceConnection);
+      if (commerceBean != null) {
+        return commerceBean;
+      }
+      //I might be a category
+      return createCommerceBean(idProvider.formatCategoryId(catalogAlias, id), commerceConnection);
     }
     return createCommerceBean(commerceIdOptional.get(), commerceConnection);
   }

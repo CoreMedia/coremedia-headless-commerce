@@ -11,6 +11,10 @@
 
   <artifactId>headless-server-commerce-lib</artifactId>
 
+  <properties>
+    <coremedia.project.extension.for>headless-server</coremedia.project.extension.for>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.coremedia.blueprint.base</groupId>
@@ -29,6 +33,10 @@
     <dependency>
       <groupId>com.coremedia.cms</groupId>
       <artifactId>cap-multisite</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>cap-unified-api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>

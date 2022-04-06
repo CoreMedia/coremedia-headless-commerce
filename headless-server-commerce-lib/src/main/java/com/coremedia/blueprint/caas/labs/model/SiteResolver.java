@@ -32,7 +32,7 @@ public class SiteResolver {
     this.cache = cache;
   }
 
-  Optional<Site> findSiteFor(String storeId, Locale locale){
+  Optional<Site> findSiteFor(String storeId, Locale locale) {
     return cache.get(new StoreIdAndLocaleToSiteCacheKey(storeId, locale, this));
   }
 
