@@ -1,0 +1,20 @@
+scalar BigDecimal
+
+schema {
+  query: Query
+}
+
+type Query {
+}
+
+directive @fetch(
+  from : String!
+) on FIELD_DEFINITION
+
+directive @inherit(
+  from: [String!]!
+) on OBJECT | INTERFACE
+
+directive @deprecated(
+  reason: String = "No longer supported"
+) on FIELD_DEFINITION | ENUM_VALUE | ARGUMENT_DEFINITION
