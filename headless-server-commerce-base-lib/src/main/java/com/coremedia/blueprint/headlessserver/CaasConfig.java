@@ -33,6 +33,7 @@ import com.coremedia.caas.wiring.TypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolverWiringFactory;
 import com.coremedia.cap.content.ContentRepository;
 import com.coremedia.cap.undoc.common.spring.CapRepositoriesConfiguration;
+import com.coremedia.function.PostProcessor;
 import com.coremedia.link.CompositeLinkComposer;
 import com.coremedia.link.LinkComposer;
 import com.coremedia.springframework.customizer.CustomizerConfiguration;
@@ -80,6 +81,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -234,8 +236,8 @@ public class CaasConfig implements WebMvcConfigurer {
   }
 
   @Bean
-  public TypeNameResolver<Object> compositeTypeNameResolver(List<TypeNameResolver<?>> typeNameResolvers) {
-    return new CompositeTypeNameResolver<>(typeNameResolvers);
+  public TypeNameResolver<Object> compositeTypeNameResolver(List<TypeNameResolver<?>> typeNameResolvers, List<PostProcessor<?, ? extends String>> postProcessors) {
+    return new CompositeTypeNameResolver<>(typeNameResolvers, postProcessors);
   }
 
   @Bean
@@ -278,8 +280,9 @@ public class CaasConfig implements WebMvcConfigurer {
   public SpelEvaluationStrategy spelEvaluationStrategy(
           BeanFactory beanFactory,
           @Qualifier("propertyAccessors") List<PropertyAccessor> propertyAccessors,
-          @Qualifier("pluginSchemaAdapterBeansResolver") BeanResolver beanResolver) {
-    return new SpelEvaluationStrategy(beanFactory, propertyAccessors, beanResolver);
+          @Qualifier("pluginSchemaAdapterBeansResolver") BeanResolver beanResolver,
+          @Qualifier("graphQlConversionService") ConversionService conversionService) {
+    return new SpelEvaluationStrategy(beanFactory, propertyAccessors, beanResolver, conversionService);
   }
 
   @Bean

@@ -23,6 +23,10 @@
     </dependency>
     <dependency>
       <groupId>com.coremedia.caas</groupId>
+      <artifactId>headless-server.link</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.caas</groupId>
       <artifactId>headless-server.plugin-support</artifactId>
     </dependency>
     <dependency>
