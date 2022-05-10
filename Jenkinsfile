@@ -16,10 +16,10 @@ import com.coremedia.comhub.releases.dto.ReleaseState
 final String PROJECT_NAME = 'headless-server-commerce'
 
 final String RELEASE_DOCKER_REPOSITORY_NAME = 'coremedia'
-final String RELEASE_DOCKER_IMAGE_NAME = 'headless-server-commerce'
+final String RELEASE_DOCKER_IMAGE_NAME = PROJECT_NAME
 final String RELEASE_LOCAL_STAGING_DIR = '${WORKSPACE}/target/nexus-staging'
 
-final String DOCKER_IMAGE_MAVEN = "${Jenkins.globalDockerRegistry}/ci/coremedia-maven:3.6.3-amazoncorretto-11-2"
+final String DOCKER_IMAGE_MAVEN = "${Jenkins.ecrPullThroughProxyRegistry}/cm-tools/maven:3.8.4-amazoncorretto-11"
 final String DOCKER_SNAPSHOTS_REGISTRY = "${Jenkins.getDockerRegistry(env)}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 final String DOCKER_RELEASES_REGISTRY = "${ComhubHelper.releasesCommerceRegistryUpstream}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 
