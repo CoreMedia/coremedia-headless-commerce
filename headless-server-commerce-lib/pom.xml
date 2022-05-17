@@ -39,10 +39,6 @@
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
-      <artifactId>cap-unified-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
       <artifactId>coremedia-cache</artifactId>
     </dependency>
     <dependency>
