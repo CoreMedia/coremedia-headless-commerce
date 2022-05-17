@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HeadlessServerCommerceApp" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="dev,local" />
+    <additionalParameters>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="installation.host" />
+        <option name="value" value="emea.cloud.coremedia.io" />
+      </param>
+    </additionalParameters>
+    <module name="headless-server-commerce-app" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.coremedia.blueprint.boot.headlessserver.HeadlessServerCommerceApp" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

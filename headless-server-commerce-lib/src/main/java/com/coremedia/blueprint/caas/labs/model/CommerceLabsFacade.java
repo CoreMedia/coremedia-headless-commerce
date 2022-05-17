@@ -6,7 +6,6 @@ import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatter
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
 import com.coremedia.blueprint.caas.labs.error.CommerceConnectionUnavailable;
 import com.coremedia.caas.model.error.SiteIdUndefined;
-import com.coremedia.cap.content.Content;
 import com.coremedia.cap.multisite.Site;
 import com.coremedia.cap.multisite.SitesService;
 import com.coremedia.livecontext.ecommerce.catalog.Catalog;
@@ -17,6 +16,7 @@ import com.coremedia.livecontext.ecommerce.catalog.Product;
 import com.coremedia.livecontext.ecommerce.catalog.ProductVariant;
 import com.coremedia.livecontext.ecommerce.common.BaseCommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceBean;
+import com.coremedia.livecontext.ecommerce.common.CommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceConnection;
 import com.coremedia.livecontext.ecommerce.common.CommerceException;
 import com.coremedia.livecontext.ecommerce.common.CommerceId;
@@ -144,22 +144,19 @@ public class CommerceLabsFacade {
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
   @Nullable
   public DataFetcherResult<CommerceBean> getCommerceBean(String commerceId, String siteId) {
-    return fetchData(siteId, connection -> {
+    return fetchData(siteId, connection -> createCommerceBean(commerceId, connection, CommerceBean.class));
+  }
 
-      //Check if the id is a product first
-      CommerceId possibleProduct = getProductId(commerceId, connection);
-      CommerceBean bean = connection.getCommerceBeanFactory().createBeanFor(possibleProduct, connection.getInitialStoreContext());
-      try {
-        if (bean != null) {
-          bean.load();
-        }
-      } catch (Exception e) {
-        //It might be a category
-        CommerceId possibleCategory = getCategoryId(commerceId, connection);
-        bean = connection.getCommerceBeanFactory().createBeanFor(possibleCategory, connection.getInitialStoreContext());
-      }
-      return bean;
-    });
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceBean(#externalId, #type, #siteId)")
+  @Nullable
+  public DataFetcherResult<CommerceBean> getCommerceBean(String externalId, String type, String siteId) {
+    return fetchData(siteId, connection -> createCommerceBean(
+            CommerceIdBuilder
+                    .builder(connection.getVendor(), SERVICE_TYPE, CommerceBeanType.of(type))
+                    .withExternalId(externalId)
+                    .build(),
+            connection));
   }
 
   @SuppressWarnings("unused")
@@ -257,36 +254,14 @@ public class CommerceLabsFacade {
     });
   }
 
-
-  @SuppressWarnings("unused")
-  public DataFetcherResult<Content> getContentRootByStore(String localeAsString, String storeId) {
-    DataFetcherResult.Builder<Content> builder = DataFetcherResult.newResult();
-    if (storeId == null || localeAsString == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    Locale locale = Locale.forLanguageTag(localeAsString);
-
-    CommerceConnection connection = getCommerceConnection(storeId, locale);
-    if (connection == null) {
-      return builder.error(CommerceConnectionUnavailable.getInstance()).build();
-    }
-    Site site = sitesService.getSite(connection.getInitialStoreContext().getSiteId());
-    if (site == null || site.getSiteRootDocument() == null) {
-      return builder.error(SiteIdUndefined.getInstance()).build();
-    }
-    builder.data(site.getSiteRootDocument());
-    return builder.build();
-  }
-
-
   @Nullable
-  private CommerceBean createCommerceBean(CommerceId commerceId, CommerceConnection commerceConnection) {
+  private static CommerceBean createCommerceBean(CommerceId commerceId, CommerceConnection commerceConnection) {
     StoreContext storeContext = commerceConnection.getInitialStoreContext();
     return commerceConnection.getCommerceBeanFactory().createBeanFor(commerceId, storeContext);
   }
 
   @Nullable
-  private <T extends CommerceBean> T createCommerceBean(String id, CommerceConnection connection, Class<T> expectedType) {
+  private static <T extends CommerceBean> T createCommerceBean(String id, CommerceConnection connection, Class<T> expectedType) {
     CommerceBean bean = createCommerceBean(id, connection);
     if (bean == null || !expectedType.isAssignableFrom(bean.getClass())) {
       return null;
@@ -295,20 +270,11 @@ public class CommerceLabsFacade {
   }
 
   @Nullable
-  private CommerceBean createCommerceBean(String id, CommerceConnection commerceConnection) {
+  private static CommerceBean createCommerceBean(String id, CommerceConnection commerceConnection) {
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(id);
-    CommerceIdProvider idProvider = commerceConnection.getIdProvider();
-    CatalogAlias catalogAlias = commerceConnection.getInitialStoreContext().getCatalogAlias();
     if (commerceIdOptional.isEmpty()) {
       LOG.debug("unknown id: '{}'", id);
-      //Type guessing
-      //Am i a product?
-      CommerceBean commerceBean = createCommerceBean(idProvider.formatProductId(catalogAlias, id), commerceConnection);
-      if (commerceBean != null) {
-        return commerceBean;
-      }
-      //I might be a category
-      return createCommerceBean(idProvider.formatCategoryId(catalogAlias, id), commerceConnection);
+      return null;
     }
     return createCommerceBean(commerceIdOptional.get(), commerceConnection);
   }
@@ -377,7 +343,7 @@ public class CommerceLabsFacade {
    */
 
   @NonNull
-  private CommerceId getCategoryId(@Nullable String categoryId, CommerceConnection connection) {
+  private static CommerceId getCategoryId(@Nullable String categoryId, CommerceConnection connection) {
     CommerceIdProvider idProvider = connection.getIdProvider();
     CatalogAlias catalogAlias = connection.getInitialStoreContext().getCatalogAlias();
     Optional<CommerceId> commerceIdOptional = CommerceIdParserHelper.parseCommerceId(categoryId);
@@ -391,7 +357,7 @@ public class CommerceLabsFacade {
     return CommerceIdFormatterHelper.format(commerceBean.getId());
   }
 
-  private SearchResult<Product> getProductSearchResult(String searchTerm, String orderBy, Integer offset, Integer limit, List<String> filterFacets, CommerceConnection connection, CommerceId categoryCommerceId) {
+  private static SearchResult<Product> getProductSearchResult(String searchTerm, String orderBy, Integer offset, Integer limit, List<String> filterFacets, CommerceConnection connection, CommerceId categoryCommerceId) {
     StoreContext storeContext = connection.getInitialStoreContext();
 
     SearchQueryBuilder queryBuilder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.PRODUCT);
