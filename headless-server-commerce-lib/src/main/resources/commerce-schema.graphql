@@ -8,7 +8,9 @@ extend type Query {
   categoryByStore(categoryId: String!, catalogId: String, locale:String!, storeId: String!): Category @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)") @deprecated(reason: "Marked for removal")
   categoryBySeoSegment(seoSegment: String!, siteId: String!): Category @fetch(from: "@commerceLabsFacade.findCategoryBySeoSegment(#seoSegment, #siteId)")
 
-  commerceBean(commerceId: String!, catalogId: String, siteId: String!): CommerceBean @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
+  commerceBean(commerceId: String!, siteId: String!): CommerceBean @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
+  # Returns a commerce bean or null. This is a good call to make when previewing commerce items.
+  commerceBeanByType(externalId: String!, type: CommerceBeanType!, siteId: String!): CommerceBean @fetch(from: "@commerceLabsFacade.getCommerceBean(#externalId, #type, #siteId)")
 
   # Returns a product or null if the product does not exist. The externalId can either be formatted (e.g commerce://product/productId) or plain (e.g. productId)
   product(externalId: String!, catalogId: String, siteId: String): Product @fetch(from: "@commerceLabsFacade.getProduct(#externalId, #siteId)")
@@ -25,6 +27,15 @@ extend type Query {
 enum OrderBySortField {
   ORDER_BY_TYPE_PRICE_ASC
   ORDER_BY_TYPE_PRICE_DSC
+}
+
+enum CommerceBeanType {
+  catalog
+  category
+  product
+  sku
+  marketingspot
+  segment
 }
 
 type ProductSearchResult {
