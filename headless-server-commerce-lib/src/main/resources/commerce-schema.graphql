@@ -41,18 +41,18 @@ enum CommerceBeanType {
 type ProductSearchResult {
   totalCount: Int!
   items: [Product]
-  resultFacets: [Facet]
+  resultFacets: [CommerceFacet]
 }
 
-type Facet {
+type CommerceFacet {
   hitCount: Int
   label: String!
   key: String!
   multiSelect: Boolean
-  values: [FacetValue]
+  values: [CommerceFacetValue]
 }
 
-type FacetValue {
+type CommerceFacetValue {
   hitCount: Int
   label: String!
   query: String!
