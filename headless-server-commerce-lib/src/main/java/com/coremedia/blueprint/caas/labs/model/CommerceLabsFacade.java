@@ -16,6 +16,7 @@ import com.coremedia.livecontext.ecommerce.catalog.Product;
 import com.coremedia.livecontext.ecommerce.catalog.ProductVariant;
 import com.coremedia.livecontext.ecommerce.common.BaseCommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceBean;
+import com.coremedia.livecontext.ecommerce.common.CommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceConnection;
 import com.coremedia.livecontext.ecommerce.common.CommerceException;
 import com.coremedia.livecontext.ecommerce.common.CommerceId;
@@ -144,6 +145,18 @@ public class CommerceLabsFacade {
   @Nullable
   public DataFetcherResult<CommerceBean> getCommerceBean(String commerceId, String siteId) {
     return fetchData(siteId, connection -> createCommerceBean(commerceId, connection, CommerceBean.class));
+  }
+
+  @SuppressWarnings("unused")
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCommerceBean(#externalId, #type, #siteId)")
+  @Nullable
+  public DataFetcherResult<CommerceBean> getCommerceBean(String externalId, String type, String siteId) {
+    return fetchData(siteId, connection -> createCommerceBean(
+            CommerceIdBuilder
+                    .builder(connection.getVendor(), SERVICE_TYPE, CommerceBeanType.of(type))
+                    .withExternalId(externalId)
+                    .build(),
+            connection));
   }
 
   @SuppressWarnings("unused")
