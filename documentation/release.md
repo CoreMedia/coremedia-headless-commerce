@@ -85,7 +85,7 @@
 
 > **Depending on your [branch model](contribute.md#-branches-and-tags) and your requirements you do not necessarily need to build releases. Releases can also be built by means of GitHub. Not having to build releases is certainly easier. At the same time they make it easier to identify which changes have been made in which version to find the best version for the corresponding project workspace.** 
 >
-> Assuming all branches (master, develop, ci/develop) already exist, proceed as follows:
+> Assuming all branches (main, develop, ci/develop) already exist, proceed as follows:
 >
 > ```bash
 > $ git clone https://github.com/CoreMedia/coremedia-headless-commerce.git
@@ -122,9 +122,9 @@
 > 
 > 
 > ```bash
-> $ git checkout master
+> $ git checkout main
 > $ git merge "origin/develop"
-> $ git push origin master
+> $ git push origin main
 > $ git tag "1910.1-1"
 > $ git push origin "1910.1-1"
 > ```

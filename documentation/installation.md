@@ -25,7 +25,7 @@ Run the server with
 
 or specify a profile defining the required property `installation.server.host`
 . All prepared spring boot profiles can be
-found [here](https://github.com/CoreMedia/coremedia-headless-commerce/tree/master/headless-server-commerce-app/src/main/resources)
+found [here](https://github.com/CoreMedia/coremedia-headless-commerce/tree/main/headless-server-commerce-app/src/main/resources)
 
 The headless server commerce relies on running CoreMedia system. It connects to
 a Content Server, reads the site settings and especially its livecontext

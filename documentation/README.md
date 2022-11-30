@@ -18,4 +18,4 @@
 * [Used Third-Party Libraries](THIRD-PARTY.txt)
 
     <!-- GitHub Pages is not able to list directory contents. Jump back to GitHub directly.  -->
-    For license texts have a look at [third-party-licenses](https://github.com/CoreMedia/coremedia-headless-commerce/tree/master/docs/third-party-licenses).
+    For license texts have a look at [third-party-licenses](https://github.com/CoreMedia/coremedia-headless-commerce/tree/main/docs/third-party-licenses).

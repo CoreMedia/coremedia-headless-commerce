@@ -26,5 +26,5 @@ Developers at CoreMedia don't necessarily need a fork of the repository. They ha
 > **This is of course only one approach on how you can manage branches in your project. Depending on your release cycle and development approach, there are of course other branch patterns that are better suited for your project.**
 > **This branch model is our best practice if you want to deploy your extension by means of the CoreMedia CI.**    
 >
-> * **master:** Will be initially used to create `develop` branch. Afterwards, it will just be used to merge changes from `develop` branch to `master`, i.e., it will just be recipient afterwards. On _release_ the master merge commit will be tagged. See below for details on tagging.
+> * **main:** Will be initially used to create `develop` branch. Afterwards, it will just be used to merge changes from `develop` branch to `main`, i.e., it will just be recipient afterwards. On _release_ the main merge commit will be tagged. See below for details on tagging.
 > * **develop:** After initial creation, all development by CoreMedia and merging pull requests will happen here.
