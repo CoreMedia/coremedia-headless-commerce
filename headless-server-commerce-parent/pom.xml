@@ -44,6 +44,25 @@
     <sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>coremedia.external.releases</id>
+      <url>https://repository.coremedia.com/nexus/content/groups/cms/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>coremedia.external.releases</id>
+      <url>https://repository.coremedia.com/nexus/content/groups/cms/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
