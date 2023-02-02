@@ -92,7 +92,6 @@ jobs:
           webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
           title: Notification from ${{ github.repository }}
           message: Workflow **${{ github.workflow }}** was cancelled.
-          # Using colors from https://github.com/CoreMedia/ci-configuration/blob/cm-jenkins/vars/cmSendNotification.groovy#L26-L34
           color: 949393
           buttons: |
             View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -104,7 +103,6 @@ jobs:
           webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
           title: Notification from ${{ github.repository }}
           message: Workflow **${{ github.workflow }}** failed.
-          # Using colors from https://github.com/CoreMedia/ci-configuration/blob/cm-jenkins/vars/cmSendNotification.groovy#L26-L34
           color: d9534f
           buttons: |
             View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

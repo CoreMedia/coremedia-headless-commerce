@@ -68,3 +68,25 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Send cancelled notification to MS Teams
+        if: cancelled() && github.event_name == 'schedule'
+        uses: simbo/msteams-message-card-action@v1
+        with:
+          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+          title: Notification from ${{ github.repository }}
+          message: Workflow **${{ github.workflow }}** was cancelled.
+          color: 949393
+          buttons: |
+            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Send failure notification to MS Teams
+        if: failure() && github.event_name == 'schedule'
+        uses: simbo/msteams-message-card-action@v1
+        with:
+          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+          title: Notification from ${{ github.repository }}
+          message: Workflow **${{ github.workflow }}** failed.
+          color: d9534f
+          buttons: |
+            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
