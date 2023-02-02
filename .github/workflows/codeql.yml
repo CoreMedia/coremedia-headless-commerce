@@ -17,6 +17,7 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+    paths-ignore: [ '**/*.md', '**/*.txt' ]
   schedule:
     - cron: '27 4 * * 4'
 
