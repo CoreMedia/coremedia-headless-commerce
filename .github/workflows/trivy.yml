@@ -1,0 +1,92 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Trivy Image Scan
+
+on:
+  push:
+    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+    paths-ignore: [ '**/*.md', '**/*.txt' ]
+  schedule:
+    - cron: '32 16 * * 1'
+
+jobs:
+  build:
+    name: Build and Scan Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          server-id: coremedia.external.releases
+          server-username: PLUGINS_NEXUS_USER
+          server-password: PLUGINS_NEXUS_PASSWORD
+      - name: Cache Maven Repo
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build Docker image with Maven
+        run: |
+          mvn install \
+              --batch-mode \
+              -Pdefault-image \
+              -Dapplication.image-tag=${{ github.sha }} \
+              -DskipTests=true \
+              -Dmdep.analyze.skip=true \
+              -Denforcer.skip=true \
+              -Dsort.skip=true \
+        env:
+          PLUGINS_NEXUS_USER: ${{ secrets.PLUGINS_NEXUS_USER }}
+          PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.9.0
+        with:
+          image-ref: 'coremedia/headless-server-commerce:${{ github.sha }}'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Send cancelled notification to MS Teams
+        if: cancelled() && github.event_name == 'schedule'
+        uses: simbo/msteams-message-card-action@v1
+        with:
+          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+          title: Notification from ${{ github.repository }}
+          message: Workflow **${{ github.workflow }}** was cancelled.
+          color: 949393
+          buttons: |
+            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Send failure notification to MS Teams
+        if: failure() && github.event_name == 'schedule'
+        uses: simbo/msteams-message-card-action@v1
+        with:
+          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+          title: Notification from ${{ github.repository }}
+          message: Workflow **${{ github.workflow }}** failed.
+          color: d9534f
+          buttons: |
+            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
