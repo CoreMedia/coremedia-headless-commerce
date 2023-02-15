@@ -56,7 +56,7 @@ jobs:
           PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.9.0
+        uses: aquasecurity/trivy-action@0.9.1
         with:
           image-ref: 'coremedia/headless-server-commerce:${{ github.sha }}'
           format: 'template'
