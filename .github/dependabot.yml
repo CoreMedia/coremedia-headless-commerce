@@ -10,7 +10,8 @@ updates:
     schedule:
       interval: weekly
     reviewers:
-      - 'CoreMedia/toko'
+      - 'marcrohlfs'
+      #- 'CoreMedia/toko'
     registries:
       - maven-github
 registries:
