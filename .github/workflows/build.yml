@@ -43,6 +43,8 @@ jobs:
           PLUGINS_NEXUS_USER: ${{ secrets.PLUGINS_NEXUS_USER }}
           PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
 
-      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive.
+      # Note: The default version (v2) of the plugin currently don't work with multimodule projects,
+      #       see https://github.com/advanced-security/maven-dependency-submission-action/issues/11
       - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@v2
+        uses: advanced-security/maven-dependency-submission-action@multi-module
