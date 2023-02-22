@@ -37,7 +37,7 @@
     <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-    <sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
+    <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
     <docs.directory>documentation</docs.directory>
   </properties>
 
@@ -58,7 +58,6 @@
             <ignoreLineSeparators>false</ignoreLineSeparators>
             <lineSeparator>\n</lineSeparator>
             <createBackupFile>false</createBackupFile>
-            <verifyFail>Sort</verifyFail>
           </configuration>
         </plugin>
         <plugin>
