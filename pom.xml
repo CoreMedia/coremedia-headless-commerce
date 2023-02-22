@@ -54,6 +54,7 @@
             <sortPlugins>groupId,artifactId</sortPlugins>
             <sortModules>true</sortModules>
             <expandEmptyElements>false</expandEmptyElements>
+            <spaceBeforeCloseEmptyElement>false</spaceBeforeCloseEmptyElement>
             <keepBlankLines>true</keepBlankLines>
             <ignoreLineSeparators>false</ignoreLineSeparators>
             <lineSeparator>\n</lineSeparator>

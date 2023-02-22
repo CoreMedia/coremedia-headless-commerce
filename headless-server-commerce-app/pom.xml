@@ -16,8 +16,7 @@
     mvn spring-boot:run
 
     To start the live headless-server-app, run:
-    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview
-  </description>
+    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview</description>
 
   <properties>
     <jib.skip>true</jib.skip>
@@ -32,6 +31,11 @@
     <dependency>
       <groupId>com.coremedia.caas</groupId>
       <artifactId>headless-server-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>cap-client-xml</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
@@ -65,12 +69,27 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -90,6 +109,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-tomcat</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
