@@ -64,13 +64,7 @@ jobs:
           server-id: coremedia.external.releases
           server-username: PLUGINS_NEXUS_USER
           server-password: PLUGINS_NEXUS_PASSWORD
-      - name: Cache Maven Repo
-        if: matrix.language == 'java'
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: maven
 
       # Autobuild attempts to build any compiled languages  (C/C++, C#, Go, or Java).
       # If this step fails, then you should remove it and run the build manually

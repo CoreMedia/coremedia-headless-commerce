@@ -36,12 +36,7 @@ jobs:
           server-id: coremedia.external.releases
           server-username: PLUGINS_NEXUS_USER
           server-password: PLUGINS_NEXUS_PASSWORD
-      - name: Cache Maven Repo
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: maven
 
       - name: Build Docker image with Maven
         run: |
