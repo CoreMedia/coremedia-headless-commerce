@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(properties = {
         "repository.factoryClassName=com.coremedia.cap.xmlrepo.XmlCapConnectionFactory",
         "com.coremedia.transform.blobCache.basePath=${user.dir}/target/blobCache",
+        "caas.search.enabled=false",
 })
 @SuppressWarnings("SpringBootApplicationProperties")
 class HeadlessServerCommerceAppIT {

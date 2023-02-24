@@ -18,10 +18,18 @@ import com.coremedia.caas.spel.SpelDirectiveWiring;
 import com.coremedia.caas.spel.SpelEvaluationStrategy;
 import com.coremedia.caas.spel.SpelFunctions;
 import com.coremedia.caas.web.CaasServiceConfigurationProperties;
+import com.coremedia.caas.web.CaasWebConfig;
+import com.coremedia.caas.web.GraphQLRestMappingConfig;
 import com.coremedia.caas.web.GraphiqlConfigurationProperties;
+import com.coremedia.caas.web.controller.ViewController;
+import com.coremedia.caas.web.controller.graphql.GraphQLController;
+import com.coremedia.caas.web.controller.graphql.GraphQLErrorController;
 import com.coremedia.caas.web.filter.HSTSResponseHeaderFilter;
+import com.coremedia.caas.web.metadata.PropertyMappingConfig;
+import com.coremedia.caas.web.monitoring.CaasMetricsConfig;
 import com.coremedia.caas.web.persistedqueries.DefaultQueryNormalizer;
 import com.coremedia.caas.web.persistedqueries.QueryNormalizer;
+import com.coremedia.caas.web.swagger.SwaggerConfig;
 import com.coremedia.caas.web.wiring.GraphQLInvocationImpl;
 import com.coremedia.caas.wiring.CapStructPropertyAccessor;
 import com.coremedia.caas.wiring.CompositeTypeNameResolver;
@@ -33,11 +41,11 @@ import com.coremedia.caas.wiring.TypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolverWiringFactory;
 import com.coremedia.cap.content.ContentRepository;
 import com.coremedia.cap.undoc.common.spring.CapRepositoriesConfiguration;
+import com.coremedia.cms.common.plugins.plugin_framework_autoconfiguration.PluginManagerAutoConfiguration;
 import com.coremedia.function.PostProcessor;
 import com.coremedia.link.CompositeLinkComposer;
 import com.coremedia.link.LinkComposer;
 import com.coremedia.springframework.customizer.CustomizerConfiguration;
-import com.coremedia.springframework.xml.ResourceAwareXmlBeanDefinitionReader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -68,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -76,9 +85,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
@@ -120,19 +127,27 @@ import static com.coremedia.caas.web.CaasWebConfig.ATTRIBUTE_NAMES_TO_GQL_CONTEX
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
 
-@Configuration
+@AutoConfiguration(after = PluginManagerAutoConfiguration.class)
 @EnableConfigurationProperties({
         CaasServiceConfigurationProperties.class,
         CaasGraphqlConfigurationProperties.class,
         GraphiqlConfigurationProperties.class,
 })
 @EnableWebMvc
-@ImportResource(value = "classpath:/com/coremedia/blueprint/base/settings/impl/bpbase-settings-services.xml", reader = ResourceAwareXmlBeanDefinitionReader.class)
 @Import({
         CustomizerConfiguration.class,
         CapRepositoriesConfiguration.class,
+        // copy of CaasWebAutoConfiguration imports except MediaConfig
+        CaasWebConfig.class,
+        GraphQLRestMappingConfig.class,
+        SwaggerConfig.class,
+        PropertyMappingConfig.class,
+        CaasMetricsConfig.class,
+        GraphQLController.class,
+        GraphQLErrorController.class,
+        ViewController.class,
 })
-public class CaasConfig implements WebMvcConfigurer {
+public class CommerceCaasAutoConfiguration implements WebMvcConfigurer {
 
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
   private static final String OPTIONAL_QUERY_ROOT_BEAN_NAME_PREFIX = "query-root:";
@@ -143,9 +158,9 @@ public class CaasConfig implements WebMvcConfigurer {
   private final CaasGraphqlConfigurationProperties caasGraphqlConfigurationProperties;
   private final GraphiqlConfigurationProperties graphiqlConfigurationProperties;
 
-  public CaasConfig(CaasServiceConfigurationProperties caasServiceConfigurationProperties,
-                    CaasGraphqlConfigurationProperties caasGraphqlConfigurationProperties,
-                    GraphiqlConfigurationProperties graphiqlConfigurationProperties) {
+  public CommerceCaasAutoConfiguration(CaasServiceConfigurationProperties caasServiceConfigurationProperties,
+                                       CaasGraphqlConfigurationProperties caasGraphqlConfigurationProperties,
+                                       GraphiqlConfigurationProperties graphiqlConfigurationProperties) {
     this.caasServiceConfigurationProperties = caasServiceConfigurationProperties;
     this.caasGraphqlConfigurationProperties = caasGraphqlConfigurationProperties;
     this.graphiqlConfigurationProperties = graphiqlConfigurationProperties;
@@ -504,4 +519,5 @@ public class CaasConfig implements WebMvcConfigurer {
     dataLoaders.forEach(registry::register);
     return registry;
   }
+
 }
