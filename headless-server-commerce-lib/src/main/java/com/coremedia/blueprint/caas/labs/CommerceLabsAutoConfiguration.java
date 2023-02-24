@@ -17,19 +17,15 @@ import com.coremedia.livecontext.ecommerce.common.BaseCommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceBean;
 import com.coremedia.livecontext.ecommerce.common.CommerceBeanType;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-@Configuration(proxyBeanMethods = false)
-@Import({
-        BaseCommerceServicesAutoConfiguration.class
-})
-public class CommerceLabsConfig {
+@AutoConfiguration(after = BaseCommerceServicesAutoConfiguration.class)
+public class CommerceLabsAutoConfiguration {
 
   private static final Set<String> SCHEMA_TYPE_NAMES = Set.of(
           CommerceBean.class.getSimpleName(),
