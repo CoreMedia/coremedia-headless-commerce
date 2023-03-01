@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.5.5</version>
+    <version>2.7.9</version>
     <relativePath/>
   </parent>
 
@@ -29,7 +29,7 @@
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <cms.version>2201.1</cms.version>
+    <cms.version>2301.1</cms.version>
     <springfox.version>3.0.0</springfox.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
     <caffeine.version>2.9.3</caffeine.version>

@@ -21,7 +21,10 @@ Build the workspace with
 
 Run the server with
 
-    mvn spring-boot:run -pl headless-server-commerce-app -Dspring-boot.run.profiles=local,preview -Dinstallation.host=<CMS-SERVER-HOSTNAME>
+    mvn spring-boot:run \
+        -pl headless-server-commerce-app \
+        -Dspring-boot.run.profiles=dev,local \
+        -Dspring-boot.run.jvmArguments="-Dinstallation.host=<CMS-SERVER-HOSTNAME>"
 
 or specify a profile defining the required property `installation.server.host`
 . All prepared spring boot profiles can be

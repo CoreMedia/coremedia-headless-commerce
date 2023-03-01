@@ -39,6 +39,10 @@
     </dependency>
     <dependency>
       <groupId>com.coremedia.cms</groupId>
+      <artifactId>common.plugin-framework-autoconfiguration</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
       <artifactId>coremedia-common</artifactId>
     </dependency>
     <dependency>

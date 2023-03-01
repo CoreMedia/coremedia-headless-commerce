@@ -20,6 +20,9 @@ jobs:
   build:
     name: Build with Maven
     runs-on: ubuntu-latest
+    env:
+      PLUGINS_NEXUS_USER: ${{ secrets.PLUGINS_NEXUS_USER }}
+      PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
 
     steps:
       - name: Checkout repository
@@ -41,9 +44,6 @@ jobs:
               install javadoc:javadoc \
               -Pintegration-test,default-image,docs-third-party \
               -Dsort.verifyFail=stop
-        env:
-          PLUGINS_NEXUS_USER: ${{ secrets.PLUGINS_NEXUS_USER }}
-          PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive.
       - name: Update dependency graph

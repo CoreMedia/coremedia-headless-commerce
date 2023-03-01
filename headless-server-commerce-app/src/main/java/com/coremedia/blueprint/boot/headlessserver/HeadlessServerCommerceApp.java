@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
@@ -18,7 +19,9 @@ import static java.lang.invoke.MethodHandles.lookup;
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientHealthAutoConfiguration",
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientMetricAutoConfiguration",
         "com.coremedia.blueprint.caas.p13n.P13nAutoConfiguration",
+        "com.coremedia.caas.web.CaasWebAutoConfiguration", // excluded in favour of CommerceCaasAutoConfiguration
 })
+@ComponentScan("com.coremedia.cap.undoc.common.spring") // required because component loader in not active here
 public class HeadlessServerCommerceApp {
 
   private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
