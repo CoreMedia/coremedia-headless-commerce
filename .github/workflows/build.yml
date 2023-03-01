@@ -23,6 +23,8 @@ jobs:
     env:
       PLUGINS_NEXUS_USER: ${{ secrets.PLUGINS_NEXUS_USER }}
       PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+    permissions:
+      contents: write # for advanced-security/maven-dependency-submission-action to to submit dependencies
 
     steps:
       - name: Checkout repository
