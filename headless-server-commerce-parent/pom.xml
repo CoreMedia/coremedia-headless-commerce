@@ -32,7 +32,6 @@
     <cms.version>2301.1</cms.version>
     <springfox.version>3.0.0</springfox.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
-    <caffeine.version>2.9.3</caffeine.version>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
     <showDeprecation>true</showDeprecation>
@@ -77,11 +76,6 @@
         <version>${cms.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.github.ben-manes.caffeine</groupId>
-        <artifactId>caffeine</artifactId>
-        <version>${caffeine.version}</version>
       </dependency>
       <dependency>
         <groupId>com.graphql-java-kickstart</groupId>
