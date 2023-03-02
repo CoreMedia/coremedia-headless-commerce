@@ -1,0 +1,8 @@
+# This file lists CVE vulnerabilities that can be ignored when the app's docker image is scanned.
+# -----------------------------------------------------------------------------------------------
+
+# Spring Web
+# ----------
+# We are not using HttpInvokerServiceExporter in our code and are not affected.
+# See also https://de.tenable.com/security/research/tra-2016-20
+CVE-2016-1000027

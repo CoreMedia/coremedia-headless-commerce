@@ -59,6 +59,7 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
           exit-code: ${{ github.event_name == 'schedule'  && '1' || '0' }}
 
       - name: Upload Trivy scan results to GitHub Security tab
