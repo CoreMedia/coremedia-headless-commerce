@@ -38,6 +38,7 @@
     <showWarnings>true</showWarnings>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
   </properties>
 
   <dependencyManagement>
