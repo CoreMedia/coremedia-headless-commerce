@@ -29,18 +29,22 @@
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <cms.version>2301.1</cms.version>
-    <springfox.version>3.0.0</springfox.version>
-    <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
-    <caffeine.version>2.9.3</caffeine.version>
-    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <maven-failsafe-plugin.version>3.0.0-M9</maven-failsafe-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M9</maven-surefire-plugin.version>
-    <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
+
     <showDeprecation>true</showDeprecation>
     <showWarnings>true</showWarnings>
+
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+
+    <!-- versions managed in project -->
+    <cms.version>2301.1</cms.version>
+    <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
+    <springfox.version>3.0.0</springfox.version>
+
+    <!-- versions managed in spring-boot-starter-parent (overwrites) -->
+    <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
   </properties>
 
   <dependencyManagement>
@@ -79,11 +83,6 @@
         <version>${cms.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.github.ben-manes.caffeine</groupId>
-        <artifactId>caffeine</artifactId>
-        <version>${caffeine.version}</version>
       </dependency>
       <dependency>
         <groupId>com.graphql-java-kickstart</groupId>
@@ -172,12 +171,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven-failsafe-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>

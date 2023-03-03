@@ -1,0 +1,31 @@
+# This file lists CVE vulnerabilities that can be ignored when the app's docker image is scanned.
+# -----------------------------------------------------------------------------------------------
+
+
+# Spring Web
+# ----------
+# We are not using HttpInvokerServiceExporter in our code and are not affected.
+# See also https://de.tenable.com/security/research/tra-2016-20
+CVE-2016-1000027
+
+
+# github.com/aws/aws-sdk-go
+# -------------------------
+# The vulnerable package github.com/aws/aws-sdk-go comes with https://github.com/abtreece/confd (/usr/bin/confd).
+# We should not be affected, because confd (and github.com/aws/aws-sdk-go) is only used locally, not with S3.
+# For further information see GitHub advisories:
+# - https://github.com/google/security-research/security/advisories/GHSA-f5pg-7wfw-84q9
+# - https://github.com/google/security-research/security/advisories/GHSA-7f33-f4f5-xwgw
+CVE-2020-8911
+CVE-2020-8912
+
+
+# golang.org/x/net
+# ----------------
+# The vulnerable package golang.org/x/net comes with https://github.com/abtreece/confd (/usr/bin/confd).
+# CVE-2022-41717: confd doesn't seem to use/accept HTTP/2 requests, hence we should not be affected.
+# CVE-2022-41721: confd doesn't seem to use the vulnerable MaxBytesHandler, hence we should not be affected.
+# CVE-2022-41723: confd doesn't seem to work with HTTP/2 streams and HPACK decoder, hence we should not be affected.
+CVE-2022-41717
+CVE-2022-41721
+CVE-2022-41723
