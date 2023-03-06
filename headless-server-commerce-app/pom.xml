@@ -10,13 +10,7 @@
   </parent>
 
   <artifactId>headless-server-commerce-app</artifactId>
-  <description>Commerce Headless Server Application
-
-    To start the preview headless-server-app, run:
-    mvn spring-boot:run
-
-    To start the live headless-server-app, run:
-    mvn spring-boot:run -Dspring-boot.run.profiles=local,preview</description>
+  <description>Commerce Headless Server Application</description>
 
   <properties>
     <jib.skip>true</jib.skip>

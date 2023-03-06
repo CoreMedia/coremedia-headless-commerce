@@ -10,6 +10,10 @@
   </parent>
 
   <artifactId>headless-server-commerce-lib</artifactId>
+  <description>
+    The implementation of the Commerce Headless Server.
+    Can be started as a separate application or integrated as a CMS project extension.
+  </description>
 
   <properties>
     <!--
