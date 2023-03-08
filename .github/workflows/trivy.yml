@@ -11,6 +11,13 @@ on:
       fail_on_issues:
         type: boolean
         default: false
+    outputs:
+      teams_fact:
+        value: |
+          {
+            "name": "Trivy Image Scan:",
+            "value": "${{ jobs.trivy.outputs.result }}"
+          }
 
 jobs:
   trivy:
@@ -19,6 +26,8 @@ jobs:
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    outputs:
+      result: ${{ job.status }}
 
     steps:
       - name: Checkout repository

@@ -9,7 +9,14 @@
 name: Build
 
 on:
-  workflow_call
+  workflow_call:
+    outputs:
+      teams_fact:
+        value: |
+          {
+            "name": "Maven Build:",
+            "value": "${{ jobs.maven.outputs.result }}"
+          }
 
 jobs:
   maven:
@@ -20,6 +27,8 @@ jobs:
       PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
     permissions:
       contents: write # for advanced-security/maven-dependency-submission-action to to submit dependencies
+    outputs:
+      result: ${{ job.status }}
 
     steps:
       - name: Checkout repository

@@ -17,6 +17,8 @@ on:
       result:
         type: string
         required: true
+      facts:
+        type: string
     secrets:
       webhook:
         required: true
@@ -38,7 +40,8 @@ jobs:
             [
               {
                 "activityTitle": "Notification from ${{ github.repository }}",
-                "activitySubtitle": "Workflow **${{ inputs.workflow }}** finished successfully."
+                "activitySubtitle": "Workflow **${{ inputs.workflow }}** finished successfully.",
+                "facts": ${{ inputs.facts }}
               }
             ]
           actions: |
@@ -62,7 +65,8 @@ jobs:
             [
               {
                 "activityTitle": "Notification from ${{ github.repository }}",
-                "activitySubtitle": "Workflow **${{ inputs.workflow }}** was cancelled."
+                "activitySubtitle": "Workflow **${{ inputs.workflow }}** was cancelled.",
+                "facts": ${{ inputs.facts }}
               }
             ]
           actions: |
@@ -86,7 +90,8 @@ jobs:
             [
               {
                 "activityTitle": "Notification from ${{ github.repository }}",
-                "activitySubtitle": "Workflow **${{ inputs.workflow }}** failed."
+                "activitySubtitle": "Workflow **${{ inputs.workflow }}** failed.",
+                "facts": ${{ inputs.facts }}
               }
             ]
           actions: |

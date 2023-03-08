@@ -45,5 +45,9 @@ jobs:
       workflow: ${{ github.workflow }}
       run_id: ${{ github.run_id }}
       result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
+      facts: |
+        [
+          ${{ join(needs.*.outputs.teams_fact, ',') }}
+        ]
     secrets:
       webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
