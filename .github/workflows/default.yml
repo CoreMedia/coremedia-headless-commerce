@@ -25,12 +25,24 @@ jobs:
     name: CodeQL
     needs: [ build ]
     uses: ./.github/workflows/codeql.yml
-    with:
-      parent_event_name: ${{ github.event_name }}
 
   trivy:
     name: Trivy
     needs: [ build ]
     uses: ./.github/workflows/trivy.yml
     with:
-      parent_event_name: ${{ github.event_name }}
+      fail_on_issues: ${{ github.event_name == 'schedule' }}
+
+  teams:
+    name: MS Teams
+    needs:
+      - build
+      - codeql
+      - trivy
+    if: ${{ !success() && github.event_name == 'schedule' }}
+    uses: ./.github/workflows/teams.yml
+    with:
+      workflow: ${{ github.workflow }}
+      result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
+    secrets:
+      webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}

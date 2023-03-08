@@ -1,0 +1,70 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: MS Teams
+
+on:
+  workflow_call:
+    inputs:
+      workflow:
+        type: string
+        required: true
+      result:
+        type: string
+        required: true
+    secrets:
+      webhook:
+        required: true
+
+jobs:
+  teams:
+    name: Notification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send success notification
+        if: inputs.result == 'success'
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.webhook }}
+          summary: Workflow **${{ inputs.workflow }}** finished successfully.
+          theme_color: 05b222
+          sections: |
+            [
+              {
+                "activityTitle": "Notification from ${{ github.repository }}",
+                "activitySubtitle": "Workflow **${{ inputs.workflow }}** finished successfully."
+              }
+            ]
+
+      - name: Send cancelled notification
+        if: inputs.result == 'cancelled'
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.webhook }}
+          summary: Workflow **${{ inputs.workflow }}** was cancelled.
+          theme_color: 949393
+          sections: |
+            [
+              {
+                "activityTitle": "Notification from ${{ github.repository }}",
+                "activitySubtitle": "Workflow **${{ inputs.workflow }}** was cancelled."
+              }
+            ]
+
+      - name: Send failure notification
+        if: inputs.result == 'failure'
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.webhook }}
+          summary: Workflow **${{ inputs.workflow }}** failed.
+          theme_color: d9534f
+          sections: |
+            [
+              {
+                "activityTitle": "Notification from ${{ github.repository }}",
+                "activitySubtitle": "Workflow **${{ inputs.workflow }}** failed."
+              }
+            ]

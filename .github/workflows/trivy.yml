@@ -8,9 +8,9 @@ name: Trivy
 on:
   workflow_call:
     inputs:
-      parent_event_name:
-        type: string
-        required: true
+      fail_on_issues:
+        type: boolean
+        default: false
 
 jobs:
   trivy:
@@ -56,31 +56,9 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
-          exit-code: ${{ inputs.parent_event_name == 'schedule'  && '1' || '0' }}
+          exit-code: ${{ inputs.fail_on_issues && '1' || '0' }}
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results.sarif'
-
-      - name: Send cancelled notification to MS Teams
-        if: cancelled() && inputs.parent_event_name == 'schedule'
-        uses: simbo/msteams-message-card-action@v1
-        with:
-          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
-          title: Notification from ${{ github.repository }}
-          message: Workflow **${{ github.workflow }}** was cancelled.
-          color: 949393
-          buttons: |
-            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-      - name: Send failure notification to MS Teams
-        if: failure() && inputs.parent_event_name == 'schedule'
-        uses: simbo/msteams-message-card-action@v1
-        with:
-          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
-          title: Notification from ${{ github.repository }}
-          message: Workflow **${{ github.workflow }}** failed.
-          color: d9534f
-          buttons: |
-            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
