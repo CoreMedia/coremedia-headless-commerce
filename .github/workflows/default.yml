@@ -23,12 +23,14 @@ jobs:
 
   codeql:
     name: CodeQL
+    needs: [ build ]
     uses: ./.github/workflows/codeql.yml
     with:
       parent_event_name: ${{ github.event_name }}
 
   trivy:
     name: Trivy
+    needs: [ build ]
     uses: ./.github/workflows/trivy.yml
     with:
       parent_event_name: ${{ github.event_name }}
