@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Trivy Image Scan
+name: Trivy
 
 on:
   workflow_call:
@@ -13,8 +13,8 @@ on:
         required: true
 
 jobs:
-  build:
-    name: Build and Scan
+  trivy:
+    name: Image Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read # for actions/checkout to fetch code

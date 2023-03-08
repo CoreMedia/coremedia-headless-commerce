@@ -18,7 +18,7 @@ on:
 
 jobs:
   build:
-    name: Build with Maven
+    name: Build
     uses: ./.github/workflows/build.yml
 
   codeql:
@@ -28,7 +28,7 @@ jobs:
       parent_event_name: ${{ github.event_name }}
 
   trivy:
-    name: Trivy Image Scan
+    name: Trivy
     uses: ./.github/workflows/trivy.yml
     with:
       parent_event_name: ${{ github.event_name }}
