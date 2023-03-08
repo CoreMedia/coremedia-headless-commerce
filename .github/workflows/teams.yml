@@ -11,6 +11,9 @@ on:
       workflow:
         type: string
         required: true
+      run_id:
+        type: string
+        required: true
       result:
         type: string
         required: true
@@ -38,6 +41,15 @@ jobs:
                 "activitySubtitle": "Workflow **${{ inputs.workflow }}** finished successfully."
               }
             ]
+          actions: |
+            [
+              {
+                "@type": "OpenUri", "name": "View Workflow Run",
+                "targets": [
+                  { "os": "default", "uri": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_id }}" }
+                ]
+              }
+            ]
 
       - name: Send cancelled notification
         if: inputs.result == 'cancelled'
@@ -53,6 +65,15 @@ jobs:
                 "activitySubtitle": "Workflow **${{ inputs.workflow }}** was cancelled."
               }
             ]
+          actions: |
+            [
+              {
+                "@type": "OpenUri", "name": "View Workflow Run",
+                "targets": [
+                  { "os": "default", "uri": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_id }}" }
+                ]
+              }
+            ]
 
       - name: Send failure notification
         if: inputs.result == 'failure'
@@ -66,5 +87,14 @@ jobs:
               {
                 "activityTitle": "Notification from ${{ github.repository }}",
                 "activitySubtitle": "Workflow **${{ inputs.workflow }}** failed."
+              }
+            ]
+          actions: |
+            [
+              {
+                "@type": "OpenUri", "name": "View Workflow Run",
+                "targets": [
+                  { "os": "default", "uri": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_id }}" }
+                ]
               }
             ]
