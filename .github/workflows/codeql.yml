@@ -12,14 +12,11 @@
 name: "CodeQL"
 
 on:
-  push:
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-    paths-ignore: [ '**/*.md', '**/*.txt' ]
-  schedule:
-    - cron: '27 4 * * 4'
+  workflow_call:
+    inputs:
+      parent_event_name:
+        type: string
+        required: true
 
 jobs:
   analyze:
@@ -80,7 +77,7 @@ jobs:
           category: "/language:${{matrix.language}}"
 
       - name: Send cancelled notification to MS Teams
-        if: cancelled() && github.event_name == 'schedule'
+        if: cancelled() && inputs.parent_event_name == 'schedule'
         uses: simbo/msteams-message-card-action@v1
         with:
           webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
@@ -91,7 +88,7 @@ jobs:
             View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Send failure notification to MS Teams
-        if: failure() && github.event_name == 'schedule'
+        if: failure() && inputs.parent_event_name == 'schedule'
         uses: simbo/msteams-message-card-action@v1
         with:
           webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}

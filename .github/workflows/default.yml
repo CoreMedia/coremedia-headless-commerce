@@ -1,0 +1,34 @@
+# This is the workflow pipeline that runs the default build and checks that are
+# needed for this repository. It is triggered by commits on the base branches
+# and in pull requests to execute the differential checks that are required the
+# pull request. Furthermore, it is triggered regularly to notify about recent
+# security issues or other external changes that may break the project checks.
+
+name: Default Pipeline
+
+on:
+  push:
+    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+  pull_request:
+    # For the CodeQL workflow, the branches below must be a subset of the branches above.
+    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+    paths-ignore: [ '**/*.md' ]
+  schedule:
+    - cron: '27 11 * * 4'
+
+jobs:
+  build:
+    name: Build with Maven
+    uses: ./.github/workflows/build.yml
+
+  codeql:
+    name: CodeQL
+    uses: ./.github/workflows/codeql.yml
+    with:
+      parent_event_name: ${{ github.event_name }}
+
+  trivy:
+    name: Trivy Image Scan
+    uses: ./.github/workflows/trivy.yml
+    with:
+      parent_event_name: ${{ github.event_name }}
