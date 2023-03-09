@@ -9,6 +9,11 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
+
+# This workflow requires the 'Build' workflow to be successfully executed first
+# (at least when POM changes have been introduced), because it makes use of the
+# cache local Maven repository.
+
 name: CodeQL
 
 on:
