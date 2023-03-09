@@ -9,26 +9,33 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: "CodeQL"
+
+# This workflow requires the 'Build' workflow to be successfully executed first
+# (at least when POM changes have been introduced), because it makes use of the
+# cache local Maven repository.
+
+name: CodeQL
 
 on:
-  push:
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-    paths-ignore: [ '**/*.md', '**/*.txt' ]
-  schedule:
-    - cron: '27 4 * * 4'
+  workflow_call:
+    outputs:
+      teams_fact:
+        value: |
+          {
+            "name": "CodeQL Analysis:",
+            "value": "${{ jobs.codeql.outputs.result }}"
+          }
 
 jobs:
-  analyze:
-    name: Analyze
+  codeql:
+    name: Analysis
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
+    outputs:
+      result: ${{ job.status }}
 
     strategy:
       fail-fast: false
@@ -78,25 +85,3 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{matrix.language}}"
-
-      - name: Send cancelled notification to MS Teams
-        if: cancelled() && github.event_name == 'schedule'
-        uses: simbo/msteams-message-card-action@v1
-        with:
-          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
-          title: Notification from ${{ github.repository }}
-          message: Workflow **${{ github.workflow }}** was cancelled.
-          color: 949393
-          buttons: |
-            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-      - name: Send failure notification to MS Teams
-        if: failure() && github.event_name == 'schedule'
-        uses: simbo/msteams-message-card-action@v1
-        with:
-          webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
-          title: Notification from ${{ github.repository }}
-          message: Workflow **${{ github.workflow }}** failed.
-          color: d9534f
-          buttons: |
-            View Workflow Run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

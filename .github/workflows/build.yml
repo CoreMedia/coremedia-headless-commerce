@@ -6,25 +6,42 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
+# This workflow runs the default build and recreates the local Maven repository
+# cache whenever POM changes are detected. The cache is stored for later use by
+# this and other workflows. As downloading all Maven artifacts to build up the
+# local repository and cache it can take very long, please follow these rules:
+# - Further pipeline workflows executing Maven builds should depend on this one.
+# - This workflow should run all Maven goals and profiles that are also needed
+#   by the dependants, so that all required artifacts are cached.
+
 name: Build
 
 on:
-  push:
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-    paths-ignore: [ '**/*.md' ]
-  pull_request:
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-    paths-ignore: [ '**/*.md' ]
+  workflow_call:
+    secrets:
+      nexus_user:
+        required: true
+      nexus_password:
+        required: true
+    outputs:
+      teams_fact:
+        value: |
+          {
+            "name": "Maven Build:",
+            "value": "${{ jobs.maven.outputs.result }}"
+          }
 
 jobs:
-  build:
-    name: Build with Maven
+  maven:
+    name: Maven
     runs-on: ubuntu-latest
     env:
-      PLUGINS_NEXUS_USER: ${{ secrets.PLUGINS_NEXUS_USER }}
-      PLUGINS_NEXUS_PASSWORD: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+      PLUGINS_NEXUS_USER: ${{ secrets.nexus_user }}
+      PLUGINS_NEXUS_PASSWORD: ${{ secrets.nexus_password }}
     permissions:
       contents: write # for advanced-security/maven-dependency-submission-action to to submit dependencies
+    outputs:
+      result: ${{ job.status }}
 
     steps:
       - name: Checkout repository

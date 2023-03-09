@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>headless-server-commerce-base-lib</artifactId>
-  <description>Implementation of the commerce headless server.</description>
+  <description>The base implementation of the Commerce Headless Server</description>
 
   <dependencies>
     <dependency>

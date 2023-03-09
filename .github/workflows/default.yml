@@ -1,0 +1,56 @@
+# This is the workflow pipeline that runs the default build and checks that are
+# needed for this repository. It is triggered by commits on the base branches
+# and in pull requests to execute the differential checks that are required the
+# pull request. Furthermore, it is triggered regularly to notify about recent
+# security issues or other external changes that may break the project checks.
+
+name: Default Pipeline
+
+on:
+  push:
+    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+  pull_request:
+    # For the CodeQL workflow, the branches below must be a subset of the branches above.
+    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
+    paths-ignore: [ '**/*.md' ]
+  schedule:
+    - cron: '27 11 * * 4'
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+    secrets:
+      nexus_user: ${{ secrets.PLUGINS_NEXUS_USER }}
+      nexus_password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+
+  codeql:
+    name: CodeQL
+    needs: [ build ]
+    uses: ./.github/workflows/codeql.yml
+
+  trivy:
+    name: Trivy
+    needs: [ build ]
+    uses: ./.github/workflows/trivy.yml
+    with:
+      fail_on_issues: ${{ github.event_name == 'schedule' }}
+
+  teams:
+    name: MS Teams
+    needs:
+      - build
+      - codeql
+      - trivy
+    if: ${{ !success() && github.event_name == 'schedule' }}
+    uses: ./.github/workflows/teams.yml
+    with:
+      workflow: ${{ github.workflow }}
+      run_id: ${{ github.run_id }}
+      result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
+      facts: |
+        [
+          ${{ join(needs.*.outputs.teams_fact, ',') }}
+        ]
+    secrets:
+      webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
