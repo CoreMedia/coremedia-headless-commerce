@@ -45,10 +45,19 @@
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
     <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
     <snakeyaml.version>1.33</snakeyaml.version>
+    <spring-framework.version>5.3.25</spring-framework.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- Override Spring Framework dependency versions. This import must precede the imports of the CMS BOMs. -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring-framework.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>com.coremedia.cms</groupId>
         <artifactId>common-core-bom</artifactId>
@@ -145,6 +154,8 @@
           <version>${sortpom-maven-plugin.version}</version>
           <configuration>
             <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+            <!-- Sorting dependencies in dependency management would break BOM import precedence. -->
+            <sortDependencyManagement>NONE</sortDependencyManagement>
             <sortDependencies>groupId,artifactId</sortDependencies>
             <sortPlugins>groupId,artifactId</sortPlugins>
             <sortModules>true</sortModules>
