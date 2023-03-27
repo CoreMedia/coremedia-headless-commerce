@@ -7,9 +7,7 @@
 
 import com.coremedia.cm.DockerAgent
 import com.coremedia.cm.Jenkins
-import com.coremedia.cm.nexus.NexusStagingAction
 import com.coremedia.comhub.ComhubHelper
-import com.coremedia.comhub.releases.dto.ReleaseState
 
 @org.jenkinsci.plugins.workflow.libs.Library(['coremedia-internal', 'coremedia-commerce', 'coremedia-aws']) _
 
@@ -214,31 +212,6 @@ pipeline {
         beforeAgent true
       }
       stages {
-        stage('Stage Maven Artifacts') {
-          when {
-            expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-            beforeAgent true
-          }
-          agent {
-            docker {
-              image DOCKER_IMAGE_MAVEN
-              args "${DockerAgent.defaultMavenArgs} ${DockerAgent.defaultDockerArgs}"
-              reuseNode true
-            }
-          }
-          steps {
-            script {
-              String stagingRepositoryId =
-                      cmNexusStaging(action: NexusStagingAction.start, dryRun: isTestMode,
-                              description: "Release ${PROJECT_NAME}-${version}")
-              cmNexusStaging(action: NexusStagingAction.mavenDeploy, dryRun: isTestMode,
-                      stagedRepositoryId: stagingRepositoryId,
-                      localStagingDir: RELEASE_LOCAL_STAGING_DIR)
-              cmNexusStaging(action: NexusStagingAction.close, dryRun: isTestMode,
-                      stagedRepositoryId: stagingRepositoryId)
-            }
-          }
-        }
         stage('Push Docker Image') {
           when {
             expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
