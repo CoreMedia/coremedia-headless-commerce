@@ -19,10 +19,17 @@ on:
 jobs:
   build:
     name: Build
-    uses: ./.github/workflows/build.yml
+    uses: CoreMedia/github-actions/.github/workflows/maven.yml@v0.1.0
+    with:
+      maven_command: |
+        mvn --batch-mode --fail-at-end \
+            install javadoc:javadoc \
+            -Pintegration-test,default-image,docs-third-party \
+            -Dsort.verifyFail=stop
+      maven_repo_server_id: coremedia.external.releases
     secrets:
-      nexus_user: ${{ secrets.PLUGINS_NEXUS_USER }}
-      nexus_password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+      maven_repo_user: ${{ secrets.PLUGINS_NEXUS_USER }}
+      maven_repo_password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
 
   codeql:
     name: CodeQL
