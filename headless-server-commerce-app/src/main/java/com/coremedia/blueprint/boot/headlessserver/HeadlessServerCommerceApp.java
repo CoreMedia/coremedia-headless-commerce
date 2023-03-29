@@ -19,7 +19,9 @@ import static java.lang.invoke.MethodHandles.lookup;
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientHealthAutoConfiguration",
         "net.devh.boot.grpc.client.autoconfigure.GrpcClientMetricAutoConfiguration",
         "com.coremedia.blueprint.caas.p13n.P13nAutoConfiguration",
-        "com.coremedia.caas.web.CaasWebAutoConfiguration", // excluded in favour of CommerceCaasAutoConfiguration
+        // Exclude auto configurations from headless-server-web in favour of CommerceCaasAutoConfiguration.
+        "com.coremedia.caas.web.CaasWebAutoConfiguration",
+        "com.coremedia.caas.web.CaasMediaAutoConfiguration",
 })
 @ComponentScan("com.coremedia.cap.undoc.common.spring") // required because component loader in not active here
 public class HeadlessServerCommerceApp {
