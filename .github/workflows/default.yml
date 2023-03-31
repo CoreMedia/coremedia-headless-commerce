@@ -39,8 +39,24 @@ jobs:
   trivy:
     name: Trivy
     needs: [ build ]
-    uses: ./.github/workflows/trivy.yml
+    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@v0.1.0
     with:
+      build_image_command: |
+        mvn --batch-mode \
+            --file headless-server-commerce-app \
+            install \
+            -Pdefault-image \
+            -Dapplication.image-prefix=coremedia \
+            -Dapplication.image-suffix=headless-server-commerce \
+            -Dapplication.image-tag=${{ github.sha }} \
+            -Denforcer.skip=true \
+            -Dmdep.analyze.skip=true \
+            -DskipTests=true \
+            -Dsort.skip=true
+      scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
+      scan_severity: MEDIUM,HIGH,CRITICAL
+      scan_vuln_type: library
+      scan_ignores: '.trivyignore'
       fail_on_issues: ${{ github.event_name == 'schedule' }}
 
   teams:
