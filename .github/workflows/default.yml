@@ -61,19 +61,16 @@ jobs:
 
   teams:
     name: MS Teams
-    needs:
-      - build
-      - codeql
-      - trivy
+    needs: [ build, codeql, trivy ]
     if: ${{ !success() && github.event_name == 'schedule' }}
-    uses: ./.github/workflows/teams.yml
+    uses: CoreMedia/github-actions/.github/workflows/msteams.yml@v0.1.0
     with:
       workflow: ${{ github.workflow }}
       run_id: ${{ github.run_id }}
-      result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
-      facts: |
+      run_result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
+      facts_json: |
         [
-          ${{ join(needs.*.outputs.teams_fact, ',') }}
+          ${{ join(needs.*.outputs.teams_fact_json, ',') }}
         ]
     secrets:
       webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
