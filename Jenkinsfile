@@ -9,7 +9,7 @@ import com.coremedia.cm.DockerAgent
 import com.coremedia.cm.Jenkins
 import com.coremedia.comhub.ComhubHelper
 
-@org.jenkinsci.plugins.workflow.libs.Library(['coremedia-internal', 'coremedia-commerce', 'coremedia-aws']) _
+@org.jenkinsci.plugins.workflow.libs.Library(['coremedia-internal', 'coremedia-commerce', 'coremedia-aws-v2']) _
 
 final String PROJECT_NAME = 'headless-server-commerce'
 
@@ -25,11 +25,11 @@ final Map<String, String> DEFAULT_MAVEN_PARAMS = [
         'application.image-prefix'   : DOCKER_SNAPSHOTS_REGISTRY,
         'jib.allowInsecureRegistries': 'true',
         'jib.goal'                   : 'build',
-        'enforcer.skip'           : 'true',
-        'mdep.analyze.skip'       : 'true',
-        'sort.skip'               : 'true',
-        'sort.verifyFail'         : 'stop',
-        'skipTests'               : 'true',
+        'enforcer.skip'              : 'true',
+        'mdep.analyze.skip'          : 'true',
+        'sort.skip'                  : 'true',
+        'sort.verifyFail'            : 'stop',
+        'skipTests'                  : 'true',
 ].asImmutable()
 
 final String GITHUB_COMMIT_STATUS_CONTEXT = "${PROJECT_NAME} pipeline"
@@ -53,6 +53,7 @@ pipeline {
   }
 
   options {
+    disableResume()
     timestamps()
     timeout(time: 1, unit: 'HOURS')
     buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '10'))
@@ -88,7 +89,7 @@ pipeline {
 
     stage('Maven') {
       when {
-        expression { isDefaultBuild || isReleaseStaging}
+        expression { isDefaultBuild || isReleaseStaging }
         beforeAgent true
       }
       agent {
@@ -102,10 +103,10 @@ pipeline {
         stage('Set Version') {
           steps {
             cmMaven(cmd: 'versions:set',
-                    mavenParams: ['newVersion'        : "${version}",
-                                  'generateBackupPoms': 'false',
+                    mavenParams: ['newVersion'            : "${version}",
+                                  'generateBackupPoms'    : 'false',
                                   'updateMatchingVersions': 'false', // https://stackoverflow.com/questions/16865743/updating-the-versions-in-a-maven-multi-module-project
-                                  'processAllModules' : 'true'],
+                                  'processAllModules'     : 'true'],
                     scanMvnLog: true,
             )
           }
@@ -189,7 +190,7 @@ pipeline {
     }
     stage('Checks Sonar Results') {
       when {
-        expression { isDefaultBuild || isReleaseStaging}
+        expression { isDefaultBuild || isReleaseStaging }
         beforeAgent true
       }
       agent {
