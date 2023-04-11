@@ -34,7 +34,9 @@ jobs:
   codeql:
     name: CodeQL
     needs: [ build ]
-    uses: ./.github/workflows/codeql.yml
+    uses: CoreMedia/github-actions/.github/workflows/codeql.yml@v0.1.0
+    with:
+      languages: "['java']"
 
   trivy:
     name: Trivy
