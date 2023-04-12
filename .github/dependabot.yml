@@ -18,9 +18,9 @@ updates:
     reviewers:
       - 'CoreMedia/toko'
     registries:
-      - maven-github
+      - coremedia-cms-releases
 registries:
-  maven-github:
+  coremedia-cms-releases:
     type: maven-repository
     url: https://repository.coremedia.com/nexus/content/groups/cms
     username: ${{ secrets.PLUGINS_NEXUS_USER }}
