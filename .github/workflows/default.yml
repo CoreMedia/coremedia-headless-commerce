@@ -37,6 +37,7 @@ jobs:
     uses: CoreMedia/github-actions/.github/workflows/codeql.yml@v0.1.0
     with:
       languages: "['java']"
+      queries: security-and-quality
 
   trivy:
     name: Trivy
