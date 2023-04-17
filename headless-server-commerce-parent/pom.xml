@@ -45,7 +45,7 @@
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
     <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
     <snakeyaml.version>1.33</snakeyaml.version>
-    <spring-framework.version>5.3.26</spring-framework.version>
+    <spring-framework.version>5.3.27</spring-framework.version>
   </properties>
 
   <dependencyManagement>
