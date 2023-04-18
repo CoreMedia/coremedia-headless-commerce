@@ -46,6 +46,9 @@
     <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
     <snakeyaml.version>1.33</snakeyaml.version>
     <spring-framework.version>5.3.27</spring-framework.version>
+
+    <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
+    <json.version>20230227</json.version>
   </properties>
 
   <dependencyManagement>
@@ -104,6 +107,12 @@
         <artifactId>springfox-swagger-ui</artifactId>
         <version>${springfox.version}</version>
         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <!-- Only a transitive dependency, but must be managed to mitigate CVEs -->
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${json.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
