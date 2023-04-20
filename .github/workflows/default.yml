@@ -48,5 +48,5 @@ jobs:
             }]
             
       - name: 'Build with Maven'
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn --batch-mode --fail-at-end install javadoc:javadoc -Pintegration-test,default-image,docs-third-party -Dsort.verifyFail=stop
   
