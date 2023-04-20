@@ -132,14 +132,6 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-      <id>central-early-bird</id>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </repository>
-    <repository>
-      <!-- configure central repo as first one to force Maven to look first here for artifacts instead of into the incredibly slow repository.coremedia.com -->
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <id>look-here-first</id>
       <url>https://repo1.maven.org/maven2/</url>
     </repository>
