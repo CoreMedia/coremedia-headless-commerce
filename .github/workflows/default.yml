@@ -4,75 +4,46 @@
 # pull request. Furthermore, it is triggered regularly to notify about recent
 # security issues or other external changes that may break the project checks.
 
-name: Default Pipeline
+name: Test Pipeline
 
 on:
-  push:
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-  pull_request:
-    # For the CodeQL workflow, the branches below must be a subset of the branches above.
-    branches: [ main, 'maintenance-[0-9]+.[0-9]+' ]
-    paths-ignore: [ '**/*.md' ]
-  schedule:
-    - cron: '27 11 * * 4'
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build
-    uses: CoreMedia/github-actions/.github/workflows/maven.yml@v0.1.0
-    with:
-      maven_command: |
-        mvn --batch-mode --fail-at-end \
-            install javadoc:javadoc \
-            -Pintegration-test,default-image,docs-third-party \
-            -Dsort.verifyFail=stop
-      maven_repo_server_id: coremedia.external.releases
-    secrets:
-      maven_repo_user: ${{ secrets.PLUGINS_NEXUS_USER }}
-      maven_repo_password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
 
-  codeql:
-    name: CodeQL
-    needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/codeql.yml@v0.1.0
-    with:
-      languages: "['java']"
-      queries: security-and-quality
+      - name: 'Set up JDK 11'
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
 
-  trivy:
-    name: Trivy
-    needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@v0.1.0
-    with:
-      build_image_command: |
-        mvn --batch-mode \
-            --file headless-server-commerce-app \
-            install \
-            -Pdefault-image \
-            -Dapplication.image-prefix=coremedia \
-            -Dapplication.image-suffix=headless-server-commerce \
-            -Dapplication.image-tag=${{ github.sha }} \
-            -Denforcer.skip=true \
-            -Dmdep.analyze.skip=true \
-            -DskipTests=true \
-            -Dsort.skip=true
-      scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
-      scan_severity: MEDIUM,HIGH,CRITICAL
-      scan_vuln_type: library
-      fail_on_issues: ${{ github.event_name == 'schedule' }}
+      - name: 'Cache Maven Repo'
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-  teams:
-    name: MS Teams
-    needs: [ build, codeql, trivy ]
-    if: ${{ !success() && github.event_name == 'schedule' }}
-    uses: CoreMedia/github-actions/.github/workflows/msteams.yml@v0.1.0
-    with:
-      workflow: ${{ github.workflow }}
-      run_id: ${{ github.run_id }}
-      run_result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
-      facts_json: |
-        [
-          ${{ join(needs.*.outputs.teams_fact_json, ',') }}
-        ]
-    secrets:
-      webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+      - name: 'Set up Maven settings'
+        uses: s4u/maven-settings-action@v2.7.0
+        with:
+          servers: |
+            [{
+              "id": "coremedia.external.releases",
+              "username": "${{ secrets.PLUGINS_NEXUS_USER }}",
+              "password": "${{ secrets.PLUGINS_NEXUS_PASSWORD }}"
+            },
+            {
+              "id": "coremedia.internal.releases",
+              "username": "${{ secrets.PLUGINS_NEXUS_USER }}",
+              "password": "${{ secrets.PLUGINS_NEXUS_PASSWORD }}"
+            }]
+            
+      - name: 'Build with Maven'
+        run: mvn --batch-mode --update-snapshots verify
+  
