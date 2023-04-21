@@ -23,7 +23,7 @@ jobs:
     with:
       maven_command: |
         mvn --batch-mode --fail-at-end \
-            install javadoc:javadoc \
+            clean install javadoc:javadoc \
             -Pintegration-test,default-image,docs-third-party \
             -Dsort.verifyFail=stop
       maven_repo_server_id: coremedia.external.releases
