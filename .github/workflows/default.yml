@@ -26,7 +26,7 @@ jobs:
             clean install javadoc:javadoc \
             -Pintegration-test,default-image,docs-third-party \
             -Dsort.verifyFail=stop
-      maven_repo_server_id: coremedia.external.releases
+      maven_settings: .github/workflows/.m2/settings.xml
     secrets:
       maven_repo_user: ${{ secrets.PLUGINS_NEXUS_USER }}
       maven_repo_password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
