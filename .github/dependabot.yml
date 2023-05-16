@@ -9,14 +9,17 @@ updates:
     directory: '/'
     schedule:
       interval: weekly
-    reviewers:
-      - 'CoreMedia/toko'
+    labels:
+      - dependencies
+      - toko
   - package-ecosystem: maven
     directory: '/'
     schedule:
       interval: weekly
-    reviewers:
-      - 'CoreMedia/toko'
+    labels:
+      - dependencies
+      - java
+      - toko
     registries:
       - coremedia-cms-releases
 registries:
