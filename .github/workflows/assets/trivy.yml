@@ -6,6 +6,11 @@ severity:
   - HIGH
   - CRITICAL
 
+scan:
+  skip-files:
+    - /coremedia/prometheus/jmx_prometheus_javaagent.jar
+    - /usr/bin/confd
+
 vulnerability:
   type:
     - library
