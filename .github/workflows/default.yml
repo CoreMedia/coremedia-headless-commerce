@@ -62,8 +62,7 @@ jobs:
             -DskipTests=true \
             -Dsort.skip=true
       scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
-      scan_severity: MEDIUM,HIGH,CRITICAL
-      scan_vuln_type: library
+      scan_config: .github/workflows/assets/trivy.yml
       fail_on_issues: ${{ github.event_name == 'schedule' }}
 
   teams:
