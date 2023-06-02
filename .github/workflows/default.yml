@@ -16,6 +16,11 @@ on:
   schedule:
     - cron: '27 11 * * 4'
 
+permissions:
+  actions: read
+  contents: write
+  security-events: write
+
 jobs:
   build:
     name: Build
