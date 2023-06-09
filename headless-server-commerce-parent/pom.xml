@@ -38,6 +38,7 @@
     <!-- versions managed in project -->
     <cms.version>2301.2</cms.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
+    <jetty.version>9.4.51.v20230217</jetty.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
@@ -53,8 +54,16 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Override Spring Framework dependency versions. This import must precede the imports of the CMS BOMs. -->
       <dependency>
+        <!-- Override Jetty dependency versions. This import must precede the imports of the CMS BOMs. -->
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-bom</artifactId>
+        <version>${jetty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <!-- Override Spring Framework dependency versions. This import must precede the imports of the CMS BOMs. -->
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
         <version>${spring-framework.version}</version>
