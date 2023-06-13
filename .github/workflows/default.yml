@@ -63,7 +63,6 @@ jobs:
             -Dsort.skip=true
       scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
       scan_config: .github/workflows/assets/trivy.yml
-      fail_on_issues: ${{ github.event_name == 'schedule' }}
 
   teams:
     name: MS Teams
