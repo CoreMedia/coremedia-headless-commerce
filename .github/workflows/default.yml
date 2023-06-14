@@ -24,7 +24,7 @@ permissions:
 jobs:
   build:
     name: Build
-    uses: CoreMedia/github-actions/.github/workflows/maven.yml@v0.2.0
+    uses: CoreMedia/github-actions/.github/workflows/maven.yml@github-support/2194869/showcase-callee
     with:
       maven_command: |
         mvn --batch-mode --fail-at-end \
