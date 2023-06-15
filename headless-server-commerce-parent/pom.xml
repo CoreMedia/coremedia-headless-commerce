@@ -44,6 +44,7 @@
     <springfox.version>3.0.0</springfox.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
+    <graphql-java.version>19.6</graphql-java.version>
     <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
     <snakeyaml.version>2.0</snakeyaml.version>
     <spring-framework.version>5.3.28</spring-framework.version>
@@ -119,6 +120,11 @@
             <artifactId>snappy-java</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-java</artifactId>
+        <version>${graphql-java.version}</version>
       </dependency>
       <dependency>
         <groupId>com.graphql-java-kickstart</groupId>
