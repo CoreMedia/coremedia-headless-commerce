@@ -21,6 +21,9 @@ permissions:
   contents: write
   security-events: write
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   build:
     name: Build
