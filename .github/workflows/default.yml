@@ -47,7 +47,7 @@ jobs:
   trivy:
     name: Trivy
     needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@v0.3.0
+    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@toko/NOISSUE/Ignore-Dependabot-CVEs-from-Trivy-scans
     with:
       build_image_command: |
         mvn --batch-mode \
@@ -63,6 +63,7 @@ jobs:
             -Dsort.skip=true
       scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
       scan_config: .github/workflows/assets/trivy.yml
+      ignore_unfixed_dependabot_cves: true
 
   teams:
     name: MS Teams
