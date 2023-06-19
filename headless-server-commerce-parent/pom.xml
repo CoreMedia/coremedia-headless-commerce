@@ -49,7 +49,7 @@
     <spring-framework.version>5.3.27</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
-    <json.version>20230227</json.version>
+    <json.version>20230618</json.version>
   </properties>
 
   <dependencyManagement>
