@@ -38,12 +38,14 @@
     <!-- versions managed in project -->
     <cms.version>2304.1</cms.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
+    <guava.version>32.0.1-jre</guava.version>
     <jetty.version>9.4.51.v20230217</jetty.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
+    <graphql-java.version>19.6</graphql-java.version>
     <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
     <snakeyaml.version>2.0</snakeyaml.version>
     <spring-framework.version>5.3.28</spring-framework.version>
@@ -119,6 +121,39 @@
             <artifactId>snappy-java</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+        <exclusions>
+          <!-- Going with the same exclusions that are defined in com.coremedia.cms:common-thirdparty-bom -->
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>listenablefuture</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.j2objc</groupId>
+            <artifactId>j2objc-annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-java</artifactId>
+        <version>${graphql-java.version}</version>
       </dependency>
       <dependency>
         <groupId>com.graphql-java-kickstart</groupId>
