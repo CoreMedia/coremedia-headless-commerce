@@ -38,6 +38,7 @@
     <!-- versions managed in project -->
     <cms.version>2304.1</cms.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
+    <guava.version>32.0.1-jre</guava.version>
     <jetty.version>9.4.51.v20230217</jetty.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
@@ -118,6 +119,34 @@
           <exclusion>
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+        <exclusions>
+          <!-- Going with the same exclusions that are defined in com.coremedia.cms:common-thirdparty-bom -->
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>listenablefuture</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.google.j2objc</groupId>
+            <artifactId>j2objc-annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
