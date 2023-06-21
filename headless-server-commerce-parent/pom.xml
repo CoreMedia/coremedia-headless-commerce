@@ -38,7 +38,6 @@
     <!-- versions managed in project -->
     <cms.version>2304.1</cms.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
-    <guava.version>32.0.1-jre</guava.version>
     <jetty.version>9.4.51.v20230217</jetty.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
@@ -46,16 +45,27 @@
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
     <graphql-java.version>19.6</graphql-java.version>
+    <netty.version>4.1.94.Final</netty.version>
     <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
     <snakeyaml.version>2.0</snakeyaml.version>
     <spring-framework.version>5.3.28</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
+    <guava.version>32.0.1-jre</guava.version>
+    <htmlcleaner.version>2.29</htmlcleaner.version>
     <json.version>20230618</json.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <!-- Override Netty dependency versions. This import must precede the imports of the CMS BOMs. -->
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>${netty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <!-- Override Jetty dependency versions. This import must precede the imports of the CMS BOMs. -->
         <groupId>org.eclipse.jetty</groupId>
@@ -172,6 +182,11 @@
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>${json.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sourceforge.htmlcleaner</groupId>
+        <artifactId>htmlcleaner</artifactId>
+        <version>${htmlcleaner.version}</version>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
