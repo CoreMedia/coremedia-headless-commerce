@@ -38,7 +38,6 @@
     <!-- versions managed in project -->
     <cms.version>2304.1</cms.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
-    <guava.version>32.0.1-jre</guava.version>
     <jetty.version>9.4.51.v20230217</jetty.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
@@ -51,6 +50,7 @@
     <spring-framework.version>5.3.28</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
+    <guava.version>32.0.1-jre</guava.version>
     <json.version>20230618</json.version>
   </properties>
 
