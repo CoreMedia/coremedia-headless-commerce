@@ -44,7 +44,7 @@
     <springfox.version>3.0.0</springfox.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
-    <graphql-java.version>19.6</graphql-java.version>
+    <graphql-java.version>20.4</graphql-java.version>
     <netty.version>4.1.94.Final</netty.version>
     <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
     <snakeyaml.version>2.0</snakeyaml.version>
