@@ -51,7 +51,7 @@
     <spring-framework.version>5.3.28</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
-    <guava.version>32.0.1-jre</guava.version>
+    <guava.version>32.1.1-jre</guava.version>
     <htmlcleaner.version>2.29</htmlcleaner.version>
     <json.version>20230618</json.version>
   </properties>
