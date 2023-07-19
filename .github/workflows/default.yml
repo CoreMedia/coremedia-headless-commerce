@@ -32,9 +32,7 @@ jobs:
             -Pintegration-test,default-image,docs-third-party \
             -Dsort.verifyFail=stop
       maven_settings: .github/workflows/assets/settings.xml
-    secrets:
-      maven_repo_user: ${{ secrets.PLUGINS_NEXUS_USER }}
-      maven_repo_password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+    secrets: inherit
 
   codeql:
     name: CodeQL
