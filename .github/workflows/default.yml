@@ -31,7 +31,7 @@ jobs:
             clean install javadoc:javadoc \
             -Pintegration-test,default-image,docs-third-party \
             -Dsort.verifyFail=stop
-      maven_settings: .github/workflows/assets/settings.xml
+      maven_settings: .github/workflows/config/settings.xml
     secrets: inherit
 
   codeql:
@@ -41,6 +41,7 @@ jobs:
     with:
       languages: "['java']"
       queries: security-and-quality
+      maven_settings: .github/workflows/config/settings.xml
 
   trivy:
     name: Trivy
@@ -59,8 +60,9 @@ jobs:
             -Dmdep.analyze.skip=true \
             -DskipTests=true \
             -Dsort.skip=true
+      maven_settings: .github/workflows/config/settings.xml
       scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
-      scan_config: .github/workflows/assets/trivy.yml
+      scan_config: .github/workflows/config/trivy.yml
 
   teams:
     name: MS Teams
