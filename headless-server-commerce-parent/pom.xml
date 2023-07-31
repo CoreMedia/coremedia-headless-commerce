@@ -40,7 +40,7 @@
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
     <jetty.version>9.4.51.v20230217</jetty.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
-    <sortpom-maven-plugin.version>3.2.1</sortpom-maven-plugin.version>
+    <sortpom-maven-plugin.version>3.3.0</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
