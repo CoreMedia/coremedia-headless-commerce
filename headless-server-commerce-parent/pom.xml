@@ -179,12 +179,6 @@
         <scope>runtime</scope>
       </dependency>
       <dependency>
-        <!-- Only a transitive dependency, but must be managed to mitigate CVEs -->
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>${json.version}</version>
-      </dependency>
-      <dependency>
         <groupId>net.sourceforge.htmlcleaner</groupId>
         <artifactId>htmlcleaner</artifactId>
         <version>${htmlcleaner.version}</version>
@@ -194,6 +188,12 @@
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk18on</artifactId>
         <version>${bouncycastle.version}</version>
+      </dependency>
+      <dependency>
+        <!-- Only a transitive dependency, but must be managed to mitigate CVEs -->
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${json.version}</version>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
