@@ -24,7 +24,7 @@ permissions:
 jobs:
   build:
     name: Build
-    uses: CoreMedia/github-actions/.github/workflows/maven.yml@v0.3.0
+    uses: CoreMedia/github-actions/.github/workflows/maven.yml@v0.4.0
     with:
       maven_command: |
         mvn --batch-mode --fail-at-end \
@@ -39,7 +39,7 @@ jobs:
   codeql:
     name: CodeQL
     needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/codeql.yml@v0.3.0
+    uses: CoreMedia/github-actions/.github/workflows/codeql.yml@v0.4.0
     with:
       languages: "['java']"
       queries: security-and-quality
@@ -47,7 +47,7 @@ jobs:
   trivy:
     name: Trivy
     needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@v0.3.0
+    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@v0.4.0
     with:
       build_image_command: |
         mvn --batch-mode \
@@ -68,7 +68,7 @@ jobs:
     name: MS Teams
     needs: [ build, codeql, trivy ]
     if: ${{ !success() && github.event_name == 'schedule' }}
-    uses: CoreMedia/github-actions/.github/workflows/msteams.yml@v0.3.0
+    uses: CoreMedia/github-actions/.github/workflows/msteams.yml@v0.4.0
     with:
       workflow: ${{ github.workflow }}
       run_id: ${{ github.run_id }}
