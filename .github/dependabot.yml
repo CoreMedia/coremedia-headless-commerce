@@ -26,5 +26,5 @@ registries:
   coremedia-cms-releases:
     type: maven-repository
     url: https://repository.coremedia.com/nexus/content/groups/cms
-    username: ${{ secrets.PLUGINS_NEXUS_USER }}
-    password: ${{ secrets.PLUGINS_NEXUS_PASSWORD }}
+    username: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_USERNAME }}
+    password: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_TOKEN }}
