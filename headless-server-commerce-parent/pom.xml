@@ -39,6 +39,7 @@
     <cms.version>2307.1</cms.version>
     <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
     <jetty.version>10.0.16</jetty.version>
+    <pf4j.version>3.10.0</pf4j.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.3.0</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
@@ -210,6 +211,11 @@
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>${json.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.pf4j</groupId>
+        <artifactId>pf4j</artifactId>
+        <version>${pf4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
