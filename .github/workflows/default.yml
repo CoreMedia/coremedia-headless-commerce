@@ -22,60 +22,87 @@ permissions:
   security-events: write
 
 jobs:
-  build:
-    name: Build
-    uses: CoreMedia/github-actions/.github/workflows/maven.yml@v0.4.0
-    with:
-      maven_command: |
-        mvn --batch-mode --fail-at-end \
-            clean install javadoc:javadoc \
-            -Pintegration-test,default-image,docs-third-party \
-            -Dsort.verifyFail=stop
-      maven_settings: .github/workflows/config/settings.xml
-    secrets: inherit
+  build-and-check:
+    name: Build and Check
+    runs-on: ubuntu-latest
 
-  codeql:
-    name: CodeQL
-    needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/codeql.yml@v0.4.0
-    with:
-      languages: "['java']"
-      queries: security-and-quality
-      maven_settings: .github/workflows/config/settings.xml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
 
-  trivy:
-    name: Trivy
-    needs: [ build ]
-    uses: CoreMedia/github-actions/.github/workflows/trivy-image.yml@v0.4.0
-    with:
-      build_image_command: |
-        mvn --batch-mode \
-            --file headless-server-commerce-app \
-            install \
-            -Pdefault-image \
-            -Dapplication.image-prefix=coremedia \
-            -Dapplication.image-suffix=headless-server-commerce \
-            -Dapplication.image-tag=${{ github.sha }} \
-            -Denforcer.skip=true \
-            -Dmdep.analyze.skip=true \
-            -DskipTests=true \
-            -Dsort.skip=true
-      maven_settings: .github/workflows/config/settings.xml
-      scan_image_ref: "coremedia/headless-server-commerce:${{ github.sha }}"
-      scan_config: .github/workflows/config/trivy.yml
+      - name: Set up JDK
+        uses: actions/setup-java@v3.13.0
+        with:
+          java-version: 11
+          distribution: corretto
+          cache: ${{ !env.ACT && 'maven' || '' }}
 
-  teams:
-    name: MS Teams
-    needs: [ build, codeql, trivy ]
-    if: ${{ !success() && github.event_name == 'schedule' }}
-    uses: CoreMedia/github-actions/.github/workflows/msteams.yml@v0.4.0
-    with:
-      workflow: ${{ github.workflow }}
-      run_id: ${{ github.run_id }}
-      run_result: ${{ contains(join(needs.*.result, ','), 'cancelled') && 'cancelled' || 'failure' }}
-      facts_json: |
-        [
-          ${{ join(needs.*.outputs.teams_fact_json, ',') }}
-        ]
-    secrets:
-      webhook: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+      - name: Overwrite Maven settings
+        run: cp .github/workflows/config/settings.xml ${HOME}/.m2/settings.xml
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2.22.4
+        with:
+          languages: java
+          queries: security-and-quality
+
+      - name: Run Maven Build
+        run: |
+          mvn --batch-mode --fail-at-end \
+              install javadoc:javadoc \
+              -Pintegration-test,default-image,docs-third-party \
+              -Dapplication.image-prefix=coremedia \
+              -Dapplication.image-suffix=headless-server-commerce \
+              -Dapplication.image-tag=${{ github.sha }} \
+              -Dsort.verifyFail=stop
+        env:
+          NEXUS_GITHUB_ACTIONS_READONLY_USERNAME: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_USERNAME }}
+          NEXUS_GITHUB_ACTIONS_READONLY_TOKEN: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_TOKEN }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2.22.4
+        with:
+          category: '/language:java'
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.12.0
+        with:
+          scan-type: image
+          image-ref: "coremedia/headless-server-commerce:${{ github.sha }}"
+          trivy-config: .github/workflows/config/trivy.yml
+          format: sarif
+          output: trivy-results.sarif
+          limit-severities-for-sarif: true
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2.22.4
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Update dependency graph
+        if: github.ref_name == github.event.repository.default_branch
+        uses: advanced-security/maven-dependency-submission-action@v3.0.3
+
+      - name: Send failure notification to MS Teams
+        if: ${{ !success() && github.event_name == 'schedule' }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
+          summary: "Workflow **${{ github.workflow }}** failed."
+          theme_color: d9534f
+          sections: |
+            [
+              {
+                "activityTitle": "Notification from ${{ github.repository }}",
+                "activitySubtitle": "Workflow **${{ github.workflow }}** failed."
+              }
+            ]
+          actions: |
+            [
+              {
+                "@type": "OpenUri", "name": "View Workflow Run",
+                "targets": [
+                  { "os": "default", "uri": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" }
+                ]
+              }
+            ]
