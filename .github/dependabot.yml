@@ -8,14 +8,18 @@ updates:
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: weekly
+      interval: monthly
+      time: '00:27'
+      timezone: 'Etc/UTC'
     labels:
       - dependencies
       - toko
   - package-ecosystem: maven
     directory: '/'
     schedule:
-      interval: weekly
+      interval: daily
+      time: '01:27'
+      timezone: 'Etc/UTC'
     labels:
       - dependencies
       - java
