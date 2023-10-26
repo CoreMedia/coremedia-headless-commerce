@@ -17,7 +17,9 @@ updates:
   - package-ecosystem: maven
     directory: '/'
     schedule:
-      interval: weekly
+      interval: daily
+      time: '01:27'
+      timezone: 'Etc/UTC'
     labels:
       - dependencies
       - java
