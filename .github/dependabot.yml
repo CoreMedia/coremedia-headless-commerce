@@ -8,7 +8,9 @@ updates:
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: weekly
+      interval: monthly
+      time: '00:27'
+      timezone: 'Etc/UTC'
     labels:
       - dependencies
       - toko
