@@ -385,7 +385,7 @@
                 <bannedDependencies>
                   <excludes>
                     <!-- use jakarta.annotation:jakarta.annotation-api instead -->
-                    <exclude>javax.annotation:javax.annotation-api</exclude>
+                    <exclude>jakarta.annotation:jakarta.annotation-api</exclude>
                   </excludes>
                   <searchTransitive>true</searchTransitive>
                 </bannedDependencies>
@@ -456,7 +456,7 @@
                     <!-- use com.sun.activation:jakarta-activation instead -->
                     <exclude>jakarta.activation:jakarta.activation-api</exclude>
                     <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>javax.annotation:javax.annotation-api</exclude>
+                    <exclude>jakarta.annotation:jakarta.annotation-api</exclude>
                     <!-- use jakarta.annotation:jakarta.annotation-api instead -->
                     <exclude>com.sun.mail:javax.mail</exclude>
                     <!-- use com.sun.mail:jakarta-mail instead -->
