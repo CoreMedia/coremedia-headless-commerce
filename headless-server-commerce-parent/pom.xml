@@ -448,11 +448,11 @@
                     <!-- use Spring MVC -->
                     <exclude>com.sun.jersey*</exclude>
 
-                    <exclude>javax.activation:activation</exclude>
+                    <exclude>jakarta.activation:activation</exclude>
                     <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>javax.activation:activation-api</exclude>
+                    <exclude>jakarta.activation:activation-api</exclude>
                     <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>com.sun.activation:javax.activation</exclude>
+                    <exclude>com.sun.activation:jakarta.activation</exclude>
                     <!-- use com.sun.activation:jakarta-activation instead -->
                     <exclude>jakarta.activation:jakarta.activation-api</exclude>
                     <!-- use com.sun.activation:jakarta-activation instead -->
