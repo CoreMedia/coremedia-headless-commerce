@@ -411,7 +411,7 @@
                 <bannedDependencies>
                   <excludes>
                     <!-- use jakarta.annotation:jakarta.annotation-api instead -->
-                    <exclude>jakarta.annotation:jakarta.annotation-api</exclude>
+                    <exclude>javax.annotation:javax.annotation-api</exclude>
                   </excludes>
                   <searchTransitive>true</searchTransitive>
                 </bannedDependencies>
@@ -447,9 +447,9 @@
                     <exclude>org.mockito:mockito-all</exclude>
                     <!-- excluded servlet, jsp, and el APIs because the new artifactIds changed,
                                              and we do not want to include both old and new versions -->
-                    <exclude>jakarta.servlet:servlet-api</exclude>
-                    <exclude>jakarta.servlet.jsp:jsp-api</exclude>
-                    <exclude>jakarta.servlet.jsp.jstl:jstl-api</exclude>
+                    <exclude>javax.servlet:servlet-api</exclude>
+                    <exclude>javax.servlet.jsp:jsp-api</exclude>
+                    <exclude>javax.servlet.jsp.jstl:jstl-api</exclude>
                     <exclude>javax.el:el-api</exclude>
                     <!-- too old -->
                     <exclude>jmock:jmock</exclude>
@@ -474,24 +474,21 @@
                     <!-- use Spring MVC -->
                     <exclude>com.sun.jersey*</exclude>
 
-                    <exclude>jakarta.activation:activation</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>jakarta.activation:activation-api</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>com.sun.activation:jakarta.activation</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>jakarta.activation:jakarta.activation-api</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>jakarta.annotation:jakarta.annotation-api</exclude>
-                    <!-- use jakarta.annotation:jakarta.annotation-api instead -->
-                    <exclude>com.sun.mail:javax.mail</exclude>
-                    <!-- use com.sun.mail:jakarta-mail instead -->
-                    <exclude>javax.transaction:javax.transaction-api</exclude>
-                    <!-- use jakarta.transaction:jakarta-transaction-api instead -->
-                    <exclude>javax.xml.bind:jaxb-api</exclude>
-                    <!-- use jakarta.xml.bind:jakarta.xml.bind-api instead -->
-                    <exclude>com.sun.xml.bind:*</exclude>
-                    <!-- use org.glassfish.jaxb:jaxb-runtime instead -->
+                    <exclude>javax.activation:activation</exclude>               <!-- use com.sun.activation:jakarta.activation instead -->
+                    <exclude>javax.activation:activation-api</exclude>           <!-- use com.sun.activation:jakarta.activation instead -->
+                    <exclude>com.sun.activation:javax.activation</exclude>       <!-- use com.sun.activation:jakarta.activation instead -->
+                    <exclude>jakarta.activation:jakarta.activation-api</exclude> <!-- use com.sun.activation:jakarta.activation instead -->
+                    <exclude>javax.annotation:javax.annotation-api</exclude>     <!-- use jakarta.annotation:jakarta.annotation-api instead -->
+                    <exclude>com.sun.mail:javax.mail</exclude>                   <!-- use com.sun.mail:jakarta.mail instead -->
+                    <exclude>javax.persistence:javax.persistence-api</exclude>   <!-- use jakarta.persistence:jakarta.persistence-api instead -->
+                    <exclude>javax.transaction:javax.transaction-api:*:(,1.3)</exclude>   <!-- use jakarta.transaction:jakarta.transaction-api instead (except for corba) -->
+                    <exclude>javax.validation:validation-api</exclude>           <!-- use jakarta.validation:jakarta.validation-api instead -->
+                    <exclude>javax.xml.bind:jaxb-api</exclude> <!-- use jakarta.xml.bind:jakarta.xml.bind-api instead -->
+                    <exclude>com.sun.xml.bind:*</exclude> <!-- use org.glassfish.jaxb:jaxb-runtime instead -->
+
+                    <!-- forbid Jakarta EE 8 artifacts -->
+                    <exclude>jakarta.validation:jakarta.validation-api:(,3.0.2)</exclude>
+                    <exclude>org.hibernate.validator:hibernate-validator*:(,8.0.1)</exclude>
                   </excludes>
                   <includes>
                     <!--
