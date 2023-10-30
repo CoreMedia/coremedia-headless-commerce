@@ -50,7 +50,7 @@
     <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <solr.version>9.4.1</solr.version>
-    <spring-framework.version>5.3.31</spring-framework.version>
+    <spring-framework.version>6.0.13</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <bouncycastle.version>1.77</bouncycastle.version>
