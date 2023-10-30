@@ -421,9 +421,9 @@
                     <exclude>org.mockito:mockito-all</exclude>
                     <!-- excluded servlet, jsp, and el APIs because the new artifactIds changed,
                                              and we do not want to include both old and new versions -->
-                    <exclude>javax.servlet:servlet-api</exclude>
-                    <exclude>javax.servlet.jsp:jsp-api</exclude>
-                    <exclude>javax.servlet.jsp.jstl:jstl-api</exclude>
+                    <exclude>jakarta.servlet:servlet-api</exclude>
+                    <exclude>jakarta.servlet.jsp:jsp-api</exclude>
+                    <exclude>jakarta.servlet.jsp.jstl:jstl-api</exclude>
                     <exclude>javax.el:el-api</exclude>
                     <!-- too old -->
                     <exclude>jmock:jmock</exclude>
@@ -432,7 +432,7 @@
                     <!-- exclude, and include only with scope "provided" -->
                     <exclude>com.github.spotbugs:spotbugs-annotations</exclude>
                     <exclude>com.google.code.findbugs:jsr305</exclude>
-                    <exclude>javax.servlet:javax.servlet-api</exclude>
+                    <exclude>jakarta.servlet:jakarta.servlet-api</exclude>
                     <!-- junit:junit vs. junit:junit-dep: Since JUnit 4.11 junit-dep just relocates to
                          junit and files a warning when used. Thus excluding it here. -->
                     <exclude>junit:junit-dep</exclude>
@@ -474,7 +474,7 @@
                     -->
                     <include>com.github.spotbugs:spotbugs-annotations:*:*:provided</include>
                     <include>com.google.code.findbugs:jsr305:*:*:provided</include>
-                    <include>javax.servlet:javax.servlet-api:*:*:provided</include>
+                    <include>jakarta.servlet:jakarta.servlet-api:*:*:provided</include>
                   </includes>
                 </bannedDependencies>
               </rules>
