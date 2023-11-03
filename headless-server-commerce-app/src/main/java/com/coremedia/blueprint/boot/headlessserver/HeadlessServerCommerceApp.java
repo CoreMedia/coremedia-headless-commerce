@@ -15,9 +15,6 @@ import static java.lang.invoke.MethodHandles.lookup;
  * Main entry point for the headless server application.
  */
 @SpringBootApplication(excludeName = {
-        "net.devh.boot.grpc.client.autoconfigure.GrpcClientAutoConfiguration",
-        "net.devh.boot.grpc.client.autoconfigure.GrpcClientHealthAutoConfiguration",
-        "net.devh.boot.grpc.client.autoconfigure.GrpcClientMetricAutoConfiguration",
         "com.coremedia.blueprint.caas.p13n.P13nAutoConfiguration",
         // Exclude auto configurations from headless-server-web in favour of CommerceCaasAutoConfiguration.
         "com.coremedia.caas.web.CaasWebAutoConfiguration",
@@ -42,6 +39,8 @@ public class HeadlessServerCommerceApp {
         LOG.error("Application startup failed, cause: {}", ((InvalidDefinition) c).getDetailMessage());
         return;
       }
+      LOG.error("Application startup failed, cause: {}", e.getMessage());
+    } catch (Exception e) {
       LOG.error("Application startup failed, cause: {}", e.getMessage());
     } finally {
       Hooks.disable();
