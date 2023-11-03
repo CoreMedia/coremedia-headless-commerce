@@ -81,8 +81,34 @@
     <!-- to embed GraphiQL tool -->
     <dependency>
       <groupId>com.graphql-java-kickstart</groupId>
-      <artifactId>graphiql-spring-boot-starter</artifactId>
+      <artifactId>graphql-spring-boot-starter</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.graphql-java-kickstart</groupId>
+          <artifactId>graphql-java-servlet</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.graphql-java-kickstart</groupId>
+          <artifactId>graphql-java-tools</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.github.graphql-java</groupId>
+          <artifactId>graphql-java-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-validation</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
