@@ -53,7 +53,7 @@
     <spring-framework.version>5.3.30</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
-    <bouncycastle.version>1.76</bouncycastle.version>
+    <bouncycastle.version>1.77</bouncycastle.version>
     <guava.version>32.1.3-jre</guava.version>
     <htmlcleaner.version>2.29</htmlcleaner.version>
     <json.version>20231013</json.version>
