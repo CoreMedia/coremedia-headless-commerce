@@ -46,7 +46,7 @@
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
     <graphql-java.version>19.9</graphql-java.version>
-    <netty.version>4.1.104.Final</netty.version>
+    <netty.version>4.1.105.Final</netty.version>
     <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <solr.version>9.4.0</solr.version>
