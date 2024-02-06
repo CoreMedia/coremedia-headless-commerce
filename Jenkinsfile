@@ -17,7 +17,7 @@ final String RELEASE_DOCKER_REPOSITORY_NAME = 'coremedia'
 final String RELEASE_DOCKER_IMAGE_NAME = PROJECT_NAME
 final String RELEASE_LOCAL_STAGING_DIR = '${WORKSPACE}/target/nexus-staging'
 
-final String DOCKER_IMAGE_MAVEN = "${Jenkins.ecrPullThroughProxyRegistry}/cmaven:3.8.6-17.0.6.10-1-cm-1.0.1"
+final String DOCKER_IMAGE_MAVEN = "${Jenkins.ecrPullThroughProxyRegistry}/cm-tools/maven:3.8.6-17.0.9.8-1-cm-1.1.1"
 final String DOCKER_SNAPSHOTS_REGISTRY = "${Jenkins.getDockerRegistry(env)}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 final String DOCKER_RELEASES_REGISTRY = "${ComhubHelper.releasesCommerceRegistryUpstream}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 
