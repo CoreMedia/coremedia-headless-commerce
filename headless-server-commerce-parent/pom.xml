@@ -448,24 +448,16 @@
                     <!-- use Spring MVC -->
                     <exclude>com.sun.jersey*</exclude>
 
-                    <exclude>javax.activation:activation</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>javax.activation:activation-api</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>com.sun.activation:javax.activation</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>jakarta.activation:jakarta.activation-api</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>javax.annotation:javax.annotation-api</exclude>
-                    <!-- use jakarta.annotation:jakarta.annotation-api instead -->
-                    <exclude>com.sun.mail:javax.mail</exclude>
-                    <!-- use com.sun.mail:jakarta-mail instead -->
-                    <exclude>javax.transaction:javax.transaction-api</exclude>
-                    <!-- use jakarta.transaction:jakarta-transaction-api instead -->
-                    <exclude>javax.xml.bind:jaxb-api</exclude>
-                    <!-- use jakarta.xml.bind:jakarta.xml.bind-api instead -->
-                    <exclude>com.sun.xml.bind:*</exclude>
-                    <!-- use org.glassfish.jaxb:jaxb-runtime instead -->
+                    <exclude>javax.activation:activation</exclude>                        <!-- use jakarta.activation:jakarta.activation-api instead -->
+                    <exclude>javax.activation:activation-api</exclude>                    <!-- use jakarta.activation:jakarta.activation-api instead -->
+                    <exclude>com.sun.activation:javax.activation</exclude>                <!-- use jakarta.activation:jakarta.activation-api instead -->
+                    <exclude>javax.annotation:javax.annotation-api</exclude>              <!-- use jakarta.annotation:jakarta.annotation-api instead -->
+                    <exclude>com.sun.mail:javax.mail</exclude>                            <!-- use com.sun.mail:jakarta.mail instead -->
+                    <exclude>javax.persistence:javax.persistence-api</exclude>            <!-- use jakarta.persistence:jakarta.persistence-api instead -->
+                    <exclude>javax.transaction:javax.transaction-api:*:(,1.3)</exclude>   <!-- use jakarta.transaction:jakarta.transaction-api instead (except for corba) -->
+                    <exclude>javax.validation:validation-api</exclude>                    <!-- use jakarta.validation:jakarta.validation-api instead -->
+                    <exclude>javax.xml.bind:jaxb-api</exclude>                            <!-- use jakarta.xml.bind:jakarta.xml.bind-api instead -->
+                    <exclude>com.sun.xml.bind:*</exclude>                                 <!-- use org.glassfish.jaxb:jaxb-runtime instead -->
                   </excludes>
                   <includes>
                     <!--
