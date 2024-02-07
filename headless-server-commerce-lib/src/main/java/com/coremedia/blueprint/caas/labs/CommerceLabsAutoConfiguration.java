@@ -17,14 +17,14 @@ import com.coremedia.livecontext.ecommerce.common.BaseCommerceBeanType;
 import com.coremedia.livecontext.ecommerce.common.CommerceBean;
 import com.coremedia.livecontext.ecommerce.common.CommerceBeanType;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-@AutoConfigureAfter(BaseCommerceServicesAutoConfiguration.class)
+@AutoConfiguration(after = BaseCommerceServicesAutoConfiguration.class)
 public class CommerceLabsAutoConfiguration {
 
   private static final Set<String> SCHEMA_TYPE_NAMES = Set.of(
