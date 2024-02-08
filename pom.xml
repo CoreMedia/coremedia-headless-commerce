@@ -4,7 +4,7 @@
 
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce</artifactId>
-  <version>2.1.0-RC-SNAPSHOT</version>
+  <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <organization>
