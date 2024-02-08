@@ -30,6 +30,7 @@ final Map<String, String> DEFAULT_MAVEN_PARAMS = [
         'sort.skip'                  : 'true',
         'sort.verifyFail'            : 'stop',
         'skipTests'                  : 'true',
+        'maven.javadoc.skip'         : 'true',
 ].asImmutable()
 
 final String GITHUB_COMMIT_STATUS_CONTEXT = "${PROJECT_NAME} pipeline"
