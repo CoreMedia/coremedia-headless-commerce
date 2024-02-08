@@ -23,17 +23,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.coremedia.caas</groupId>
-      <artifactId>headless-server-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.coremedia.cms</groupId>
       <artifactId>cap-client-xml</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.coremedia.cms</groupId>
-      <artifactId>coremedia-common</artifactId>
     </dependency>
     <dependency>
       <groupId>com.coremedia.commerce.labs</groupId>
@@ -51,6 +43,12 @@
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <!-- to embed GraphiQL tool -->
+    <dependency>
+      <groupId>com.graphql-java-kickstart</groupId>
+      <artifactId>graphql-spring-boot-starter</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -71,10 +69,6 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

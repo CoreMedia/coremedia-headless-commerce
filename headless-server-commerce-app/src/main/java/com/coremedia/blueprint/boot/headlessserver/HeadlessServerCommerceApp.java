@@ -1,14 +1,8 @@
 package com.coremedia.blueprint.boot.headlessserver;
 
-import com.coremedia.caas.richtext.stax.config.InvalidDefinition;
-import com.coremedia.util.Hooks;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-
-import static java.lang.invoke.MethodHandles.lookup;
 
 /**
  * Main entry point for the headless server application.
@@ -21,26 +15,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 })
 @ComponentScan("com.coremedia.cap.undoc.common.spring") // required because component loader in not active here
 public class HeadlessServerCommerceApp {
-
-  private static final Logger LOG = LoggerFactory.getLogger(lookup().lookupClass());
-
-  private static Throwable unwrap(Throwable e) {
-    return (e.getCause() != null) ? unwrap(e.getCause()) : e;
-  }
-
   public static void main(String[] args) {
-    try {
-      Hooks.enable();
-      SpringApplication.run(HeadlessServerCommerceApp.class, args);
-    } catch (Exception e) {
-      Throwable c = unwrap(e);
-      if (InvalidDefinition.class.isAssignableFrom(c.getClass())) {
-        LOG.error("Application startup failed, cause: {}", ((InvalidDefinition) c).getDetailMessage());
-      } else {
-        LOG.error("Application startup failed, cause: {}", e.getMessage());
-      }
-    } finally {
-      Hooks.disable();
-    }
+    SpringApplication.run(HeadlessServerCommerceApp.class, args);
   }
 }
