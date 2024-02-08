@@ -161,14 +161,6 @@ pipeline {
             )
           }
         }
-        stage('Javadoc') {
-          steps {
-            cmMaven(cmd: 'javadoc:javadoc',
-                    mavenParams: DEFAULT_MAVEN_PARAMS,
-                    scanMvnLog: true,
-            )
-          }
-        }
         stage('Sonar') {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
