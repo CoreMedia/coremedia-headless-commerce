@@ -9,6 +9,12 @@ Changelog
 - Initial Release of this Application.
 
 ---
+## v2.1.0-RC
+
+- Java 17, Spring 6, Spring Boot 3
+
+---
+
 
 ## Limitations
 

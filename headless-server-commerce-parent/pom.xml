@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.18</version>
+    <version>3.2.2</version>
     <relativePath/>
   </parent>
 
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce-parent</artifactId>
-  <version>2.0.7-RC-SNAPSHOT</version>
+  <version>2.1.0-RC-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <organization>
@@ -25,7 +26,7 @@
   </licenses>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -36,21 +37,22 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
     <!-- versions managed in project -->
-    <cms.version>2310.2</cms.version>
-    <graphiql-spring-boot-starter.version>11.1.0</graphiql-spring-boot-starter.version>
-    <jetty.version>10.0.20</jetty.version>
+    <cms.version>2401.1</cms.version>
+    <graphql-spring-boot-starter.version>15.1.0</graphql-spring-boot-starter.version>
+    <jetty.version>12.0.6</jetty.version>
     <pf4j.version>3.10.0</pf4j.version>
     <sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.3.0</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
+    <coremedia-enforcer-rules.version>1.2.2</coremedia-enforcer-rules.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
-    <graphql-java.version>19.9</graphql-java.version>
+    <graphql-java.version>21.3</graphql-java.version>
     <netty.version>4.1.106.Final</netty.version>
-    <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
+    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <solr.version>9.4.1</solr.version>
-    <spring-framework.version>5.3.31</spring-framework.version>
+    <spring-framework.version>6.1.3</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <bouncycastle.version>1.77</bouncycastle.version>
@@ -168,17 +170,42 @@
         <artifactId>graphql-java</artifactId>
         <version>${graphql-java.version}</version>
       </dependency>
+      <!-- to embed GraphiQL tool -->
       <dependency>
         <groupId>com.graphql-java-kickstart</groupId>
-        <artifactId>graphiql-spring-boot-starter</artifactId>
-        <version>${graphiql-spring-boot-starter.version}</version>
-        <scope>runtime</scope>
+        <artifactId>graphql-spring-boot-starter</artifactId>
+        <version>${graphql-spring-boot-starter.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.graphql-java-kickstart</groupId>
+            <artifactId>graphql-java-servlet</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.graphql-java-kickstart</groupId>
+            <artifactId>graphql-java-tools</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>io.github.graphql-java</groupId>
+            <artifactId>graphql-java-annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>io.springfox</groupId>
         <artifactId>springfox-swagger-ui</artifactId>
         <version>${springfox.version}</version>
-        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>net.sourceforge.htmlcleaner</groupId>
@@ -372,152 +399,35 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>${maven-enforcer-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.coremedia.cms</groupId>
+            <artifactId>common-banned-dependencies</artifactId>
+            <version>${cms.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.coremedia.maven</groupId>
+            <artifactId>coremedia-enforcer-rules</artifactId>
+            <version>${coremedia-enforcer-rules.version}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
-            <id>enforce-banned-dependencies</id>
+            <id>enforce-onerepo-rules</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <phase>validate</phase>
             <configuration>
               <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <!-- use jakarta.annotation:jakarta.annotation-api instead -->
-                    <exclude>javax.annotation:javax.annotation-api</exclude>
-                  </excludes>
-                  <searchTransitive>true</searchTransitive>
-                </bannedDependencies>
+                <myCustomRule implementation="com.coremedia.maven.enforcer.ModularOneRepoEnforcerRule">
+                  <enforceNoCoreToBlueprintDependencies>true</enforceNoCoreToBlueprintDependencies>
+                </myCustomRule>
+                <myCustomRule implementation="com.coremedia.maven.enforcer.BannedDependenciesRule">
+                  <configurationFile>/com/coremedia/cms/maven/enforcer/bannedDependencies.xml</configurationFile>
+                </myCustomRule>
               </rules>
               <fail>true</fail>
-            </configuration>
-          </execution>
-          <execution>
-            <id>enforce-versions</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <phase>validate</phase>
-            <configuration>
-              <rules>
-                <requireJavaVersion>
-                  <version>[11,)</version>
-                </requireJavaVersion>
-                <DependencyConvergence/>
-                <bannedDependencies>
-                  <excludes>
-                    <!-- use spring utilities instead -->
-                    <exclude>commons-beanutils:commons-beanutils</exclude>
-                    <!-- exclude commons-httpclient, use org.apache.httpcomponents:httpclient instead-->
-                    <exclude>commons-httpclient:commons-httpclient</exclude>
-                    <!-- excluded because of conflict with logback -->
-                    <exclude>commons-logging:commons-logging:*</exclude>
-                    <!-- use hibernate validator instead -->
-                    <exclude>commons-validator:commons-validator:*</exclude>
-                    <!-- excluded because already included in jdk 6 -->
-                    <exclude>stax:stax-api</exclude>
-                    <exclude>org.apache.geronimo.specs:geronimo-stax-api_1.0_spec</exclude>
-                    <exclude>org.mockito:mockito-all</exclude>
-                    <!-- excluded servlet, jsp, and el APIs because the new artifactIds changed,
-                                             and we do not want to include both old and new versions -->
-                    <exclude>javax.servlet:servlet-api</exclude>
-                    <exclude>javax.servlet.jsp:jsp-api</exclude>
-                    <exclude>javax.servlet.jsp.jstl:jstl-api</exclude>
-                    <exclude>javax.el:el-api</exclude>
-                    <!-- too old -->
-                    <exclude>jmock:jmock</exclude>
-                    <exclude>jmock:jmock-cglib</exclude>
-
-                    <!-- exclude, and include only with scope "provided" -->
-                    <exclude>com.github.spotbugs:spotbugs-annotations</exclude>
-                    <exclude>com.google.code.findbugs:jsr305</exclude>
-                    <exclude>javax.servlet:javax.servlet-api</exclude>
-                    <!-- junit:junit vs. junit:junit-dep: Since JUnit 4.11 junit-dep just relocates to
-                         junit and files a warning when used. Thus excluding it here. -->
-                    <exclude>junit:junit-dep</exclude>
-                    <exclude>xalan:xalan</exclude>
-                    <exclude>xerces:xercesImpl</exclude>
-                    <exclude>xml-apis:xml-apis</exclude>
-                    <exclude>rhino:js</exclude>
-                    <!-- uses GPL -->
-                    <exclude>net.joala:*</exclude>
-                    <!-- JDK5 -->
-                    <exclude>com.google.guava:guava-jdk5</exclude>
-
-                    <!-- use Spring MVC -->
-                    <exclude>com.sun.jersey*</exclude>
-
-                    <exclude>javax.activation:activation</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>javax.activation:activation-api</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>com.sun.activation:javax.activation</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>jakarta.activation:jakarta.activation-api</exclude>
-                    <!-- use com.sun.activation:jakarta-activation instead -->
-                    <exclude>javax.annotation:javax.annotation-api</exclude>
-                    <!-- use jakarta.annotation:jakarta.annotation-api instead -->
-                    <exclude>com.sun.mail:javax.mail</exclude>
-                    <!-- use com.sun.mail:jakarta-mail instead -->
-                    <exclude>javax.transaction:javax.transaction-api</exclude>
-                    <!-- use jakarta.transaction:jakarta-transaction-api instead -->
-                    <exclude>javax.xml.bind:jaxb-api</exclude>
-                    <!-- use jakarta.xml.bind:jakarta.xml.bind-api instead -->
-                    <exclude>com.sun.xml.bind:*</exclude>
-                    <!-- use org.glassfish.jaxb:jaxb-runtime instead -->
-                  </excludes>
-                  <includes>
-                    <!--
-                      Do not even allow scope "test", since it overrides a transitive "provided".
-                      S. http://www.sonatype.com/books/mvnref-book/reference/pom-relationships-sect-project-dependencies.html#pom-relationships-sect-transitive
-                    -->
-                    <include>com.github.spotbugs:spotbugs-annotations:*:*:provided</include>
-                    <include>com.google.code.findbugs:jsr305:*:*:provided</include>
-                    <include>javax.servlet:javax.servlet-api:*:*:provided</include>
-                  </includes>
-                </bannedDependencies>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-          <execution>
-            <id>enforce-test</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <phase>validate</phase>
-            <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <!-- exclude, and include only with scope "test" -->
-                    <exclude>org.assertj:*</exclude>
-                    <exclude>org.eclipse.jetty:*:(,9)</exclude>
-                    <exclude>org.jmock:*</exclude>
-                    <exclude>org.junit:*</exclude>
-                    <exclude>org.junit.jupiter:*</exclude>
-                    <exclude>org.junit.platform:*</exclude>
-                    <exclude>org.mockito:*</exclude>
-                    <exclude>org.powermock:*</exclude>
-                    <exclude>org.springframework:spring-test</exclude>
-                    <exclude>org.springframework.boot:spring-boot-test</exclude>
-                  </excludes>
-                  <includes>
-                    <!-- enforce scope "test" -->
-                    <include>org.assertj:*:*:*:test</include>
-                    <include>org.eclipse.jetty:*:*:*:test</include>
-                    <include>org.junit:*:*:*:test</include>
-                    <include>org.junit.jupiter:*:*:*:test</include>
-                    <include>org.junit.platform:*:*:*:test</include>
-                    <include>org.mockito:*:*:*:test</include>
-                    <include>org.powermock:*:*:*:test</include>
-                    <include>org.springframework:spring-test:*:*:test</include>
-                    <include>org.springframework.boot:spring-boot-test:*:*:test</include>
-                  </includes>
-                  <searchTransitive>true</searchTransitive>
-                </bannedDependencies>
-              </rules>
             </configuration>
           </execution>
         </executions>
