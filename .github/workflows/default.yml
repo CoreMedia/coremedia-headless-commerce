@@ -81,7 +81,7 @@ jobs:
 
       - name: Update dependency graph
         if: github.ref_name == github.event.repository.default_branch
-        uses: advanced-security/maven-dependency-submission-action@v4.0.0
+        uses: advanced-security/maven-dependency-submission-action@v4.0.1
 
       - name: Send failure notification to MS Teams
         if: ${{ !success() && github.event_name == 'schedule' }}
