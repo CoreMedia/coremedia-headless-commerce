@@ -13,7 +13,7 @@ updates:
       timezone: 'Etc/UTC'
     labels:
       - dependencies
-      - toko
+      - ginger
   - package-ecosystem: maven
     directory: '/'
     schedule:
@@ -23,7 +23,7 @@ updates:
     labels:
       - dependencies
       - java
-      - toko
+      - ginger
     registries:
       - coremedia-cms-releases
 registries:
