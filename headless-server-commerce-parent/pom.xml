@@ -56,7 +56,7 @@
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <bouncycastle.version>1.77</bouncycastle.version>
-    <guava.version>33.0.0-jre</guava.version>
+    <guava.version>33.1.0-jre</guava.version>
     <htmlcleaner.version>2.29</htmlcleaner.version>
     <json.version>20240303</json.version>
   </properties>
