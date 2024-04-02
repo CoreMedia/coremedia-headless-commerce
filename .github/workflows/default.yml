@@ -41,7 +41,7 @@ jobs:
         run: cp .github/workflows/config/settings.xml ${HOME}/.m2/settings.xml
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3.24.6
+        uses: github/codeql-action/init@v3.24.9
         with:
           languages: java
           queries: security-and-quality
@@ -60,7 +60,7 @@ jobs:
           NEXUS_GITHUB_ACTIONS_READONLY_TOKEN: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_TOKEN }}
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3.24.6
+        uses: github/codeql-action/analyze@v3.24.9
         with:
           category: '/language:java'
 
@@ -75,7 +75,7 @@ jobs:
           limit-severities-for-sarif: true
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3.24.6
+        uses: github/codeql-action/upload-sarif@v3.24.9
         with:
           sarif_file: trivy-results.sarif
 
