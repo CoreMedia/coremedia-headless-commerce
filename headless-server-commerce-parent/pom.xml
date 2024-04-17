@@ -47,7 +47,7 @@
     <coremedia-enforcer-rules.version>1.2.2</coremedia-enforcer-rules.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
-    <graphql-java.version>21.3</graphql-java.version>
+    <graphql-java.version>22.0</graphql-java.version>
     <netty.version>4.1.109.Final</netty.version>
     <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
     <snakeyaml.version>2.2</snakeyaml.version>
