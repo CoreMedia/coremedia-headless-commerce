@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce</artifactId>
   <version>2.1.1-RC-SNAPSHOT</version>
   <packaging>pom</packaging>
-
   <organization>
     <name>CoreMedia AG</name>
     <url>http://www.coremedia.com/</url>
@@ -24,7 +21,6 @@
     <module>headless-server-commerce-lib</module>
     <module>headless-server-commerce-parent</module>
   </modules>
-
   <scm>
     <connection>scm:git:https://github.com/CoreMedia/playgound</connection>
     <developerConnection>scm:git:https://github.com/CoreMedia/playgound</developerConnection>
@@ -33,12 +29,12 @@
   </scm>
 
   <properties>
+    <docs.directory>documentation</docs.directory>
     <!-- plugin versions -->
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
     <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
     <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
     <sortpom-maven-plugin.version>3.4.1</sortpom-maven-plugin.version>
-    <docs.directory>documentation</docs.directory>
   </properties>
 
   <build>
@@ -49,16 +45,16 @@
           <artifactId>sortpom-maven-plugin</artifactId>
           <version>${sortpom-maven-plugin.version}</version>
           <configuration>
+            <createBackupFile>false</createBackupFile>
+            <expandEmptyElements>false</expandEmptyElements>
+            <ignoreLineSeparators>false</ignoreLineSeparators>
+            <keepBlankLines>true</keepBlankLines>
+            <lineSeparator>\n</lineSeparator>
             <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
             <sortDependencies>groupId,artifactId</sortDependencies>
-            <sortPlugins>groupId,artifactId</sortPlugins>
             <sortModules>true</sortModules>
-            <expandEmptyElements>false</expandEmptyElements>
+            <sortPlugins>groupId,artifactId</sortPlugins>
             <spaceBeforeCloseEmptyElement>false</spaceBeforeCloseEmptyElement>
-            <keepBlankLines>true</keepBlankLines>
-            <ignoreLineSeparators>false</ignoreLineSeparators>
-            <lineSeparator>\n</lineSeparator>
-            <createBackupFile>false</createBackupFile>
           </configuration>
         </plugin>
         <plugin>
@@ -86,11 +82,11 @@
           <configuration>
             <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
             <errorRemedy>ignore</errorRemedy>
-            <excludedGroups>^com\.coremedia\.</excludedGroups>
             <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+            <excludedGroups>^com\.coremedia\.</excludedGroups>
             <includeTransitiveDependencies>false</includeTransitiveDependencies>
-            <licensesOutputFile>${docs.directory}/third-party-licenses/licenses.xml</licensesOutputFile>
             <licensesOutputDirectory>${docs.directory}/third-party-licenses</licensesOutputDirectory>
+            <licensesOutputFile>${docs.directory}/third-party-licenses/licenses.xml</licensesOutputFile>
             <outputDirectory>${docs.directory}</outputDirectory>
             <sortByGroupIdAndArtifactId>true</sortByGroupIdAndArtifactId>
           </configuration>

@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>com.coremedia.commerce.labs</groupId>
     <artifactId>headless-server-commerce-parent</artifactId>
     <version>2.1.1-RC-SNAPSHOT</version>
     <relativePath>../headless-server-commerce-parent</relativePath>
   </parent>
-
   <artifactId>headless-server-commerce-app</artifactId>
   <description>Commerce Headless Server Application</description>
 
   <properties>
-    <jib.skip>true</jib.skip>
-    <jib.goal>dockerBuild</jib.goal>
     <application.image-base>coremedia/java-application-base:2.0-cm-17.0-corretto</application.image-base>
     <application.image-prefix>coremedia</application.image-prefix>
     <application.image-suffix>${project.build.finalName}</application.image-suffix>
     <application.image-tag>${project.version}</application.image-tag>
+    <jib.goal>dockerBuild</jib.goal>
+    <jib.skip>true</jib.skip>
   </properties>
 
   <dependencies>
     <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>com.coremedia.cms</groupId>
       <artifactId>cap-client-xml</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>coremedia-common</artifactId>
     </dependency>
     <dependency>
       <groupId>com.coremedia.commerce.labs</groupId>
@@ -43,12 +50,6 @@
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <!-- to embed GraphiQL tool -->
-    <dependency>
-      <groupId>com.graphql-java-kickstart</groupId>
-      <artifactId>graphql-spring-boot-starter</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -69,6 +70,10 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -118,6 +123,18 @@
           <groupId>com.google.cloud.tools</groupId>
           <artifactId>jib-maven-plugin</artifactId>
           <configuration>
+            <container>
+              <appRoot>/coremedia</appRoot>
+              <ports>
+                <!--Servlet Container Port -->
+                <port>8080</port>
+                <!--Actuator Port-->
+                <port>8081</port>
+                <!--Prometheus Agent Port-->
+                <port>8199</port>
+              </ports>
+              <workingDirectory>/coremedia</workingDirectory>
+            </container>
             <from>
               <image>${application.image-base}</image>
             </from>
@@ -127,18 +144,6 @@
                 <tag>${application.image-tag}</tag>
               </tags>
             </to>
-            <container>
-              <appRoot>/coremedia</appRoot>
-              <workingDirectory>/coremedia</workingDirectory>
-              <ports>
-                <!--Servlet Container Port -->
-                <port>8080</port>
-                <!--Actuator Port-->
-                <port>8081</port>
-                <!--Prometheus Agent Port-->
-                <port>8199</port>
-              </ports>
-            </container>
           </configuration>
           <executions>
             <execution>
@@ -157,10 +162,10 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.coremedia.blueprint.boot.headlessserver.HeadlessServerCommerceApp</mainClass>
           <layers>
             <enabled>true</enabled>
           </layers>
+          <mainClass>com.coremedia.blueprint.boot.headlessserver.HeadlessServerCommerceApp</mainClass>
         </configuration>
       </plugin>
     </plugins>
@@ -179,22 +184,21 @@
             <artifactId>jib-maven-plugin</artifactId>
             <configuration>
               <container>
-                <entrypoint>INHERIT</entrypoint>
                 <args>
                   <arg>application</arg>
                 </args>
-                <user>coremedia:coremedia</user>
+                <entrypoint>INHERIT</entrypoint>
                 <environment>
                   <JAVA_HEAP>1g</JAVA_HEAP>
                   <JAVA_PARALLEL_GC>true</JAVA_PARALLEL_GC>
                   <SPRING_BOOT_EXPLODED_APP>true</SPRING_BOOT_EXPLODED_APP>
-                  <SPRING_BOOT_EXPLODED_MAINCLASS>@jib-main-class-file</SPRING_BOOT_EXPLODED_MAINCLASS>
                   <SPRING_BOOT_EXPLODED_CLASSPATH>@jib-classpath-file</SPRING_BOOT_EXPLODED_CLASSPATH>
+                  <SPRING_BOOT_EXPLODED_MAINCLASS>@jib-main-class-file</SPRING_BOOT_EXPLODED_MAINCLASS>
                 </environment>
+                <user>coremedia:coremedia</user>
               </container>
               <pluginExtensions>
                 <pluginExtension>
-                  <implementation>com.google.cloud.tools.jib.maven.extension.ownership.JibOwnershipExtension</implementation>
                   <configuration implementation="com.google.cloud.tools.jib.maven.extension.ownership.Configuration">
                     <rules>
                       <rule>
@@ -203,6 +207,7 @@
                       </rule>
                     </rules>
                   </configuration>
+                  <implementation>com.google.cloud.tools.jib.maven.extension.ownership.JibOwnershipExtension</implementation>
                 </pluginExtension>
               </pluginExtensions>
             </configuration>

@@ -1,1 +1,2 @@
 com.coremedia.blueprint.headlessserver.CommerceCaasAutoConfiguration
+com.coremedia.blueprint.headlessserver.CorsAutoConfiguration

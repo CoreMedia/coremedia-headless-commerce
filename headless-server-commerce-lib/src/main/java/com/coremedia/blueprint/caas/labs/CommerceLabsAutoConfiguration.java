@@ -19,7 +19,11 @@ import com.coremedia.livecontext.ecommerce.common.CommerceBeanType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -56,6 +60,15 @@ public class CommerceLabsAutoConfiguration {
       CommerceBeanType commerceBeanType = commerceBean.getId().getCommerceBeanType();
       return Optional.ofNullable(TYPE_RESOLVE_MAP.get(commerceBeanType));
     };
+  }
+
+  @Bean
+  @Qualifier("graphqlSchemaResource")
+  public Resource commerceSchemaResource() throws IOException {
+    PathMatchingResourcePatternResolver loader = new PathMatchingResourcePatternResolver();
+    return Arrays.stream(loader.getResources("classpath*:commerce-schema.graphql"))
+            .findFirst()
+            .orElseThrow(() -> new IOException("GraphQl schema resource 'commerce-schema.graphql' not found."));
   }
 
   @Bean("query-root:catalog")
