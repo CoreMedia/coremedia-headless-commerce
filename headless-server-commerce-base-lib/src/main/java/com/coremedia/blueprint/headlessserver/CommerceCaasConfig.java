@@ -1,9 +1,6 @@
 package com.coremedia.blueprint.headlessserver;
 
 import com.coremedia.caas.config.CaasGraphqlConfigurationProperties;
-import com.coremedia.caas.config.DoctypeConfigurationProperties;
-import com.coremedia.caas.config.RemoteServiceConfigurationProperties;
-import com.coremedia.caas.config.StaxContextConfigurationProperties;
 import com.coremedia.caas.filter.ValidityDateFilterPredicate;
 import com.coremedia.caas.headless_server.plugin_support.PluginSupport;
 import com.coremedia.caas.headless_server.plugin_support.extensionpoints.CaasWiringFactory;
@@ -13,7 +10,6 @@ import com.coremedia.caas.model.mapper.CompositeModelMapper;
 import com.coremedia.caas.model.mapper.FilteringModelMapper;
 import com.coremedia.caas.model.mapper.ModelMapper;
 import com.coremedia.caas.model.mapper.ModelMappingPropertyAccessor;
-import com.coremedia.caas.plugin.PluginConfiguration;
 import com.coremedia.caas.service.cache.Weighted;
 import com.coremedia.caas.spel.SpelDirectiveWiring;
 import com.coremedia.caas.spel.SpelEvaluationStrategy;
@@ -33,16 +29,12 @@ import com.coremedia.caas.wiring.FilteringDataFetcher;
 import com.coremedia.caas.wiring.ProvidesTypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolver;
 import com.coremedia.caas.wiring.TypeNameResolverWiringFactory;
-import com.coremedia.cache.config.CacheConfiguration;
 import com.coremedia.cap.common.CapConnection;
 import com.coremedia.cap.content.ContentRepository;
-import com.coremedia.cap.content.spring.ContentConfigurationProperties;
 import com.coremedia.cap.multisite.SitesService;
-import com.coremedia.cap.undoc.common.spring.CapRepositoriesConfiguration;
 import com.coremedia.function.PostProcessor;
 import com.coremedia.link.CompositeLinkComposer;
 import com.coremedia.link.LinkComposer;
-import com.coremedia.springframework.customizer.CustomizerConfiguration;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -55,19 +47,14 @@ import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.idl.SchemaDirectiveWiring;
 import graphql.schema.idl.WiringFactory;
-import jakarta.inject.Named;
 import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
-import org.dataloader.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -116,19 +103,10 @@ import static java.util.Collections.emptyList;
 @EnableConfigurationProperties({
         CaasServiceConfigurationProperties.class,
         CaasGraphqlConfigurationProperties.class,
-        RemoteServiceConfigurationProperties.class,
-        StaxContextConfigurationProperties.class,
-        ContentConfigurationProperties.class,
-        DoctypeConfigurationProperties.class,
 })
 @EnableWebMvc
 @Import({
-        // inspired by CaasConfig
-        CacheConfiguration.class,
-        CustomizerConfiguration.class,
-        CapRepositoriesConfiguration.class,
         GraphQlConfiguration.class,
-        PluginConfiguration.class,
         CaasWebConfig.class,
         GraphQLErrorController.class,
 })
@@ -175,7 +153,7 @@ public class CommerceCaasConfig implements WebMvcConfigurer {
   }
 
   @Bean
-  @ConditionalOnProperty("caas.logRequests")
+  @ConditionalOnProperty("caas.log-requests")
   public Filter logFilter() {
     CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter() {
       @Override
@@ -195,7 +173,7 @@ public class CommerceCaasConfig implements WebMvcConfigurer {
     return filter;
   }
 
-  @Bean("cacheManager")
+  @Bean
   public CacheManager cacheManager() {
     List<org.springframework.cache.Cache> list = caasServiceConfigurationProperties.getCacheSpecs().entrySet().stream()
             .map(entry -> createCache(entry.getKey(), entry.getValue()))
@@ -260,10 +238,8 @@ public class CommerceCaasConfig implements WebMvcConfigurer {
   }
 
   @Bean
-  public DataLoaderRegistry dataLoaderRegistry(Map<String, DataLoader<String, Try<String>>> dataLoaders) {
-    DataLoaderRegistry registry = new DataLoaderRegistry();
-    dataLoaders.forEach(registry::register);
-    return registry;
+  public DataLoaderRegistry dataLoaderRegistry() {
+    return new DataLoaderRegistry();
   }
 
   @Bean
@@ -399,10 +375,7 @@ public class CommerceCaasConfig implements WebMvcConfigurer {
   }
 
   @Bean
-  @ConditionalOnBean(CapConnection.class)
-  @ConditionalOnClass(CapConnection.class)
   @ConditionalOnEnabledHealthIndicator("uapiConnectionReadiness")
-  @Named("uapiConnectionReadinessHealthIndicator")
   @ConditionalOnMissingBean(name = "uapiConnectionReadinessHealthIndicator")
   public UapiConnectionReadinessHealthIndicator uapiConnectionReadinessHealthIndicator (CapConnection connection) {
     return new UapiConnectionReadinessHealthIndicator(connection);
