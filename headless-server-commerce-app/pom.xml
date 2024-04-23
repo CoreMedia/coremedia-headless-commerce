@@ -31,10 +31,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.coremedia.cms</groupId>
-      <artifactId>coremedia-common</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.coremedia.commerce.labs</groupId>
       <artifactId>headless-server-commerce-base-lib</artifactId>
       <version>${project.version}</version>
