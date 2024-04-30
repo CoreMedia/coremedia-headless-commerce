@@ -30,6 +30,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.0
 
+      - name: Initialize internal configuration
+        id: config
+        run: |
+          MVN_ARGS='--batch-mode --fail-at-end'
+          if [[ -z "${{ runner.debug }}" ]]; then
+            MVN_ARGS="${MVN_ARGS} --no-transfer-progress"
+          fi
+          echo "mvn_args=${MVN_ARGS}" >> "$GITHUB_OUTPUT"
+
       - name: Set up JDK
         uses: actions/setup-java@v4.2.2
         with:
@@ -48,7 +57,7 @@ jobs:
 
       - name: Run Maven Build
         run: |
-          mvn --batch-mode --fail-at-end \
+          mvn ${{ steps.config.outputs.mvn_args }} \
               install javadoc:javadoc \
               -Pintegration-test,default-image,docs-third-party \
               -Dapplication.image-prefix=coremedia \
