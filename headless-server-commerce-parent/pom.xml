@@ -42,7 +42,7 @@
     <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>3.4.1</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
-    <coremedia-enforcer-rules.version>1.2.2</coremedia-enforcer-rules.version>
+    <coremedia-enforcer-rules.version>2.0.0</coremedia-enforcer-rules.version>
     <log4j2slf4j.version>2.23.1</log4j2slf4j.version>
     <slf4j.version>2.0.13</slf4j.version>
 
