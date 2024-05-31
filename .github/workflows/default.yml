@@ -63,7 +63,9 @@ jobs:
               -Dapplication.image-prefix=coremedia \
               -Dapplication.image-suffix=headless-server-commerce \
               -Dapplication.image-tag=${{ github.sha }} \
-              -Dsort.verifyFail=stop
+              -Dsort.verifyFail=stop \
+              | tee mvn-output.log
+          [[ ${PIPESTATUS} -eq 0 ]] || exit ${PIPESTATUS}
         env:
           NEXUS_GITHUB_ACTIONS_READONLY_USERNAME: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_USERNAME }}
           NEXUS_GITHUB_ACTIONS_READONLY_TOKEN: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_TOKEN }}
@@ -91,6 +93,18 @@ jobs:
       - name: Update dependency graph
         if: github.ref_name == github.event.repository.default_branch
         uses: advanced-security/maven-dependency-submission-action@v4.1.1
+
+      - name: Check for deprecated API usages
+        if: github.ref_name == github.event.repository.default_branch || github.base_ref == github.event.repository.default_branch
+        run: |
+          cat mvn-output.log | grep '^\[WARNING\]' | grep 'has been deprecated' > deprecated.log || true
+          grep -Fvf .github/workflows/config/ignored-deprecations.txt deprecated.log > violations.log || true
+          if [[ -s violations.log ]]; then
+            cat violations.log
+            echo "::error::Deprecated API calls are not allowed!"
+            exit 1
+          fi
+          echo "::notice::No deprecated API calls found"
 
       - name: Send failure notification to MS Teams
         if: ${{ !success() && github.event_name == 'schedule' }}
