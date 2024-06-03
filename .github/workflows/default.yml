@@ -65,7 +65,7 @@ jobs:
           category: '/language:java'
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.19.0
+        uses: aquasecurity/trivy-action@0.21.0
         with:
           scan-type: image
           image-ref: "coremedia/headless-server-commerce:${{ github.sha }}"
