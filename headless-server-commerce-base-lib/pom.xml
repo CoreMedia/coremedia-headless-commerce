@@ -20,7 +20,7 @@
     <dependency>
       <groupId>com.coremedia.caas</groupId>
       <artifactId>headless-server-web</artifactId>
-      <version>2404.2</version>
+      <version>2406.0.0</version>
       <classifier>patch-CMS-24718</classifier>
     </dependency>
     <dependency>
