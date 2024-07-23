@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.3</version>
+    <version>3.3.1</version>
     <relativePath/>
   </parent>
 
@@ -36,7 +36,7 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
     <!-- versions managed in project -->
-    <cms.version>2404.2</cms.version>
+    <cms.version>2406.0.1</cms.version>
     <jetty.version>12.0.6</jetty.version>
     <pf4j.version>3.12.0</pf4j.version>
     <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
@@ -47,12 +47,7 @@
     <slf4j.version>2.0.13</slf4j.version>
 
     <!-- versions managed in spring-boot-starter-parent (overwrites) -->
-    <graphql-java.version>21.5</graphql-java.version>
-    <netty.version>4.1.111.Final</netty.version>
     <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
-    <snakeyaml.version>2.2</snakeyaml.version>
-    <solr.version>9.5.0</solr.version>
-    <spring-framework.version>6.1.6</spring-framework.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <bouncycastle.version>1.78.1</bouncycastle.version>
@@ -166,11 +161,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>com.graphql-java</groupId>
-        <artifactId>graphql-java</artifactId>
-        <version>${graphql-java.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
         <scope>runtime</scope>
@@ -185,21 +175,7 @@
         <artifactId>htmlcleaner</artifactId>
         <version>${htmlcleaner.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.solr</groupId>
-        <artifactId>solr-solrj</artifactId>
-        <version>${solr.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.solr</groupId>
-        <artifactId>solr-solrj-streaming</artifactId>
-        <version>${solr.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.solr</groupId>
-        <artifactId>solr-solrj-zookeeper</artifactId>
-        <version>${solr.version}</version>
-      </dependency>
+
       <dependency>
         <!-- Only a transitive dependency, but must be managed to mitigate CVEs -->
         <groupId>org.bouncycastle</groupId>
