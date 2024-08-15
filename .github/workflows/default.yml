@@ -82,7 +82,6 @@ jobs:
           scan-type: image
           image-ref: "coremedia/headless-server-commerce:${{ github.sha }}"
           trivy-config: .github/workflows/config/trivy.yml
-          trivyignores: .github/workflows/config/trivyignores.txt
           format: sarif
           output: trivy-results.sarif
           limit-severities-for-sarif: true

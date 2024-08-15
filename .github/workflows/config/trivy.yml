@@ -1,6 +1,8 @@
 format: sarif
 output: trivy-results.sarif
 
+ignorefile: .github/workflows/config/trivyignores.txt
+
 severity:
   - MEDIUM
   - HIGH
