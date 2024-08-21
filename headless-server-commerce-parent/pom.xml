@@ -37,7 +37,7 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
     <!-- versions managed in project -->
-    <cms.version>2406.0.0</cms.version>
+    <cms.version>2406.0.1</cms.version>
     <graphql-spring-boot-starter.version>15.1.0</graphql-spring-boot-starter.version>
     <jetty.version>12.0.6</jetty.version>
     <pf4j.version>3.10.0</pf4j.version>
