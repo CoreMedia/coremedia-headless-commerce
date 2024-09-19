@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -203,24 +202,6 @@ public class CommerceLabsFacade {
 
       return getProductSearchResult(searchTerm, orderBy, offset, limit, filterFacets, connection, commerceId);
     });
-  }
-
-  @Nullable
-  public SearchResult<ProductVariant> searchProductVariants(String searchTerm, Map<String, String> searchParams, String siteId) {
-    CommerceConnection connection = getCommerceConnection(siteId);
-    if (connection == null) {
-      return null;
-    }
-    StoreContext storeContext = connection.getInitialStoreContext();
-
-    try {
-      CatalogService catalogService = connection.getCatalogService();
-      SearchQueryBuilder builder = SearchQuery.builder(searchTerm, BaseCommerceBeanType.SKU);
-      return catalogService.search(builder.build(), storeContext);
-    } catch (CommerceException e) {
-      LOG.warn("Could not search product variants with searchTerm {}", searchTerm, e);
-      return null;
-    }
   }
 
   @SuppressWarnings("unused")
