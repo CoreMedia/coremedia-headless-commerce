@@ -73,7 +73,7 @@ public class CommerceLabsAutoConfiguration {
 
   @Bean("query-root:catalog")
   @Qualifier("queryRoot")
-  public Object commerce(CommerceLabsFacade commerceLabsFacade) {
+  public Object commerce() {
     // A simple Object suffices because all commerce root fields are implemented via @fetch directives
     return new Object();
   }

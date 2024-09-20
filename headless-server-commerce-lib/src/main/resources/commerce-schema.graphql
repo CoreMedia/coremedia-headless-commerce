@@ -5,7 +5,7 @@ extend type Query {
 
   # Returns a category or null if the category does not exist. The externalId can either be formatted (e.g commerce://category/categoryId) or plain (e.g. categoryId)
   category(categoryId: String!, catalogId: String, siteId: String): Category @fetch(from: "@commerceLabsFacade.getCategory(#categoryId, #siteId)")
-  categoryByStore(categoryId: String!, catalogId: String, locale:String!, storeId: String!): Category @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)") @deprecated(reason: "Marked for removal")
+  categoryByStore(categoryId: String!, catalogId: String, locale:String!, storeId: String!): Category @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId)") @deprecated(reason: "Marked for removal")
   categoryBySeoSegment(seoSegment: String!, siteId: String!): Category @fetch(from: "@commerceLabsFacade.findCategoryBySeoSegment(#seoSegment, #siteId)")
 
   commerceBean(commerceId: String!, siteId: String!): CommerceBean @fetch(from: "@commerceLabsFacade.getCommerceBean(#commerceId, #siteId)")
