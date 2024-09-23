@@ -122,8 +122,8 @@ public class CommerceLabsFacade {
 
   @SuppressWarnings("unused")
   @Deprecated
-  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId, #catalogId)")
-  public DataFetcherResult<Category> getCategoryByStore(String categoryId, String localeAsString, String storeId, String catalogId) {
+  // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCategoryByStore(#categoryId, #locale, #storeId)")
+  public DataFetcherResult<Category> getCategoryByStore(String categoryId, String localeAsString, String storeId) {
     DataFetcherResult.Builder<Category> builder = DataFetcherResult.newResult();
     if (storeId == null || localeAsString == null) {
       return builder.error(SiteIdUndefined.getInstance()).build();
