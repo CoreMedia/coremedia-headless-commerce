@@ -34,6 +34,11 @@ jobs:
       - name: Initialize internal configuration
         id: config
         run: |
+          if [[ -n "${{ secrets.MSTEAMS_WORKFLOW_POST_URL }}" ]]; then
+            echo "has_msteams_workflow_post_url=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Secret MSTEAMS_WORKFLOW_POST_URL is not set. Won't send any failure notifications to Teams."
+          fi
           MVN_ARGS='--batch-mode --fail-at-end'
           if [[ -z "${{ runner.debug }}" ]]; then
             MVN_ARGS="${MVN_ARGS} --no-transfer-progress"
@@ -109,29 +114,26 @@ jobs:
           fi
           echo "::notice::No deprecated API calls found"
 
-      - name: Send failure notification to MS Teams
-        if: ${{ !success() && github.event_name == 'schedule' }}
-        uses: aliencube/microsoft-teams-actions@v0.8.0
-        with:
-          webhook_uri: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
-          summary: "Workflow **${{ github.workflow }}** failed."
-          theme_color: d9534f
-          sections: |
-            [
-              {
-                "activityTitle": "Notification from ${{ github.repository }}",
-                "activitySubtitle": "Workflow **${{ github.workflow }}** failed."
-              }
-            ]
-          actions: |
-            [
-              {
-                "@type": "OpenUri", "name": "View Workflow Run",
-                "targets": [
-                  { "os": "default", "uri": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" }
-                ]
-              }
-            ]
+      - name: Send failure notification to MS Teams Workflow
+        if: ${{ !success() && github.event_name == 'schedule' && steps.config.outputs.has_msteams_workflow_post_url }}
+        run: |
+          cat .github/workflows/config/teams-notification-card-template.json \
+              | jq -c . \
+              | sed "s|@GITHUB_REPOSITORY@|${{ github.repository }}|g" \
+              | sed "s|@GITHUB_WORKFLOW@|${{ github.workflow }}|g" \
+              | sed "s|@GITHUB_RUN_ID@|${{ github.run_id }}|g" \
+              | sed "s|@GITHUB_SERVER_URL@|${{ github.server_url }}|g" \
+              > notification-card.json
+          curl "${{ secrets.MSTEAMS_WORKFLOW_POST_URL }}" \
+              -X POST \
+              -H 'Content-Type: application/json' \
+              -d @'notification-card.json' \
+              > notification-result.json
+          if [[ -s notification-result.json ]]; then
+            echo "Notification card post result:"
+            cat notification-result.json | jq -r '.error // empty'
+            exit 1
+          fi
 
       - name: Debug GitHub contexts (only when debug logging is enabled)
         if: always() && runner.debug
