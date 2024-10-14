@@ -38,7 +38,7 @@
     <!-- versions managed in project -->
     <cms.version>2406.0.2</cms.version>
     <jetty.version>12.0.6</jetty.version>
-    <pf4j.version>3.12.0</pf4j.version>
+    <pf4j.version>3.12.1</pf4j.version>
     <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
