@@ -1,6 +1,8 @@
 format: sarif
 output: trivy-results.sarif
 
+ignorefile: .github/workflows/config/trivyignores.txt
+
 severity:
   - MEDIUM
   - HIGH
@@ -11,6 +13,5 @@ scan:
     - /coremedia/prometheus/jmx_prometheus_javaagent.jar
     - /usr/bin/confd
 
-vulnerability:
-  type:
-    - library
+pkg-types:
+  - library

@@ -1,0 +1,67 @@
+{
+  "type" : "message",
+  "attachments" : [
+    {
+      "contentType" : "application/vnd.microsoft.card.adaptive",
+      "contentUrl" : null,
+      "content" : {
+        "$schema" : "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type" : "AdaptiveCard",
+        "version" : "1.5",
+        "msteams" : {
+          "width" : "Full"
+        },
+        "body" : [
+          {
+            "type" : "ColumnSet",
+            "columns" : [
+              {
+                "type" : "Column",
+                "width" : 5,
+                "items" : [
+                  {
+                    "type" : "TextBlock",
+                    "text" : "Failure in @GITHUB_REPOSITORY@",
+                    "weight" : "Bolder",
+                    "size" : "Large",
+                    "spacing" : "None",
+                    "wrap" : true,
+                    "horizontalAlignment" : "Left",
+                    "style" : "heading",
+                    "maxLines" : 0
+                  },
+                  {
+                    "type" : "TextBlock",
+                    "text" : "Workflow **@GITHUB_WORKFLOW@** failed.",
+                    "wrap" : true,
+                    "spacing" : "ExtraLarge"
+                  }
+                ]
+              },
+              {
+                "type" : "Column",
+                "width" : 1,
+                "items" : [
+                  {
+                    "type" : "Image",
+                    "url" : "https://cdn.staticcrate.com/stock-hd/effects/Footagecrate-Sad_Gingerbread_emoji-effect-lg.jpg",
+                    "altText" : "Sad Ginger(bread)",
+                    "width" : "100px",
+                    "horizontalAlignment" : "Right"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "actions" : [
+          {
+            "type" : "Action.OpenUrl",
+            "title" : "View Workflow Run",
+            "url" : "@GITHUB_SERVER_URL@/@GITHUB_REPOSITORY@/actions/runs/@GITHUB_RUN_ID@"
+          }
+        ]
+      }
+    }
+  ]
+}

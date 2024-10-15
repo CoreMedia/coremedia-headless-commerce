@@ -15,6 +15,7 @@ on:
     paths-ignore: [ '**/*.md' ]
   schedule:
     - cron: '27 11 * * 4'
+  workflow_dispatch:
 
 permissions:
   actions: read
@@ -29,6 +30,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.0
+
+      - name: Initialize internal configuration
+        id: config
+        run: |
+          if [[ -n "${{ secrets.MSTEAMS_WORKFLOW_POST_URL }}" ]]; then
+            echo "has_msteams_workflow_post_url=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Secret MSTEAMS_WORKFLOW_POST_URL is not set. Won't send any failure notifications to Teams."
+          fi
+          MVN_ARGS='--batch-mode --fail-at-end'
+          if [[ -z "${{ runner.debug }}" ]]; then
+            MVN_ARGS="${MVN_ARGS} --no-transfer-progress"
+          fi
+          echo "mvn_args=${MVN_ARGS}" >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK
         uses: actions/setup-java@v4.2.2
@@ -48,13 +63,15 @@ jobs:
 
       - name: Run Maven Build
         run: |
-          mvn --batch-mode --fail-at-end \
+          mvn ${{ steps.config.outputs.mvn_args }} \
               install javadoc:javadoc \
               -Pintegration-test,default-image,docs-third-party \
               -Dapplication.image-prefix=coremedia \
               -Dapplication.image-suffix=headless-server-commerce \
               -Dapplication.image-tag=${{ github.sha }} \
-              -Dsort.verifyFail=stop
+              -Dsort.verifyFail=stop \
+              | tee mvn-output.log
+          [[ ${PIPESTATUS} -eq 0 ]] || exit ${PIPESTATUS}
         env:
           NEXUS_GITHUB_ACTIONS_READONLY_USERNAME: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_USERNAME }}
           NEXUS_GITHUB_ACTIONS_READONLY_TOKEN: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_TOKEN }}
@@ -65,6 +82,7 @@ jobs:
           category: '/language:java'
 
       - name: Run Trivy vulnerability scanner
+        if: github.event_name != 'pull_request'
         uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: image
@@ -75,6 +93,7 @@ jobs:
           limit-severities-for-sarif: true
 
       - name: Upload Trivy scan results to GitHub Security tab
+        if: github.event_name != 'pull_request'
         uses: github/codeql-action/upload-sarif@v3.26.10
         with:
           sarif_file: trivy-results.sarif
@@ -83,26 +102,66 @@ jobs:
         if: github.ref_name == github.event.repository.default_branch
         uses: advanced-security/maven-dependency-submission-action@v4.1.1
 
-      - name: Send failure notification to MS Teams
-        if: ${{ !success() && github.event_name == 'schedule' }}
-        uses: aliencube/microsoft-teams-actions@v0.8.0
-        with:
-          webhook_uri: ${{ secrets.TEAMS_WEBHOOK_TOKO_CI_NOTIFICATIONS }}
-          summary: "Workflow **${{ github.workflow }}** failed."
-          theme_color: d9534f
-          sections: |
-            [
-              {
-                "activityTitle": "Notification from ${{ github.repository }}",
-                "activitySubtitle": "Workflow **${{ github.workflow }}** failed."
-              }
-            ]
-          actions: |
-            [
-              {
-                "@type": "OpenUri", "name": "View Workflow Run",
-                "targets": [
-                  { "os": "default", "uri": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" }
-                ]
-              }
-            ]
+      - name: Check for deprecated API usages
+        if: github.ref_name == github.event.repository.default_branch || github.base_ref == github.event.repository.default_branch
+        run: |
+          cat mvn-output.log | grep '^\[WARNING\]' | grep 'has been deprecated' > deprecated.log || true
+          grep -Fvf .github/workflows/config/ignored-deprecations.txt deprecated.log > violations.log || true
+          if [[ -s violations.log ]]; then
+            cat violations.log
+            echo "::error::Deprecated API calls are not allowed!"
+            exit 1
+          fi
+          echo "::notice::No deprecated API calls found"
+
+      - name: Send failure notification to MS Teams Workflow
+        if: ${{ !success() && github.event_name == 'schedule' && steps.config.outputs.has_msteams_workflow_post_url }}
+        run: |
+          cat .github/workflows/config/teams-notification-card-template.json \
+              | jq -c . \
+              | sed "s|@GITHUB_REPOSITORY@|${{ github.repository }}|g" \
+              | sed "s|@GITHUB_WORKFLOW@|${{ github.workflow }}|g" \
+              | sed "s|@GITHUB_RUN_ID@|${{ github.run_id }}|g" \
+              | sed "s|@GITHUB_SERVER_URL@|${{ github.server_url }}|g" \
+              > notification-card.json
+          curl "${{ secrets.MSTEAMS_WORKFLOW_POST_URL }}" \
+              -X POST \
+              -H 'Content-Type: application/json' \
+              -d @'notification-card.json' \
+              > notification-result.json
+          if [[ -s notification-result.json ]]; then
+            echo "Notification card post result:"
+            cat notification-result.json | jq -r '.error // empty'
+            exit 1
+          fi
+
+      - name: Debug GitHub contexts (only when debug logging is enabled)
+        if: always() && runner.debug
+        run: |
+          echo "::group::Dump GitHub context"
+          echo '${{ toJSON(github) }}'
+          echo "::endgroup::"
+          echo "::group::Dump job context"
+          echo '${{ toJSON(job) }}'
+          echo "::endgroup::"
+          echo "::group::Dump steps context"
+          echo '${{ toJSON(steps) }}'
+          echo "::endgroup::"
+          echo "::group::Dump runner context"
+          echo '${{ toJSON(runner) }}'
+          echo "::endgroup::"
+          echo "::group::Dump strategy context"
+          echo '${{ toJSON(strategy) }}'
+          echo "::endgroup::"
+          echo "::group::Dump matrix context"
+          echo '${{ toJSON(matrix) }}'
+          echo "::endgroup::"
+          echo "::group::Dump vars context"
+          echo '${{ toJSON(vars) }}'
+          echo "::endgroup::"
+          echo "::group::Dump env context"
+          echo '${{ toJSON(env) }}'
+          echo "::endgroup::"
+          echo "::group::Dump OS environment"
+          env | sort
+          echo "::endgroup::"
