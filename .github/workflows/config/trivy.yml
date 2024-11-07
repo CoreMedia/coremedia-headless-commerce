@@ -13,5 +13,6 @@ scan:
     - /coremedia/prometheus/jmx_prometheus_javaagent.jar
     - /usr/bin/confd
 
-pkg-types:
-  - library
+pkg:
+  types:
+    - library
