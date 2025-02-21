@@ -36,7 +36,7 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
     <!-- versions managed in project -->
-    <cms.version>2412.0.0</cms.version>
+    <cms.version>2412.0.1</cms.version>
     <jetty.version>12.0.12</jetty.version>
     <pf4j.version>3.13.0</pf4j.version>
     <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
