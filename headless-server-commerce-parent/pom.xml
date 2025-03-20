@@ -54,7 +54,7 @@
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <bouncycastle.version>1.80</bouncycastle.version>
-    <guava.version>33.4.0-jre</guava.version>
+    <guava.version>33.4.5-jre</guava.version>
     <htmlcleaner.version>2.29</htmlcleaner.version>
     <json.version>20250107</json.version>
     <tomcat.version>10.1.34</tomcat.version>
