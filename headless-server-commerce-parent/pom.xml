@@ -50,7 +50,7 @@
     <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
 
     <!-- versions managed in spring-boot-dependencies (overwrites) -->
-    <netty.version>4.2.0.Final</netty.version><!-- can be deleted with spring boot update -->
+    <netty.version>4.2.1.Final</netty.version><!-- can be deleted with spring boot update -->
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <bouncycastle.version>1.80</bouncycastle.version>
