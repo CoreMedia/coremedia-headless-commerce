@@ -42,12 +42,9 @@
     <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
-    <coremedia-enforcer-rules.version>1.2.2</coremedia-enforcer-rules.version>
+    <coremedia-enforcer-rules.version>2.0.2</coremedia-enforcer-rules.version>
     <log4j2slf4j.version>2.24.3</log4j2slf4j.version>
     <slf4j.version>2.0.17</slf4j.version>
-
-    <!-- versions managed in spring-boot-starter-parent (overwrites) -->
-    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
 
     <!-- versions managed in spring-boot-dependencies (overwrites) -->
     <netty.version>4.2.1.Final</netty.version><!-- can be deleted with spring boot update -->
@@ -396,12 +393,10 @@
             <phase>validate</phase>
             <configuration>
               <rules>
-                <myCustomRule implementation="com.coremedia.maven.enforcer.ModularOneRepoEnforcerRule">
+                <oneRepoEnforcerRule />
+                <modularOneRepoEnforcerRule>
                   <enforceNoCoreToBlueprintDependencies>true</enforceNoCoreToBlueprintDependencies>
-                </myCustomRule>
-                <myCustomRule implementation="com.coremedia.maven.enforcer.BannedDependenciesRule">
-                  <configurationFile>/com/coremedia/cms/maven/enforcer/bannedDependencies.xml</configurationFile>
-                </myCustomRule>
+                </modularOneRepoEnforcerRule>
               </rules>
               <fail>true</fail>
             </configuration>
