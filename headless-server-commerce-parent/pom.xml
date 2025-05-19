@@ -38,24 +38,16 @@
     <!-- versions managed in project -->
     <cms.version>2412.0.3</cms.version>
     <jetty.version>12.0.12</jetty.version>
-    <pf4j.version>3.13.0</pf4j.version>
     <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
     <springfox.version>3.0.0</springfox.version>
     <coremedia-enforcer-rules.version>2.0.3</coremedia-enforcer-rules.version>
-    <log4j2slf4j.version>2.24.3</log4j2slf4j.version>
     <slf4j.version>2.0.17</slf4j.version>
 
     <!-- versions managed in spring-boot-dependencies (overwrites) -->
     <netty.version>4.2.1.Final</netty.version><!-- can be deleted with spring boot update -->
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
-    <bouncycastle.version>1.80</bouncycastle.version>
-    <guava.version>33.4.8-jre</guava.version>
-    <htmlcleaner.version>2.29</htmlcleaner.version>
-    <json.version>20250107</json.version>
-    <tomcat.version>10.1.39</tomcat.version>
-    <logback.version>1.5.16</logback.version>
   </properties>
 
   <dependencyManagement>
@@ -135,34 +127,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-        <exclusions>
-          <!-- Going with the same exclusions that are defined in com.coremedia.cms:common-thirdparty-bom -->
-          <exclusion>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotations</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.guava</groupId>
-            <artifactId>listenablefuture</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.j2objc</groupId>
-            <artifactId>j2objc-annotations</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>checker-qual</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
         <scope>runtime</scope>
@@ -173,44 +137,11 @@
         <version>${springfox.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.sourceforge.htmlcleaner</groupId>
-        <artifactId>htmlcleaner</artifactId>
-        <version>${htmlcleaner.version}</version>
-      </dependency>
-
-      <dependency>
-        <!-- Only a transitive dependency, but must be managed to mitigate CVEs -->
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk18on</artifactId>
-        <version>${bouncycastle.version}</version>
-      </dependency>
-      <dependency>
-        <!-- Only a transitive dependency, but must be managed to mitigate CVEs -->
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>${json.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.pf4j</groupId>
-        <artifactId>pf4j</artifactId>
-        <version>${pf4j.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-bom</artifactId>
         <version>${slf4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-to-slf4j</artifactId>
-        <version>${log4j2slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>${log4j2slf4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
