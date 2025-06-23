@@ -48,6 +48,7 @@
     <netty.version>4.2.2.Final</netty.version><!-- can be deleted with spring boot update -->
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
+    <tomcat.version>10.1.42</tomcat.version>
   </properties>
 
   <dependencyManagement>
