@@ -83,7 +83,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner
         if: github.event_name != 'pull_request'
-        uses: aquasecurity/trivy-action@0.31.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: image
           image-ref: "coremedia/headless-server-commerce:${{ github.sha }}"
