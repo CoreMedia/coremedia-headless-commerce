@@ -94,6 +94,8 @@ interface Category @inherit(from: ["CommerceBean"]) {
   shortDescription: String
   longDescription: String
   imageUrl: String
+  defaultImageUrl: String
+  thumbnailUrl: String
   products: [Product]!
   parent: Category
   children: [Category]!
@@ -169,6 +171,8 @@ type CategoryImpl implements Category @inherit(from: ["CommerceBeanImpl"]) {
   shortDescription: String
   longDescription: String
   imageUrl: String
+  defaultImageUrl: String @fetch(from: "getDefaultImageUrl()")
+  thumbnailUrl: String @fetch(from: "getThumbnailUrl()")
   products: [Product]!
   parent: Category
   children: [Category]!
