@@ -43,6 +43,7 @@
     <springfox.version>3.0.0</springfox.version>
     <coremedia-enforcer-rules.version>2.0.5</coremedia-enforcer-rules.version>
     <slf4j.version>2.0.17</slf4j.version>
+    <http2-common.version>10.0.26</http2-common.version>
 
     <!-- versions managed in spring-boot-dependencies (overwrites) -->
     <netty.version>4.2.4.Final</netty.version><!-- can be deleted with spring boot update -->
@@ -55,6 +56,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.eclipse.jetty.http2</groupId>
+        <artifactId>http2-common</artifactId>
+        <version>${http2-common.version}</version>
+      </dependency>
       <dependency>
         <!-- Override Netty dependency versions. This import must precede the imports of the CMS BOMs. -->
         <groupId>io.netty</groupId>
