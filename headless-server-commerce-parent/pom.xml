@@ -46,7 +46,7 @@
     <http2-common.version>10.0.26</http2-common.version>
 
     <!-- versions managed in spring-boot-dependencies (overwrites) -->
-    <netty.version>4.2.4.Final</netty.version><!-- can be deleted with spring boot update -->
+    <netty.version>4.2.5.Final</netty.version><!-- can be deleted with spring boot update -->
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <tomcat.version>10.1.44</tomcat.version>
