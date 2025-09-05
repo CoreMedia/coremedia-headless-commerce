@@ -43,7 +43,7 @@
     <springfox.version>3.0.0</springfox.version>
     <coremedia-enforcer-rules.version>2.0.5</coremedia-enforcer-rules.version>
     <slf4j.version>2.0.17</slf4j.version>
-    <http2-common.version>10.0.26</http2-common.version>
+    <http2-common.version>11.0.26</http2-common.version>
 
     <!-- versions managed in spring-boot-dependencies (overwrites) -->
     <netty.version>4.2.4.Final</netty.version><!-- can be deleted with spring boot update -->
