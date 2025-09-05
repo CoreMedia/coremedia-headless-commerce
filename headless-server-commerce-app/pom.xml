@@ -31,6 +31,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>middle.coremedia-web-security</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>com.coremedia.commerce.labs</groupId>
       <artifactId>headless-server-commerce-base-lib</artifactId>
       <version>${project.version}</version>
