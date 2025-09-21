@@ -111,6 +111,15 @@
 
   <profiles>
     <profile>
+      <id>local-registry</id>
+      <properties>
+        <jib.goal>build</jib.goal>
+        <jib.skip>false</jib.skip>
+        <jib.allowInsecureRegistries>true</jib.allowInsecureRegistries>
+        <application.image-prefix>docker.ps-ci-01.coremedia.vm</application.image-prefix>
+      </properties>
+    </profile>
+    <profile>
       <id>docs-third-party</id>
       <!--
         Will create generated resources for docs/ folder.

@@ -135,6 +135,14 @@
                 <port>8199</port>
               </ports>
               <workingDirectory>/coremedia</workingDirectory>
+              <volumes>
+                <!-- transient volumes (emptyDir, anonymous) -->
+                <volume>/tmp</volume>
+                <volume>/var/tmp/</volume>
+                <volume>/coremedia/cache/uapi-blobcache</volume>
+                <!-- persistent volumes -->
+                <volume>/coremedia/cache/persistent-transformed-blobcache</volume>
+              </volumes>
             </container>
             <from>
               <image>${application.image-base}</image>
