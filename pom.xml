@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce</artifactId>
-  <version>2.1.7-RC</version>
+  <version>2.1.8-RC-SNAPSHOT</version>
   <packaging>pom</packaging>
   <organization>
     <name>CoreMedia AG</name>
