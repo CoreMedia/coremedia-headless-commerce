@@ -32,7 +32,7 @@
     <docs.directory>documentation</docs.directory>
     <!-- plugin versions -->
     <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
-    <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
   </properties>
