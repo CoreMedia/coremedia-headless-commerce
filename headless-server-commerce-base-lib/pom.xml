@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.coremedia.commerce.labs</groupId>
     <artifactId>headless-server-commerce-parent</artifactId>
-    <version>2.1.8-RC</version>
+    <version>2.1.9-RC-SNAPSHOT</version>
     <relativePath>../headless-server-commerce-parent</relativePath>
   </parent>
   <artifactId>headless-server-commerce-base-lib</artifactId>
