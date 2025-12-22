@@ -47,7 +47,7 @@
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
     <tomcat.version>10.1.45</tomcat.version>
     <commons-lang3.version>3.18.0</commons-lang3.version>
-    <spring-framework.version>6.2.12</spring-framework.version>
+    <spring-framework.version>7.0.2</spring-framework.version>
   </properties>
 
   <dependencyManagement>
