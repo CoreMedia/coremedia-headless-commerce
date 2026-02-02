@@ -46,7 +46,7 @@ jobs:
           echo "mvn_args=${MVN_ARGS}" >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK
-        uses: actions/setup-java@v5.1.0
+        uses: actions/setup-java@v5.2.0
         with:
           java-version: 21
           distribution: corretto
