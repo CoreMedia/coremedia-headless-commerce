@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.server.servlet.context.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -29,6 +29,10 @@ import static java.lang.invoke.MethodHandles.lookup;
         // no persisted queries -> avoids error in PersistedQueryAutoConfiguration (CMS-24775)
         "com.coremedia.caas.web.persistedqueries.impl.PersistedQueryAutoConfiguration",
         "com.coremedia.caas.web.rest.RestMappingAutoConfiguration",
+        // no media controller support
+        "com.coremedia.caas.web.controller.MediaControllerAutoConfiguration",
+        // no beans for plugins support
+        "com.coremedia.cms.common.plugins.beans_for_plugins_app.CommonBeansForPluginsAutoConfiguration",
 })
 @ComponentScan("com.coremedia.cap.undoc.common.spring") // required because component loader in not active here
 @ServletComponentScan(basePackages = {
