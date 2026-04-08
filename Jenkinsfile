@@ -17,7 +17,7 @@ final String RELEASE_DOCKER_REPOSITORY_NAME = 'coremedia'
 final String RELEASE_DOCKER_IMAGE_NAME = PROJECT_NAME
 final String RELEASE_LOCAL_STAGING_DIR = '${WORKSPACE}/target/nexus-staging'
 
-final String DOCKER_IMAGE_MAVEN = "${Jenkins.ecrPullThroughProxyRegistry}/cm-tools/maven:3.8.6-17.0.12.7-1-cm-1.1.3"
+final String DOCKER_IMAGE_MAVEN = ComhubHelper.DOCKER_IMAGE_MAVEN_JAVA_21
 final String DOCKER_SNAPSHOTS_REGISTRY = "${Jenkins.getDockerRegistry(env)}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 final String DOCKER_RELEASES_REGISTRY = "${ComhubHelper.releasesCommerceRegistryUpstream}/${RELEASE_DOCKER_REPOSITORY_NAME}"
 
@@ -25,6 +25,7 @@ final Map<String, String> DEFAULT_MAVEN_PARAMS = [
         'application.image-prefix'   : DOCKER_SNAPSHOTS_REGISTRY,
         'jib.allowInsecureRegistries': 'true',
         'jib.goal'                   : 'build',
+        'jib.baseImageCache'         : '${WORKSPACE}/target/jib-cache',
         'enforcer.skip'              : 'true',
         'mdep.analyze.skip'          : 'true',
         'sort.skip'                  : 'true',
