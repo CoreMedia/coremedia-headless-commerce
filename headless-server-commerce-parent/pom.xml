@@ -40,7 +40,7 @@
     <jetty.version>12.1.8</jetty.version>
     <sonar-maven-plugin.version>5.5.0.6356</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-    <coremedia-enforcer-rules.version>2.0.5</coremedia-enforcer-rules.version>
+    <coremedia-enforcer-rules.version>2.0.6</coremedia-enforcer-rules.version>
     <slf4j.version>2.0.17</slf4j.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
