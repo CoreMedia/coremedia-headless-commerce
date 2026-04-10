@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.5</version>
     <relativePath/>
   </parent>
 
@@ -37,17 +37,16 @@
 
     <!-- versions managed in project -->
     <cms.version>2512.0.1</cms.version>
-    <jetty.version>12.1.6</jetty.version>
+    <jetty.version>12.1.8</jetty.version>
     <sonar-maven-plugin.version>5.5.0.6356</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-    <springfox.version>3.0.0</springfox.version>
     <coremedia-enforcer-rules.version>2.0.5</coremedia-enforcer-rules.version>
     <slf4j.version>2.0.17</slf4j.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
-    <tomcat.version>11.0.18</tomcat.version>
+    <tomcat.version>11.0.21</tomcat.version>
     <commons-lang3.version>3.19.0</commons-lang3.version>
-    <spring-framework.version>7.0.5</spring-framework.version>
+    <spring-framework.version>7.0.6</spring-framework.version>
   </properties>
 
   <dependencyManagement>
@@ -122,11 +121,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
         <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger-ui</artifactId>
-        <version>${springfox.version}</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
