@@ -11,7 +11,7 @@
 
   <groupId>com.coremedia.commerce.labs</groupId>
   <artifactId>headless-server-commerce-parent</artifactId>
-  <version>3.0.2-RC</version>
+  <version>3.0.3-RC-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <organization>
