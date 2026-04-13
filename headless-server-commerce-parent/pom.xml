@@ -47,6 +47,7 @@
     <tomcat.version>11.0.21</tomcat.version>
     <commons-lang3.version>3.19.0</commons-lang3.version>
     <spring-framework.version>7.0.6</spring-framework.version>
+    <jackson-bom.version>3.1.1</jackson-bom.version>
   </properties>
 
   <dependencyManagement>
@@ -67,6 +68,15 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <!-- Override Jackson dependency versions. This import must precede the imports of the CMS BOMs. -->
+        <groupId>tools.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <dependency>
         <groupId>com.coremedia.cms</groupId>
         <artifactId>common-core-bom</artifactId>
