@@ -67,7 +67,8 @@ pipeline {
     stage('Prepare') {
       steps {
         script {
-          String projectVersion = comhubXmlStarletSelect(xmlFile: 'pom.xml', xPath: 'project/version')
+          String projectVersion = cmBash(label: 'Get project version from POM', returnStdout: true,
+                  script: "yq '.project.version' pom.xml").trim()
           if (isReleaseStaging) {//input example: 2.0.40-RC-SNAPSHOT
             version = projectVersion.replace('-SNAPSHOT', '') //example: 2.0.40-RC
             String versionExtension = version.replaceAll('[\\d.]*','') //example: -RC
