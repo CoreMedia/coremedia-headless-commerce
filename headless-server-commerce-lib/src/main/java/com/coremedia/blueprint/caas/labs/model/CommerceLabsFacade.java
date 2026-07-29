@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -75,14 +76,16 @@ public class CommerceLabsFacade {
     }
   }
 
+  /**
+   * Returns the available {@link Catalog}s assigned to the given site.
+   * @param siteId the ID of the site
+   * @return a {@link DataFetcherResult} containing the list of {@link Catalog}s
+   */
   @SuppressWarnings("unused")
   @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
   public DataFetcherResult<List<Catalog>> getCatalogs(String siteId) {
-    return fetchData(siteId, connection -> {
-      CatalogService catalogService = connection.getCatalogService();
-      return catalogService.getCatalogs(connection.getInitialStoreContext());
-    });
+    return fetchData(siteId, connection -> connection.getStoreContextProvider().findContextBySiteId(siteId).map(storeContext -> connection.getCatalogService().getCatalogs(storeContext)).orElse(Collections.emptyList()));
   }
 
   @SuppressWarnings("unused")
