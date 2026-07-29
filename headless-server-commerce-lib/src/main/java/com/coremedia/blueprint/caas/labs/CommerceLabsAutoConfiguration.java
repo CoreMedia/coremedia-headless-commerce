@@ -2,6 +2,7 @@ package com.coremedia.blueprint.caas.labs;
 
 import com.coremedia.blueprint.base.livecontext.ecommerce.common.BaseCommerceServicesAutoConfiguration;
 import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.MappedCatalogsProvider;
 import com.coremedia.blueprint.caas.labs.model.CommerceLabsFacade;
 import com.coremedia.blueprint.caas.labs.model.Metadata;
 import com.coremedia.blueprint.caas.labs.model.SiteResolver;
@@ -71,8 +72,9 @@ public class CommerceLabsAutoConfiguration {
 
   @Bean
   public CommerceLabsFacade commerceLabsFacade(@Qualifier("commerceConnectionSupplier") CommerceConnectionSupplier commerceConnectionSupplier,
-                                               SitesService sitesService, SiteResolver siteResolver) {
-    return new CommerceLabsFacade(commerceConnectionSupplier, sitesService, siteResolver);
+                                               SitesService sitesService, SiteResolver siteResolver,
+                                               MappedCatalogsProvider mappedCatalogsProvider) {
+    return new CommerceLabsFacade(commerceConnectionSupplier, sitesService, siteResolver, mappedCatalogsProvider);
   }
 
   @Bean

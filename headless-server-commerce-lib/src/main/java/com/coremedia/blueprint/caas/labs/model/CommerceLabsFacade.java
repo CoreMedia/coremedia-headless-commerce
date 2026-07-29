@@ -1,6 +1,7 @@
 package com.coremedia.blueprint.caas.labs.model;
 
 import com.coremedia.blueprint.base.livecontext.ecommerce.common.CommerceConnectionSupplier;
+import com.coremedia.blueprint.base.livecontext.ecommerce.common.MappedCatalogsProvider;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdBuilder;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdFormatterHelper;
 import com.coremedia.blueprint.base.livecontext.ecommerce.id.CommerceIdParserHelper;
@@ -33,6 +34,7 @@ import graphql.execution.DataFetcherResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,11 +53,13 @@ public class CommerceLabsFacade {
   private final CommerceConnectionSupplier commerceConnectionSupplier;
   private final SitesService sitesService;
   private final SiteResolver siteResolver;
+  private final MappedCatalogsProvider mappedCatalogsProvider;
 
-  public CommerceLabsFacade(CommerceConnectionSupplier commerceConnectionSupplier, SitesService sitesService, SiteResolver siteResolver) {
+  public CommerceLabsFacade(CommerceConnectionSupplier commerceConnectionSupplier, SitesService sitesService, SiteResolver siteResolver, MappedCatalogsProvider mappedCatalogsProvider) {
     this.commerceConnectionSupplier = commerceConnectionSupplier;
     this.sitesService = sitesService;
     this.siteResolver = siteResolver;
+    this.mappedCatalogsProvider = mappedCatalogsProvider;
   }
 
   public <T> DataFetcherResult<T> fetchData(String siteId, Function<CommerceConnection, T> function) {
@@ -85,7 +89,10 @@ public class CommerceLabsFacade {
   @Deprecated
   // it is being used by within commerce-schema.graphql as @fetch(from: "@commerceLabsFacade.getCatalogs(#siteId)")
   public DataFetcherResult<List<Catalog>> getCatalogs(String siteId) {
-    return fetchData(siteId, connection -> connection.getStoreContextProvider().findContextBySiteId(siteId).map(storeContext -> connection.getCatalogService().getCatalogs(storeContext)).orElse(Collections.emptyList()));
+    return fetchData(siteId, connection -> connection.getStoreContextProvider()
+            .findContextBySiteId(siteId)
+            .map(mappedCatalogsProvider::getConfiguredCatalogs)
+            .orElse(Collections.emptyList()));
   }
 
   @SuppressWarnings("unused")
