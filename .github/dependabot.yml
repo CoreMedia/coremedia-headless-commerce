@@ -11,6 +11,10 @@ updates:
       interval: monthly
       time: '00:27'
       timezone: 'Etc/UTC'
+    groups:
+      github-codeql-action:
+        patterns:
+          - 'github/codeql-action*'
     labels:
       - dependencies
       - ginger
