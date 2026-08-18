@@ -1,2 +1,0 @@
-# Ignores for known (false-positive) CVE reports that will not be fixed by
-# us or the vendor for the baseline versions that are used on this branch.
