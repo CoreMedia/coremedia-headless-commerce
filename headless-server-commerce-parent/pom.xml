@@ -37,7 +37,7 @@
 
     <!-- versions managed in project -->
     <cms.version>2512.1.1</cms.version>
-    <jetty.version>12.1.8</jetty.version>
+    <jetty.version>12.1.9</jetty.version>
     <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
     <coremedia-enforcer-rules.version>2.0.6</coremedia-enforcer-rules.version>
@@ -48,6 +48,7 @@
     <commons-lang3.version>3.19.0</commons-lang3.version>
     <spring-framework.version>7.0.8</spring-framework.version>
     <jackson-bom.version>3.2.2</jackson-bom.version>
+    <log4j-bom.version>2.26.1</log4j-bom.version>
   </properties>
 
   <dependencyManagement>
@@ -73,6 +74,14 @@
         <groupId>tools.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
         <version>${jackson-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <!-- Override Log4j dependency versions to fix CVE-2026-49844. This import must precede the imports of the CMS BOMs. -->
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j-bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
