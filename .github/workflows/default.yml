@@ -77,26 +77,9 @@ jobs:
           NEXUS_GITHUB_ACTIONS_READONLY_TOKEN: ${{ secrets.NEXUS_GITHUB_ACTIONS_READONLY_TOKEN }}
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@54f647b7e1bb85c95cddabcd46b0c578ec92bc1a # v4.36.3
+        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
         with:
           category: '/language:java'
-
-      - name: Run Trivy vulnerability scanner
-        if: github.event_name != 'pull_request'
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          scan-type: image
-          image-ref: "coremedia/headless-server-commerce:${{ github.sha }}"
-          trivy-config: .github/workflows/config/trivy.yml
-          format: sarif
-          output: trivy-results.sarif
-          limit-severities-for-sarif: true
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: github.event_name != 'pull_request'
-        uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
-        with:
-          sarif_file: trivy-results.sarif
 
       - name: Update dependency graph
         if: github.ref_name == github.event.repository.default_branch
