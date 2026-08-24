@@ -47,6 +47,7 @@
     <tomcat.version>11.0.22</tomcat.version>
     <commons-lang3.version>3.19.0</commons-lang3.version>
     <spring-framework.version>7.0.8</spring-framework.version>
+    <spring-graphql.version>2.0.4</spring-graphql.version>
     <jackson-bom.version>3.2.2</jackson-bom.version>
   </properties>
 
@@ -65,6 +66,13 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
         <version>${spring-framework.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.graphql</groupId>
+        <artifactId>spring-graphql</artifactId>
+        <version>${spring-graphql.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
