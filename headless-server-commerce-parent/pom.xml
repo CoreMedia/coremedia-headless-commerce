@@ -47,7 +47,7 @@
     <tomcat.version>11.0.22</tomcat.version>
     <commons-lang3.version>3.19.0</commons-lang3.version>
     <spring-framework.version>7.0.8</spring-framework.version>
-    <spring-graphql.version>2.0.4</spring-graphql.version>
+    <spring-graphql.version>2.0.5</spring-graphql.version>
     <jackson-bom.version>3.2.2</jackson-bom.version>
   </properties>
 
