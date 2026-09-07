@@ -44,7 +44,7 @@
     <slf4j.version>2.0.18</slf4j.version>
 
     <!-- versions managed in com.coremedia.cms BOMs (overwrites) -->
-    <tomcat.version>11.0.22</tomcat.version>
+    <tomcat.version>11.0.25</tomcat.version>
     <commons-lang3.version>3.19.0</commons-lang3.version>
     <spring-framework.version>7.0.8</spring-framework.version>
     <spring-graphql.version>2.0.5</spring-graphql.version>
