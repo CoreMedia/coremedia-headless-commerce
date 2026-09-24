@@ -180,7 +180,9 @@ jobs:
         internal,spring-boot,application,team-ginger,
         headless-server-commerce-app-${{ needs.build-and-check.outputs.release_version }},
         ${{ needs.build-and-check.outputs.snapshot_or_release }}
-      parent-name: marketplace
+      parent-name: Marketplace
       sbom-artifact-name: SBOM
       bom-filename: application.cdx.json
-    secrets: inherit
+    secrets:
+      DEPENDENCY_TRACK_APISERVER_HOST: ${{ secrets.DEPENDENCY_TRACK_APISERVER_HOST }}
+      DEPENDENCY_TRACK_API_KEY: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
