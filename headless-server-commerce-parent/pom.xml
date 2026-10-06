@@ -240,6 +240,18 @@
           <artifactId>maven-surefire-plugin</artifactId>
         </plugin>
         <plugin>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <configuration>
+            <projectType>application</projectType>
+            <outputDirectory>${project.build.outputDirectory}/META-INF/sbom</outputDirectory>
+            <outputFormat>json</outputFormat>
+            <outputName>application.cdx</outputName>
+            <skipNotDeployed>false</skipNotDeployed>
+            <includeLicenseText>true</includeLicenseText>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
           <version>${sonar-maven-plugin.version}</version>
@@ -328,7 +340,7 @@
             <phase>validate</phase>
             <configuration>
               <rules>
-                <oneRepoEnforcerRule />
+                <oneRepoEnforcerRule/>
                 <modularOneRepoEnforcerRule>
                   <enforceNoCoreToBlueprintDependencies>true</enforceNoCoreToBlueprintDependencies>
                 </modularOneRepoEnforcerRule>

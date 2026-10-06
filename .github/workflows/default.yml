@@ -26,6 +26,9 @@ jobs:
   build-and-check:
     name: Build and Check
     runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.config.outputs.release_version }}
+      snapshot_or_release: ${{ steps.config.outputs.snapshot_or_release }}
 
     steps:
       - name: Checkout repository
@@ -44,6 +47,14 @@ jobs:
             MVN_ARGS="${MVN_ARGS} --no-transfer-progress"
           fi
           echo "mvn_args=${MVN_ARGS}" >> "$GITHUB_OUTPUT"
+          PROJECT_VERSION=$( yq '.project.version' pom.xml )
+          RELEASE_VERSION=${PROJECT_VERSION%-SNAPSHOT}
+          echo "release_version=${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
+          if [[ ${PROJECT_VERSION} == *-SNAPSHOT ]]; then
+            echo "snapshot_or_release=snapshot" >> "$GITHUB_OUTPUT"
+          else
+            echo "snapshot_or_release=release" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up JDK
         uses: actions/setup-java@v6.0.1
@@ -97,6 +108,14 @@ jobs:
           fi
           echo "::notice::No deprecated API calls found"
 
+      - name: Upload SBOM artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: SBOM
+          path: headless-server-commerce-app/target/classes/META-INF/sbom/application.cdx.json
+          if-no-files-found: error
+
       - name: Send failure notification to MS Teams Workflow
         if: ${{ !success() && github.event_name == 'schedule' && steps.config.outputs.has_msteams_workflow_post_url }}
         run: |
@@ -148,3 +167,22 @@ jobs:
           echo "::group::Dump OS environment"
           env | sort
           echo "::endgroup::"
+
+  upload-sbom:
+    name: Upload SBOM
+    if: github.event_name != 'pull_request'
+    needs: build-and-check
+    uses: CoreMedia/github-actions/.github/workflows/reusable-sbom-upload.yml@11ea2256703349126a018fbe80525235ad8a023b # reusable-sbom-upload/v1.0.0
+    with:
+      project-name: coremedia-headless-commerce
+      project-version: ${{ needs.build-and-check.outputs.release_version }}
+      project-tags: |-
+        internal,spring-boot,application,team-ginger,
+        headless-server-commerce-app-${{ needs.build-and-check.outputs.release_version }},
+        ${{ needs.build-and-check.outputs.snapshot_or_release }}
+      parent-name: Marketplace
+      sbom-artifact-name: SBOM
+      bom-filename: application.cdx.json
+    secrets:
+      DEPENDENCY_TRACK_APISERVER_HOST: ${{ secrets.DEPENDENCY_TRACK_APISERVER_HOST }}
+      DEPENDENCY_TRACK_API_KEY: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
